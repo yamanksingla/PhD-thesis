@@ -8,6 +8,7 @@ on: [push]
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build_latex:
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
     runs-on: ubuntu-latest
     steps:
       - name: Set up Git repository
@@ -23,3 +24,16 @@ jobs:
         with:
           name: PDF
           path: main.pdf
+          
+      - name: Check pdf file
+        run: |
+            file main.pdf | grep -q ' PDF '
+
+      - name: Upload file to repository
+        run: |
+          git config --global user.name "yamanksingla"
+          git config --global user.email "yamank@iiitd.ac.in"
+          git add main.pdf
+          git commit -m "Updated thesis [skip ci]"
+          git push
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
