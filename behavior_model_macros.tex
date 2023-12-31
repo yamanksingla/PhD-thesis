@@ -1,0 +1,123 @@
+\usepackage{adjustbox}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{color}
+\usepackage{enumitem}
+\usepackage{fancyvrb}
+\usepackage{float}
+\usepackage[symbol]{footmisc}
+\usepackage{inconsolata} % improve the aesthetics of text in
+% the typewriter font
+\usepackage{listings}
+\usepackage{longtable}
+\usepackage{makecell}
+\usepackage{mathtools}
+\usepackage{multirow}
+% \usepackage{setspace}
+\usepackage{subcaption}
+\usepackage{supertabular}
+\usepackage{tabto}
+\usepackage{tablefootnote}
+\usepackage{tabularx}
+\usepackage{verbatim}
+\usepackage{xfrac}
+\usepackage{xltabular}
+
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\lstset{
+xleftmargin=0pt, % remove indentation
+basicstyle=\small\ttfamily,
+columns=flexible,
+breaklines=true,
+aboveskip=0pt, % remove extra space above listings
+belowskip=0pt, % remove extra space below listings
+framexleftmargin=0pt, % remove indentation
+}
+
+\newcommand{\cy}[1]{}%{\textcolor{red}{[CY: #1]}}
+
+%-------------------- environment definitions -----------------
+\newenvironment{example}[0]{\begin{Example} \it}{\end{Example}}
+\newenvironment{proof-of}[1]{{\em Proof of #1:}}{}
+
+%----------------- command definitions ----------
+\newcommand{\nnn}{{\tt \bf  not}}
+
+% Any macro definitions you would like to include
+% These are not defined in the style file, because they don't begin
+% with \bmva, so they might conflict with the user's own macros.
+% The \bmvaOneDot macro adds a full stop unless there is one in the
+% text already.
+\def\eg{\emph{e.g}\bmvaOneDot}
+\def\Eg{\emph{E.g}\bmvaOneDot}
+\def\etal{\emph{et al.}\bmvaOneDot}
+
+
+\everypar{\looseness=-1}
+
+\newcommand{\treelogo}{\raisebox{5pt}{\includegraphics[scale=0.050]{logos/tree.png}}}
+\newcommand{\iiitdlogo}{\raisebox{5pt}{\includegraphics[scale=0.0113]{logos/iiitd-logo.png}}}
+\newcommand{\ublogo}{\raisebox{5.2pt}
+{\includegraphics[scale=0.085]{logos/ub-logo.png}}}
+\newcommand{\fire}{\raisebox{5pt}{\includegraphics[scale=0.15]{logos/fire.png}}}
+\newcommand{\adobelogo}{\raisebox{5pt}{\includegraphics[scale=0.032]{logos/adobe-logo.png}}}
+\newcommand\coauth{$^\star$}
+\newcommand\blfootnote[1]{%
+  \begingroup
+  \renewcommand\thefootnote{}\footnote{#1}%
+  \addtocounter{footnote}{-1}%
+  \endgroup
+}
+
+\usepackage[skins]{tcolorbox} % for little color boxes
+\newcommand{\best}[1]{\colorbox{black!10}{#1}}
+\definecolor{valbest}{HTML}{d9ead3}
+\newcommand{\valbest}[1]{\colorbox{valbest}{#1}}
+\definecolor{valgood}{HTML}{d0e0e3}
+\newcommand{\valgood}[1]{\colorbox{valgood}{#1}}
+\definecolor{valmid}{HTML}{fce5cd}
+\newcommand{\valmid}[1]{\colorbox{valmid}{#1}}
+\definecolor{valbad}{HTML}{ead1dc}
+\newcommand{\valbad}[1]{\colorbox{valbad}{#1}}
+\definecolor{themegreen}{HTML}{365956}
+\definecolor{themepurple}{HTML}{3c1b48}
+\definecolor{themered}{HTML}{b43748}
+
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcommand\Tstrut{\rule{0pt}{2.6ex}}         % = `top' strut
+\newcommand\Bstrut{\rule[-1.3ex]{0pt}{0pt}}   % = `bottom' strut
+
+\setlist[itemize]{noitemsep, topsep=0pt}
+\setlist[enumerate]{noitemsep, topsep=0pt}
+
+\newcommand{\citeauthorwithyear}[1]{\citeauthor{#1}~\shortcite{#1}}
+\newcommand{\sota}{state-of-the-art}
+\newcommand{\Sota}{State-of-the-art}
+
+\newcommand{\parens}[1]{\left(#1\right)}
+\newcommand{\braces}[1]{\left\{#1\right\}}
+\newcommand{\bracks}[1]{\left[#1\right]}
+\newcommand{\modulus}[1]{\left\vert#1\right\vert}
+\newcommand{\norm}[1]{\left\Vert#1\right\Vert}
+\newcommand{\angular}[1]{\langle#1\rangle}
+\newcommand{\lmod}{\left|\!\left|}
+\newcommand{\rmod}{\right|\!\right|}
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+
+\DeclareMathOperator*{\minimize}{minimize}
+\DeclareMathOperator*{\maximize}{maximize}
+
+\newcommand{\samplei}{^{\parens{i}}}
+\newcommand{\raisedth}[1]{#1^{\textrm{th}}}
+% \linespread{0.94}
+
+\newcommand{\accuracy}{$XX\%$}
