@@ -1,2 +1,52 @@
-\chapter{Content and Behavior Models}
+\chapter{Large Content and Behavior Models To Predict, Understand, and Generate Content and Human Behavior}
 \label{chatper:Content and Behavior Models}
+
+\begin{comment}
+    Communication has 7 parts
+    
+    Language models were trained on the message part
+    
+    How can behavior data help?
+    
+    What kind of behaviors can help?
+     - Explicit behavior
+     - Implicit behavior
+    
+     - Real vs synthetic
+    
+    
+    How to integrate?
+     - encoder
+     - text to text framework
+    
+\end{comment}
+
+In the previous chapter, we dealt with the first culture of social science, explanation, and how to enable it at scale by using machine learning techniques of computer vision and NLP. Marketers make many decisions on a regular basis: what marketing campaign to launch, who to target, what the message should be, which channel it should be sent on, when it should be sent, and how frequently. Extraction of information about advertisements (for example, emotion, persuasion strategy, topic, and question answering) and correlating them with key performance indicators (KPIs) helps decision-makers (in this case, human marketers) to understand and execute campaigns better. Now, in this chapter, we turn to the question of how to encode the complete communication pipeline to enable better and possibly completely automated decision-making. 
+
+
+Thanks to the digitization of various aspects of life, humanity has been collecting a lot of data over the last two decades. For example, let's take the case of email marketing, one of the first marketing tools leveraging Internet technology. Say a Walmart marketer sends a Black Friday offer about a price drop on Apple devices to John, a 27-year-old male grad student living in Buffalo. The email was received at 09:57 AM and opened at 02:00 PM. Upon opening the email, email content consisting of a carousel of four images and three lines is dynamically fetched from the backend. John takes 5 seconds to scan the email quickly, scrolling halfway through, before deciding to click on a photo. During this single macro-transaction, a series of micro-transactions are recorded and a host of machine learning and software systems are required to function together to make a sequence of decisions. 
+
+Amongst all the recorded transactions and algorithms, let's discuss the most prominent ones that are important for our use case. Much before sending the email, depending on business needs, the marketer decides to launch a particular campaign. The business need, for example, in this case, could be precipitated by an upcoming event or festival (Black Friday) or a rising inventory of Apple products. The next step is the creative process, where the marketer designs the email pods consisting of text and images by herself or with a team of creatives. The marketer has to decide the target segments (of which John will be a part). Next, an algorithm has to decide when to send the email and the subject line. Post this, a series of software technologies helps to send the email to the right people on time. When John decides to open the email, an event gets recorded in the backend recording \texttt{(customer ID, transaction ID, email ID, time of opening the email, device, email client, [other metadata])}. A personalization system then dynamically selects the email content and sends it to John's device. Those get recorded with the transaction ID. Scrolling on the email also generates transactions recording which images and text were sent to John's device. Further, when John decides to click on one link, another transaction gets recorded of the type \texttt{(transaction ID, customer ID, link, time of click, email client, device, [other metadata])}. On an abstract level, all of these transactions can be represented by the seven factors of communication: \texttt{(communicator, message, time of message, channel, receiver, time of effect, effect)}. 
+
+If this email were sent to a million subscribers, one email message would result in several hundred thousand transactions getting recorded. These transactions capture behavior data of the subscribers in response to a single email sent by the communicator, Walmart. This example illustrates the size and nature of behavioral data that gets captured. Notice that for a message, it is always the case that there is one sender and multiple receivers (an invariance noticed as early as 1950s \cite{meier1959measurement}). Therefore, the scale of behavioral transactions generated is several orders higher than the number of unique pieces of content. 
+
+
+Given the magnitude of behavioral data collected, the natural question is can all that data be used to answer questions related to human behavior prediction, explanation, and optimization. Therefore, the research questions that we investigate in this chapter follow this natural line of inquiry:
+\begin{enumerate}
+    \item How can behavior data help?
+
+    \item How do we encode behavior data?
+
+    \item What kind of behavior can help?
+    \begin{enumerate}
+        \item Implicit (like eye movements) and explicit (like clicks, likes, and views) behaviors
+        \item Real and synthetically generated behaviors
+    \end{enumerate}
+    
+\end{enumerate}
+
+
+
+
+
+
