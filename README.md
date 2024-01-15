@@ -1,4 +1,4 @@
-# Predicting and Optimizing Human Behavior and Communication
+# Behavior As A Modality
 Yaman K Singla's (work-in-progress) PhD Thesis
 
 The document is in the document [main.pdf](/main.pdf).
