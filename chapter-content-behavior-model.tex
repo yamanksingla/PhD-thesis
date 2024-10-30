@@ -1,0 +1,1020 @@
+\newcommand{\companyName}{in-house~}
+
+\chapter{Modeling Behavior: A Case For Large Content and Behavior Models}
+\label{chatper:Content and Behavior Models}
+
+
+\begin{comment}
+    Communication has 7 parts
+    
+    Language models were trained on the message part
+    
+    How can behavior data help?
+    
+    What kind of behaviors can help?
+     - Explicit behavior
+     - Implicit behavior
+    
+     - Real vs synthetic
+    
+    
+    How to integrate?
+     - encoder
+     - text to text framework
+    
+\end{comment}
+
+
+
+In the previous chapter, we dealt with the first culture of social science, explanation, and how to enable it at scale by using machine learning techniques of computer vision and NLP. Marketers make many decisions on a regular basis: what marketing campaign to launch, who to target, what the message should be, which channel it should be sent on, when it should be sent, and how frequently. Extraction of information about advertisements (for example, emotion, persuasion strategy, topic, and question answering) and correlating them with key performance indicators (KPIs) helps decision-makers (in this case, human marketers) to understand and execute campaigns better. Now, in this chapter, we turn to the question of how to encode the complete communication pipeline to enable better and possibly completely automated decision-making. 
+
+
+Thanks to the digitization of various aspects of life, humanity has been collecting a lot of data over the last two decades. For example, let's take the case of email marketing, one of the first marketing tools leveraging Internet technology. Say a Walmart marketer sends a Black Friday offer about a price drop on Apple devices to John, a 27-year-old male grad student living in Buffalo. The email was received at 09:57 AM and opened at 02:00 PM. Upon opening the email, email content consisting of a carousel of four images and three lines is dynamically fetched from the backend. John takes 5 seconds to scan the email quickly, scrolling halfway through, before deciding to click on a photo. During this single macro-transaction, a series of micro-transactions are recorded and a host of machine learning and software systems are required to function together to make a sequence of decisions. 
+
+Amongst all the recorded transactions and algorithms, let's discuss the most prominent ones that are important for our use case. Much before sending the email, depending on business needs, the marketer decides to launch a particular campaign. The business need, for example, in this case, could be precipitated by an upcoming event or festival (Black Friday) or a rising inventory of Apple products. The next step is the creative process, where the marketer designs the email pods consisting of text and images by herself or with a team of creatives. The marketer has to decide the target segments (of which John will be a part). Next, an algorithm has to decide when to send the email and the subject line. Post this, a series of software technologies helps to send the email to the right people on time. When John decides to open the email, an event gets recorded in the backend recording \texttt{(customer ID, transaction ID, email ID, time of opening the email, device, email client, [other metadata])}. A personalization system then dynamically selects the email content and sends it to John's device. Those get recorded with the transaction ID. Scrolling on the email also generates transactions recording which images and text were sent to John's device. Further, when John decides to click on one link, another transaction gets recorded of the type \texttt{(transaction ID, customer ID, link, time of click, email client, device, [other metadata])}. On an abstract level, all of these transactions can be represented by the seven factors of communication: \texttt{(communicator, message, time of message, channel, receiver, time of effect, effect)}. 
+
+If this email were sent to a million subscribers, one email message would result in several hundred thousand transactions getting recorded. These transactions capture behavior data of the subscribers in response to a single email sent by the communicator, Walmart. This example illustrates the size and nature of behavioral data that gets captured. Notice that for a message, it is always the case that there is one sender and multiple receivers (an invariance noticed as early as 1950s \cite{meier1959measurement}). Therefore, the scale of behavioral transactions generated is several orders higher than the number of unique pieces of content. 
+
+
+Given the magnitude of behavioral data collected, the natural question is can all that data be used to answer questions related to human behavior prediction, explanation, and optimization. Therefore, the research questions that we investigate in this chapter follow this natural line of inquiry:
+\begin{enumerate}
+    \item How can behavior data help? Can behavior data help us to achieve the following goals:
+        \begin{enumerate}
+            \item Behavior Prediction
+            \item Behavior Explanation
+            \item Behavior Optimization?
+        \end{enumerate}
+    
+    \item How should we encode behavior data? 
+
+    \item What kind of behavior can help?
+    \begin{enumerate}
+        \item How can implicit (like eye movements) and explicit (like clicks, likes, and views) behaviors help? 
+        \item Can synthetically generated behavior data help?
+    \end{enumerate}
+    
+\end{enumerate}
+
+
+To solve the behavior problems listed before, we can take inspiration from how the problem of learning natural language is being solved in the domain of large language models (LLMs). Raffel \textit{et al.} \cite{raffel2020exploring}, in their seminal work on T5, mention that the basic idea underlying large language models is to treat every text processing problem as a ``text-to-text'' problem, \textit{i.e.}, taking the text as input and producing new text as output. This framework allows for a direct application of the same model, objective, training procedure, and decoding process to every task we consider. Further, this allows us to pre-train a model on a data-rich task like the next-word prediction, which can then be transferred to downstream tasks. Notably, thanks to the Internet, the next-word prediction task has huge amounts of available data. Consider the Common Crawl project (https://commoncrawl.org), one common source of data included in most language models. It produces more than 20TB of text per month sampled from random web pages across the internet. 
+
+
+
+T5 and other language models like GPT-3, Pythia \cite{biderman2023pythia}, and Llama \cite{touvron2023llama} can solve a wide variety of tasks, including the ones for which they were not explicitly trained. For instance, language models trained on the next word prediction task showed generalization capabilities across a wide variety of tasks like question-answering, summarization, natural language inference, and translation \cite{brown2020language}. Recently, a series of papers have shown that this generalized ``world understanding'' captured in LLMs can be leveraged to enable them to ``see'' \cite{liu2023visual,li2023videochat,li2023blip2,zhu2023minigpt,ge2023planting,zhang2023video,bhattacharya2023video}. This is a significant capability enhancement since a model trained in language only settings can be made to reason about images and videos. These papers follow the same transfer learning approach advocated by T5, where they convert visual information to language space to leverage the ``text-to-text'' framework. They show that it is possible to teach a large language model, the new modality of vision, without needing to pre-train the model from scratch. Rather, using only a few million tokens, it is possible to scale LLMs' abilities to vision as well. Following this chain of thought, it could be possible to solve the effectiveness problem by posing it as a ``text-to-text'' problem. This is one of the paradigms we explore in this work. We show behavior generalization using several different types of behaviors.
+
+\begin{figure*}[!t]
+  \centering
+  \includegraphics[width=1.0\textwidth]{images/factors of communication.pdf}
+  \caption{Communication process can be defined by seven factors: Communicator, Message, Time of message, Channel, Receiver, Time of effect, and Effect. Any message is created to serve an end goal. For marketers, the end goal is to bring in the desired receiver effect (behavior) (like clicks, purchases, likes, and customer retention). The figure presents the key elements in the communication pipeline - the marketer, message, channel, receivers, and finally, the receiver effect. \label{fig:factors-of-communication-chapter-lcbm}}
+\end{figure*}
+
+
+Another possible way to integrate behavior with text is an encoder approach, which we will detail next. While behavior is a downstream effect of content, behavior contains signals about the content sent to the receiver and can help improve content-understanding and natural language processing. For instance,  integration of human gaze data into neural network architectures has been explored for a range of computer vision tasks such as image captioning, visual question answering, and tagging \cite{karessli2017gaze,yu2017supervising,he2019human,boyd2022human}. In language processing, tracking a reader's eye movements provides information about the cognitive processes of text comprehension \cite{RaynerReadingComp, Just1980}. Hence, recent research has utilized features gleaned from readers' eye movement to improve the performance of complex NLP tasks such as sentiment analysis \cite{long-etal-2017-cognition, mishra-etal-2016-leveraging}, sarcasm detection \cite{mishra-etal-2016-harnessing}, part-of-speech tagging \cite{barrett-etal-2016-cross}, NER \cite{hollenstein-zhang-2019-entity}, and text difficulty \cite{ScanPathApp1}. While these studies show promise that behavior can be used to extract information about content, these are done in relatively small-scale lab settings needing real-time behavior to infer about content. Given these limitations, these approaches are not possible to scale. Scale helped LLMs to learn language. We therefore explore the paradigm of synthetic behavior generated over content and then scale it over to fine-tune a large language model to understand the possibilities of this paradigm better. We cover both the approaches next.
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+\label{ref:Introduction}
+
+\begin{figure*}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{images/fig1-lcbm.pdf}
+    \caption{Encoding and predicting content (images, videos, and text) and behavior in the language space. Large Content Behavior Models (LCBMs), once trained, can enable a host of different applications, including behavior simulation, content understanding, content-behavior optimization, and content-behavior understanding.}
+    \label{fig:figure-1-lcbm}
+\end{figure*}
+
+\begin{figure*}[!t]
+% \vspace*{-3mm}
+\centering
+\makebox[\textwidth]{%
+\resizebox{1.0\textwidth}{!}{%
+% \begin{subfigure}[b]{0.25\textwidth}
+% \includegraphics[width=1.15\textwidth]{images/r2_score.png}\caption{}    
+% \end{subfigure}
+% \begin{subfigure}[b]{0.25\textwidth}
+% \includegraphics[width=1.15\textwidth]{images/accuracy_2.png}\caption{}    
+% \end{subfigure}
+% %\includegraphics[width=0.25\textwidth]{images/behavior-simulation-2-radar-plot.pdf}\caption{}
+% \begin{subfigure}[b]{0.25\textwidth}
+%     \includegraphics[width=1.15\textwidth]{images/content_simulation_2.png}
+%     \caption{}
+% \end{subfigure}
+% \begin{subfigure}[b]{0.24\textwidth}
+%     \includegraphics[width=1.15\textwidth]{images/understanding_2.png}
+%     \caption{}
+% \end{subfigure}
+% \iffalse
+\begin{subfigure}[b]{0.25\textwidth}
+\includegraphics[width=1\textwidth]{images/accuracy_scores_final.pdf}\caption{}    
+\end{subfigure}
+%\includegraphics[width=0.25\textwidth]{images/behavior-simulation-2-radar-plot.pdf}\caption{}
+\begin{subfigure}[b]{0.25\textwidth}
+    \includegraphics[width=1\textwidth]{images/content_simulation_scores.pdf}
+    \caption{}
+\end{subfigure}
+\begin{subfigure}[b]{0.24\textwidth}
+    \includegraphics[width=1\textwidth]{images/content_understanding_scores.pdf}
+    \caption{}
+\end{subfigure}
+\begin{subfigure}[b]{0.25\textwidth}
+\includegraphics[width=1\textwidth]{images/domain-adaptation_1.pdf}\caption{}    
+\end{subfigure}
+% \fi
+}}
+    \caption{
+    \label{fig:capabilities-radarplot}
+    Comparison of GPT-3.5, GPT-4, Vicuna-13B, and LCBM-13B on: (a)~Behavior Simulation accuracy on two types of behaviors: replay value prediction and likes/views prediction. The task is, given the video content and channel information, to predict replay values corresponding to each scene and the ratio of likes to views.
+    (b)~Content simulation and behavior understanding tasks. The task for content simulation is, given the channel information and scene-level behavior, to predict the scene content. Given information on the video platform and the video content, the task of behavior understanding is to predict and explain the sentiments of the viewers and the commenters. %The predicted sentiment is compared with the average ground truth sentiment of all the YouTube comments. 
+    Six evaluators scored the models' explanations between 0-5 to get the predicted sentiment and explanation scores by comparing the ratings and reasons with the user comments. The annotators did not know which model gave the reasoning.
+    (c)~Content understanding tasks. We evaluate four tasks: emotion, topic, and persuasion strategy prediction, and action-and-reason understanding.
+    (d)~Behavior Simulation on in-house Email Marketing Data ($R^2$ score) and Twitter likes (accuracy), and Content Simulation on Twitter tweet prediction (BLEU/ROUGE scores).
+    It can be noted that on the behavior simulation, content simulation, and behavior understanding tasks, LCBM performs better than 3-shot GPT-3.5 and 10-shot GPT-4 (covering a larger area. On the content understanding tasks, while LCBM outperforms similar-sized Vicuna models, GPT-3.5 performs better. However, we also note that GPT-3.5 and GPT-4 are at least 12 times larger than LCBM-13B. Further, we show the behavior domain adaptation results in Table~\ref{table:behavior-domain-adaptation}, ~\ref{table:behavior-simulation-like-simulation-twitter}, ~\ref{table:content-simulation-twitter}.
+    %Keeping a cutoff R2 Score of -1.25, GPT-3.5 was excluded due to its, poor performance, (c)
+    }
+\end{figure*}
+
+
+
+
+%\textit{``The human brain \textcolor{red}{and an LLM are} the only object in the known universe that can predict its own (a human's) future and tell its own (a human's) fortune.''} - Dan Brown\\
+%\cy{Better to remove the red part} 
+%{\small We plan to build models which can make the red part true!}
+
+
+
+
+% In this paper, we use communication in the same sense that
+\citet{shannon-weaver-1949}, in their seminal paper on communication, includes all of the procedures by which one mind may affect another. This includes all forms of expression, such as words, gestures, speech, pictures, and musical sounds. They mentioned that the broad problem of communication can be studied at three levels: technical, semantic, and effectiveness.
+
+\textbf{Level A: Technical.} How accurately can the symbols of communication be transmitted?
+
+\textbf{Level B: Semantic.} How precisely do the transmitted symbols convey the desired meaning?
+
+\textbf{Level C: Effectiveness.} How well does the received meaning induce the desired conduct in the receiver?
+
+% The technical level is concerned with the \textit{accuracy} of transference. The semantic level deals with conveying the meaning to the receiver. the interpretation of meaning by the receiver, and the effectiveness problem deals with the receivers' conduct given their p meaning understood by them. The effectiveness problem is concerned with influencing the conduct of the receiver.
+These three levels build on top of each other. Thus, solving the problem at Level C necessarily requires solving the corresponding problems at Levels A and B.
+
+Since the publication of this seminal paper, the tremendous growth in the field of telecommunications, particularly the advent of the Internet and mobile devices, has led to affordable, wide-scale solutions for Level A.
+% since this seminal paper This work was published in 1949, and since then, the field of communication has progressed to a great extent. In the last 70 years, due to contributions from Shannon and other scientists, we have progressed much on the problem proposed in Level A. This has resulted in the development of various communication tools such as telephones, mobile phones, internet, and many more, making communication so much more accurate that today we can think about video calls across continents. 
+With the recent advances in large language models (LLMs) such as BERT \citep{devlin2018bert}, GPT-3 and 4 \citep{brown2020language,openai2023gpt4}, T5 \citep{raffel2020exploring}, and many more, we have witnessed a significant improvement in the performance of various Natural Language Processing (NLP) tasks. LLMs in zero- or few-shot settings can easily handle tasks such as question answering, summarization, translation, and many more. This has helped us progress towards solving Level B to a large extent. However, the Level C problem of effectiveness remains largely unsolved. Effectiveness refers to designing messages that can fulfill the communicators' underlying objectives, such as explaining complex concepts to the receivers and informing the receivers' choices (\textit{e.g.}, when making purchase decisions).
+
+
+\textbf{How do we solve the effectiveness problem while retaining the other two levels?} To solve the effectiveness problem, we can take inspiration from how the semantic problem is being solved. \citet{raffel2020exploring}, in their seminal work on T5, mention that the basic idea underlying large language models is to treat every text processing problem as a ``text-to-text'' problem, \textit{i.e.}, taking the text as input and producing new text as output. This framework allows for a direct application of the same model, objective, training procedure, and decoding process to every task we consider. Further, this allows us to pre-train a model on a data-rich task like the next-word prediction, which can then be transferred to downstream tasks. Notably, thanks to the Internet, the next-word prediction task has huge amounts of available data. Consider the Common Crawl project (https://commoncrawl.org), one common source of data included in most language models. It produces more than 20TB of text per month sampled from random web pages across the internet. 
+
+
+
+
+
+
+T5 and other language models like GPT-3, Pythia \citep{biderman2023pythia}, and Llama \citep{touvron2023llama} can solve a wide variety of tasks, including the ones for which they were not explicitly trained. For instance, language models trained on the next word prediction task showed generalization capabilities across a wide variety of tasks like question-answering, summarization, natural language inference, and translation \citep{brown2020language}. Recently, a series of papers have shown that this generalized ``world understanding'' captured in LLMs can be leveraged to enable them to ``see'' \citep{liu2023visual,li2023videochat,li2023blip2,zhu2023minigpt,ge2023planting,zhang2023video,bhattacharya2023video}. This is a significant capability enhancement since a model trained in language only settings can be made to reason about images and videos. These papers follow the same transfer learning approach advocated by T5, where they convert visual information to language space to leverage the ``text-to-text'' framework. They show that it is possible to teach a large language model, the new modality of vision, without needing to pre-train the model from scratch. Rather, using only a few million tokens, it is possible to scale LLMs' abilities to vision as well. Following this chain of thought, it could be possible to solve the effectiveness problem by posing it as a ``text-to-text'' problem. This is the paradigm we explore in this work. 
+
+
+\begin{figure*}[!t]
+% \vspace*{-3mm}
+    \centering
+    \includegraphics[width=\textwidth]{images/content-behavior-five-factors.pdf}
+    \caption{Five factors of communication: Communicator, Message, Channel, Receiver, and Effect.}
+    \label{fig:five-factors-communication}
+% \vspace*{-2mm}
+\end{figure*}
+
+
+\textbf{How can we pose the effectiveness problem as a text-to-text problem?} The problem of effect is to know what the receiver does after receiving the message \citep{shannon-weaver-1949}. In general, for a piece of content, other than the content itself, we often have information about \textit{who} consumes the content and what his \textit{action} is on consuming the content. The latter is the effect described in Shannon's three levels of communication. For instance, an email, as a message from the communicator to the receiver, elicits certain actions from the receiver like link-clicks, replies, and read-time. While LLMs are trained on trillions of tokens of content, the training does not include the receiver effect. For instance, Enron Email \citep{klimt2004enron} is a popular corpus that is included in the training of LLMs like Pythia \citep{biderman2023pythia}. It contains 600K email content sourced from the Enron corporation, which LLMs use to learn how to write emails. However, it does not contain data about the receivers' activities, such as whether they opened the email, how long they kept it open (read-time), and what their reply was. Similarly, while major text corpora include a large number of public blogs and user forums to train LLMs like CommonCrawl, they are stripped of receiver behavior on forum messages, such as the number of likes, shares, and replies, before including them in LLM training (for instance, see \citep{biderman2022datasheet,penedo2023refinedweb}). 
+To pose the effectiveness problem as a text-to-text problem, we can include these \textit{behavior tokens} in the text along with content tokens and train the LLM to model both of those in the same space. This might help the LLM simulate the receiver effect, optimize for it, and reason about it. 
+
+%This makes LLM unable to simulate behavior and optimize content for a particular audience effect. Therefore, the natural next step is to include behavior tokens in LLM training to teach it the behavior modality\footnote{Here, we take the view of modality as defined as by \citet{lahat2015multimodal}, where they define it as phenomena captured using multiple independent sensors and each sensor output can be termed as a modality \citep{ramachandram2017deep}.}. However, training an LLM from scratch is expensive. 
+
+%Communication as defined by the communication theorist, Harold Lasswell, is  by five factors: who (\textit{i.e.}, communicator) says what (\textit{i.e.}, message) through which medium to whom (\textit{i.e.}, the receiver) and with what effect (\textit{i.e.}, behavior) \citep{}. Therefore, to capture communication in its entirety, we need to model all five factors of communication. However, large language models are trained only on (at most) three factors among the five factors: communicator, message, and receiver. The behavior modality additionally defines how the receiver will act while interacting with the content, and what attitude and action changes are observed in the receiver after that. 
+
+%Recently, a few studies have shown that instruction fine-tuning makes it possible to teach LLMs a new modality. They rely on the assumption that language semantics can play a wider role: a universal interface representing all modalities in the language space. Examples like GPT-4 \citep{openai2023gpt4}, BLIP \citep{li2023blip}, Llava \citep{liu2023visual}, and Video4096 \citep{bhattacharya2023video} demonstrate this power of LLMs. Therefore, following them, we teach an LLM the behavior modality using instruction fine-tuning, thus helping it learn to solve the Level C proposed by \citet{shannon-weaver-1949}. We call this instruction fine-tuning, behavior tuning of the model.
+
+%As per Laswell's model of communication, these modalities represent the message and aspects of the channel, but miss out on a crucial modality, the behavior modality. A model trained on all the five factors will be able to simulate a receiver's behavior, would be able to help the communicator optimize its message to elicit certain receiver behavior, and also explain the reason for receiver's behavior. 
+
+
+
+In this paper, we show initial experiments to integrate behavior as a new modality to increase the scope of multimodal LLMs from only content to both content and behavior. We call this new type of model a Large Content Behavior Model (LCBM). This class of models shows promise in enabling the LLMs to not only reason about content but also reason about and predict human behavior over that content. Further, LCBMs have the potential for behavior domain adaptation where models trained on one type of behavior can generalize on another behavior type (Fig.~\ref{fig:capabilities-radarplot}). Behavior simulation can enable many real-world applications, such as content recommendation, customer journey optimization, and A/B testing. To build LCBM, we introduce behavior instruction tuning (\S\ref{sec:behavior-instruction-tuning}), an attempt to extend the instruction tuning paradigm to behavior space, bringing all five communication factors (communicator, message, channel, receiver, and effect) into the same space (Fig.~\ref{fig:five-factors-communication}). Similar to \citet{brown2020language,raffel2020exploring,liu2023visual,ge2023planting}, we do not design best-in-class predictors for any of the downstream tasks. Rather, we show a model which shows generalization capabilities across a wide variety of content- and behavior-related tasks. To summarize, our paper makes the following two contributions:
+
+
+\begin{figure*}[!htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/replay-explains.jpeg}
+    \caption{A few examples showing LCBM's ability to understand and explain human behavior of scene replayability. We compare it against human-provided explanations of the same.    \label{fig:replay-explains}}
+\end{figure*}
+
+
+
+\begin{figure*}[!htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/comment-explains-compressed.pdf}
+    \caption{A few examples showing LCBM's ability to understand and explain human behavior of audience sentiment. We also compare it against other models like Vicuna and GPT-3.5. \label{fig:comment-explains}}
+\end{figure*}
+
+
+
+
+\begin{itemize}[leftmargin=*]
+    \item\textbf{Large Content Behavior Model (LCBM).} We develop a large multimodal model that shows capabilities of behavior simulation (given content), content simulation (given behavior), content understanding, and behavior understanding (Fig.~\ref{fig:figure-1-lcbm}). Following the text-to-text framework, we connect the Vicuna LLM \citep{touvron2023llama,vicuna2023} with an open-set visual encoder of EVA-CLIP \citep{sun2023eva} and instruction fine-tune it end-to-end on behavior instruction data. EVA-CLIP and QFormer \citep{li2023blip2} help the model to understand visual content in the language space, making it a Vision Language Model (VLM). During behavior instruction tuning, we teach the model to predict behavior given content and content given behavior using various instruction tasks (\S\ref{sec:behavior-instruction-tuning}). This helps us teach behavior modality to the VLM while grounding it in the natural language space. We use three datasets to show the performance of LCBM: a dataset consisting of YouTube videos as the content and the corresponding retention graph, likes, the number of views, and comment sentiment as receiver behavior; a dataset consisting of Twitter posts (text, images, and videos) and corresponding human behavior (like counts) extracted from 168 million tweets across 10135 enterprise Twitter accounts from 2007 to 2023 \cite{khurana2023behavior}; and an internal dataset of \companyName Marketing Emails\footnote[6]{We obtain \companyName Marketing Emails dataset by collaborating with the \companyName team.} (content) and the click-through rate corresponding to each segment they were sent to (behavior). We observe that teaching the LCBM behavior and content simulation improves its capabilities on them (expected), but the model also shows signs of domain-adaptation in behavior modality (few-shot capability, \textit{unexpected}) (Tables~\ref{table:behavior-domain-adaptation},\ref{table:behavior-simulation-like-simulation-twitter},\ref{table:content-simulation-twitter}) and improvements in behavior understanding (Figs.~\ref{fig:comment-explains},\ref{fig:replay-explains},\S\ref{sec:results}) (zero-shot capability, \textit{unexpected}) \citep{brown2020language}. See Fig.~\ref{fig:capabilities-radarplot} for a radar plot of all the capabilities and comparisons of performances across LCBM and state-of-the-art LLMs: GPT-3.5 and GPT-4.
+
+    \item\textbf{Dataset and Test Benchmark.} To spur research on the topic of large content and behavior models, we release our generated behavior instruction fine-tuning data from over 40,000 public-domain YouTube videos and 168 million Twitter posts. The data contains: 1)~YouTube video links, automatically extracted key scenes, scene verbalizations, replay graph data, video views, likes, comments, channel name, and subscriber count at the time of collection, and 2)~Twitter extracted account names, tweet text, associated media (image and video) verbalizations (including image captions, keywords, colors, and tones), tweet timestamps, and like counts \cite{khurana2023behavior}. We also release a benchmark to test performance on the joint content behavior space (\S\ref{sec:test benchmark}), introducing two types of tasks in this space: predictive and descriptive. In the predictive benchmark, we test the model's ability to predict behavior given the content and predict content given the behavior. In the descriptive benchmark, we validate its explanation of human behavior by comparing it with ground-truth annotations we obtain from human annotators that try to explain human behavior. See Figs.~\ref{fig:comment-explains},\ref{fig:replay-explains} for a few examples.
+\end{itemize}
+
+
+
+%To the best of our knowledge, ours is the first effort in the LLM space to bring content and behavior into the same space. 
+%Our empirical results validate the effectiveness of using content-behavior data for LLM instruction tuning and suggest practical tips for building a model which can model both content and human behavior in the same space. Concretely, we model content and behavior modalities together for image and video datasets across four different types of behavior metrics across four tasks in the benchmark tested across three LLMs.
+%Teaching an LLM to use its world knowledge to reason about content and simulate behavior can enable many applications, including content optimization (for \textit{e.g.}, forecasting the number of clicks for marketing emails before they are released), A/B testing (for \textit{e.g.}, and testing which variant of a video will get more likes and views).
+
+
+%\item 
+
+%\end{itemize}
+
+
+
+
+
+
+
+
+\subsection{Related Work}
+
+\textbf{Models of Human Communication:}
+Communication is the situation in which a source transmits a message to a receiver with conscious intent to affect the latter’s behaviors \citep{osgood1957measurement,miller1966defining}. Thus, in the most general terms, communication implies a sender, a channel, a message, a receiver, a relationship between sender and receiver, an effect, a context in which communication occurs and a range of things to which 'messages' refer \citep{mcquail2015communication,lasswell1948structure}. As per this, all of the content produced by humanity is essentially communication from a sender to a receiver over some channel and with some effect. Despite much research on communication in social sciences since the 1900s, there has been little adoption of it in machine learning modeling. A prime artefact of this is that the biggest models in machine learning (LLMs) are trained only on content (messages) and ignore other factors in communication (the intended receiver, channel, and behavior) even when they are available.
+
+
+\textbf{Prior Efforts To Model Behavior:} While there has been much research in ML to model human behavior, it has been disconnected from language and, sometimes, real-world data. For instance, Agent-based modeling (ABMs), a popular paradigm in Reinforcement Learning, has been employed to model behavior \citep{bankes2002agent,romero2023two,park2023generative}. Nevertheless, ABMs tend to view humans as rational economic agents who communicate primarily through their actions, neglecting the significance of content in communication. In ABMs, agents strive to maximize their rewards, whereas communication does not always aim to optimize specific, well-defined reward signals. Moreover, the scarcity of large repositories containing extensive records of human actions poses a challenge when training ABMs to learn human behavior. Consequently, existing large models trained on human behavior, such as the ABMs and decision transformer and its variants, often rely on simulated data, such as game environments, rather than real human behavior \citep{chen2021decision}. This reliance on artificially generated data introduces biases inherent to the creators of the training data, making it difficult to capture authentic human behavior. However, recent advancements have demonstrated the potential of large models trained on real-world tokens encompassing various modalities, like images, videos, audio, and text, as the basis for diverse tasks \citep{ge2023planting,li2023blip2}. Notably, LLMs, as exemplars of foundation models, have exhibited impressive performance across a range of tasks, including those they were not explicitly trained for, such as emotion recognition, named entity recognition, and complex tasks like table understanding \citep{ye2023large, bhattacharya2023video}.
+
+
+
+Further, there has also been much work in modeling behavior using conventional modeling techniques, such as regression, bagging and boosting \citep{mazloom2016multimodal,villarroel2019cutting}, neural networks \citep{ding2019social,wang2018retweet,khosla2014makes}, and transformers \citep{wu2021towards,xiao2022hierarchical}. While these models can certainly model behavior, LLMs show generalization powers which extend to capabilities much beyond just behavior simulation. For instance, once trained on behavior tokens, other than behavior simulation, LLMs can now generate behavior optimized content (Table~\ref{table:content-simulation}), explain behavior (Table~\ref{table:behavior-understanding}), and domain-adapt to other behaviors (Table~\ref{table:behavior-domain-adaptation}), none of which are shown by other models. The other concurrent works which model behavior using LLMs \citep{kang2023llms} model just behavior (for example, by CTR prediction) by attaching classification or regression heads to LLMs and thereby lose out on the text-to-text paradigm where LLMs show their best performance and generalization capabilities. In addition, similar to non LLM paradigm, this method loses out on other capabilities like generating behavior optimized content and explaining behavior. 
+
+
+
+
+
+
+
+
+\section{Setup}
+\label{sec:Setup}
+In this section, we introduce our approach to model content and behavior together as a text-to-text problem. Since most publicly available corpora strip off receiver behavior from content, we first introduce our dataset, ``The Content Behavior Corpus (CBC)'', a dataset consisting of content and the corresponding receiver behavior. Next, we introduce our methodology to convert the content and behavior into text and our approach to model it using an LLM. Then, we cover the tasks through which we test various capabilities of LCBM (Fig.~\ref{fig:figure-1-lcbm}): content-understanding, behavior understanding, content simulation, behavior simulation, and behavior domain adaptation. 
+
+\subsection{The Content Behavior Corpus (CBC)}
+\label{sec:content behavior corpus}
+The availability of large-scale unlabeled text data for unsupervised learning has fueled much of the progress of LLMs. In this paper, we are interested in modeling content and the corresponding receiver behavior in the same space. While available datasets contain trillions of content tokens (text, images, audio, and videos), they unfortunately do not contain the receiver effect. To address this, we utilize YouTube and Twitter, two large publicly available sources of content-behavior data, consisting of (a)~account name, account description, and number of subscribers and followers (\textit{communicator data}) \cy{Does this belong to content or behavior?}, (b)~rich content in the form of videos, images, creator-provided captions, titles, and descriptions (\textit{message}), (c)~behavior in the form of likes, views, user comments, and replay graph (\textit{receiver effect}). This covers all the five factors of communication (Fig.~\ref{fig:five-factors-communication}), with the channel being fixed (as YouTube or Twitter) and receivers being average channel followers and viewers of the communicator. Since content data is multimodal in the form of a combination of images, videos, and text, and behavior data is in the form of numbers, to model it using a text-to-text paradigm, we \textit{verbalize} both of them following the methodology we detail next.
+
+
+
+\begin{landscape}
+\begin{figure*}
+% \vspace*{-4mm}
+\centering
+    \includegraphics[width=1.5\textwidth]{images/content-behavior-arch.pdf}
+    \caption{Encoding and predicting content (images, videos, and text) and behavior in the language space. Strategy to behavior instruction fine-tune (BFT) LLMs to create LCBMs. We capture visual concepts through the visual encoder (EVA-CLIP), and world knowledge is through an LLM (Llama). To leverage the rich knowledge of LLMs, we use GMHRA and QFormer to convert visual tokens of ViT to language tokens that Llama can understand. Further, we find that verbalizing the visual stimulus helps Llama to gather information more explicitly than what is provided by ViT+QFormer. We fine-tune the combined model end-to-end to predict 1)~behavior given content and 2)~content given behavior. Snowflake and fire symbols denote the frozen and unfrozen parts of the architecture. \cy{What is the frozen value of the query input to QFormer?}}
+    \label{fig:lcbm-architecture}
+% \vspace*{-2mm}
+\end{figure*}
+\end{landscape}
+
+
+
+
+\textit{Verbalization:} For the video $V$, YouTube provides us with 100 average viewer retention values $r_i \text{ for } i\in[0..100)$, corresponding to the entire video. The sampling rate of 100 is constant and independent of video length ($T$). Replay value $r_i$ corresponds to video frames between the timestamps $(T/100\times i, T/100\times(i+1))$, which denotes how often these frames were replayed compared to the most replayed frames. The metric has a value between 0 and 1 that identifies the video's relative retention performance at a given point in the video. To accommodate longer video lengths, we merge replay values until $T/100\times(i+j)-T/100\times i > 1 \text{ second with } j\in\{i+1,100\}$. We choose the replay value for this merged group of scenes as $max(r_i,..., r_j)$. Using this logic, we get replay values $R_i$ for $i \in[0..m]$, where $m=\lfloor 100/(\lceil 100/T \rceil) \rfloor$.
+Next, we sample two frames randomly corresponding to each $i \in [0..m]$. We caption the frames using BLIP \citep{li2023blip2}. We also obtain the automatic speech recognition for the speech for the video between the timestamps corresponding to replay value $R_i$ using Whisper \citep{radford2023robust}. The ASR and BLIP captions are content for scenes, and replay values are the behavior corresponding to them. We include the scene content and behavior in the video verbalization (Listing~\ref{lcbm:verbalization}) with the sampling for both scene content and behavior as described above. %\cy{How many scene is that for each video and how to decide that?}
+%Let's define a scene $S_i$, consisting of video frames from time $t_i^s,t_i^e$.
+%For the scene $S_i$, therefore, the corresponding retention values are $R_i$.  We extract automatic speech recognition (ASR) from the video and BLIP \citep{li2023blip2} generated captions for scenes $S$. Therefore, for a scene $S_i$ spanning time $t_i^s,t_i^e$, we have the following content: scene's ASR, BLIP generated caption, and replay value.
+
+We also include video content by encoding video frames through EVA-CLIP \citep{sun2023eva} (explained in \S\ref{sec:model}). Other than video embeddings, we include the video title and description as part of the video content. Corresponding to the overall video content, we verbalize overall video behavior metrics like video views and the ratio of likes and views. Finally, we append it with communicator information on the video channel and the subscriber count. The Listing~\ref{lcbm:verbalization} presents the overall verbalization for video and frame level content and behavior. The verbalization for Twitter posts is similar and is given in Listing~\ref{listing-twitter-behavior-simulation}.
+
+\begin{lstlisting}[caption={Verbalization pattern for inputting content and behavior in the same space},frame=single,label={lcbm:verbalization},basicstyle=\scriptsize]
+Input: <video> ..[Video Tokens] .. </video> 
+The video has the following scenes:
+Scene 1: {ASR: Welcome to a quick tutorial, OCR: Adobe Premiere Pro, Captions: A desktop interface, Replays: 60}, 
+Scene 2: {ASR: on using Premiere Pro to edit, Captions: A computer interface, with an image of a white horse. Objects - Horse, Grass, Fence., Replays: 53}, 
+... 
+It was posted on Adobe's YouTube channel with the title 'Using Premiere Pro like a Pro' on Aug 15 2022. Adobe's YouTube channel has 100k subscribers. This video was viewed by 346 thousand people and liked (as a percentage of likes/views) by 2.3% people.
+\end{lstlisting}
+
+\subsection{Model}
+\label{sec:model}
+To understand both visual and textual contents, we follow a similar approach as was taken by recent models like BLIP, Llava, VideoLlama, and others \citep{liu2023visual,ge2023planting,li2023blip2,zhu2023minigpt}, we use visual encoders to encode visual knowledge and an LLM to encode text and world knowledge. Fig.~\ref{fig:lcbm-architecture} shows our architecture to encode visual content into the language space. We include video content by encoding video frames through EVA-CLIP \citep{sun2023eva} and Global Multi-Head Relation Aggregator (GMHRA) from Uniformer \citep{li2021uniformer}. GMHRA helps aggregate the information better across the time dimension. The combination of ViT and GMHRA gives us a good representation of the visual content. Next, to effectively leverage the LLM’s rich language representations, we use Q-Former from BLIP-2 \citep{li2023blip2} with an extra linear layer and additional query tokens to convert from visual tokens to language tokens. Further, similar to \citet{bhattacharya2023video}, we find that while encoding visual tokens is powerful, converting visual content to text adds to the downstream performance. Therefore, we include the BLIP caption for each scene along with the scene replay graph. 
+
+
+We use the Llama-based Vicuna-13B LLM \citep{touvron2023llama,vicuna2023} as our base LLM. Similar to prior works \citep{liu2023visual,ge2023planting,li2023blip2,zhu2023minigpt}, we follow a two-stage training paradigm where in the first stage, we utilize the WebVid \citep{bain2021frozen}, COCO caption \citep{chen2015microsoft}, Visual Genome \citep{krishna2017dense}, CC3M \citep{sharma2018conceptual}, and CC12M \citep{changpinyo2021conceptual} datasets to align the visual encoder embeddings with LLM. In the second stage, we train the model with behavior instructions prepared by following the approach described in \S\ref{sec:behavior-instruction-tuning}. In summary, LCBM takes concatenated inputs of visual tokens, scene ASR, caption, scene behavior of replays, channel information, and video title and behavior metrics of views and a ratio of likes to views. Based on the instruction, we test LCBM's abilities on various tasks we cover in the next paragraphs.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{landscape}
+\begin{table*}[tbp]
+% \vspace*{-4mm}
+\centering
+\scriptsize
+\begin{adjustbox}{width=1.6\textwidth}\begin{tabular}{lcccccccccccc}\toprule[1.5pt]
+\textbf{Model} & \textbf{\#Params} & \textbf{Training} & \multicolumn{2}{c}{\textbf{Past}} & \multicolumn{2}{c}{\textbf{Future}} & \multicolumn{4}{c}{\textbf{Random}} & \multicolumn{2}{c}{\textbf{All Masked}}\\
+ &  & & & & & & \multicolumn{4}{c}{\textbf{Window Size}} & &\\\cmidrule{8-11}
+ & & & & & & & \multicolumn{2}{c}{\textbf{5}} & \multicolumn{2}{c}{\textbf{7}}\\
+ & & & \textbf{RMSE} & \textbf{Accuracy} & \textbf{RMSE} & \textbf{Accuracy} & \textbf{RMSE} & \textbf{Accuracy} & \textbf{RMSE} & \textbf{Accuracy} & \textbf{RMSE} & \textbf{Accuracy} \\ \hline
+\textbf{LCBM} & \multirow{4}{*}{13B} & 3-BFT & \valbest{8.12} & \valbest{55.10} & \valgood{15.05} & 42.42 & \valgood{8.55} & \valgood{61.41} & \valgood{9.91} & \valgood{55.10} & - & -\\
+\textbf{LCBM} & & 5-BFT & \valgood{11.53} & \valgood{52.06} & \valbest{12.02} & \valbest{53.06}  & \valbest{8.13} & \valbest{64.83} & \valbest{9.22} & \valbest{60.26} & \valbest{31.34} & \valbest{17.16}\\
+\textbf{LCBM} & & 7-BFT & 16.17 & 35.61 & 15.14 & \valgood{44.11} & 9.02 & 59.22 & 10.47 & 53.84 & - & -\\
+\textbf{LCBM} & & 11-BFT & 18.25 & 30.95 & \valgood{15.05} & 41.44 & 10.01 & 55.15 & 10.49 & 52.61& - & -\\ \hline
+\textbf{GPT-4} & \multirow{2}{*}{$>$100B\footnotemark[2]} &  10-shot-ICL & 34.45 & 20.55 & 19.51 & 36.08 & 22.99 & 26.99 & 27.25 & 17.27 & 38.52 & 14.26\\
+\textbf{GPT-4} & & 2-shot-ICL & 35.05 & 19.34 & 18.07 & 39.33 & 17.42 & 38.10 & 21.26 & 28.05 & 37.60 & 13.73 \\\hline
+% GPT-4 & 0-shot & 81.50 & 12.36 & 246.87 & 25.88 & 165.59 & 23.60 & & \\\hline
+\textbf{GPT-3.5} & \multirow{2}{*}{175B} & 3-shot-ICL & 34.10 & 19.06 & 24.71 & 27.14 & 24.52 & 24.81 & 26.30 & 18.74 & 38.77 & 13.47\\
+\textbf{GPT-3.5} & &  2-shot-ICL & 33.36 & 18.02 & 26.44 & 25.42 & 23.35 & 25.35 & 24.68 & 21.24 & 37.16 & 13.39 \\\hline
+% GPT-3.5 & 1-shot & 37.06 & 15.49 & 18.22 & 31.85 & 22.03 & 25.00 & 22.46 & 22.09\\\hline
+% GPT-3.5 & 0-shot & 40.80 & 15.44 & 38.45 & 14.40 & 32.22 & 18.31 & & \\\hline
+\textbf{Random} & - & - & 34.10 & 10.00 & 34.10 & 10.00 & 34.10 & 10.00 & 34.10 & 10.00 & 34.10 & 10.00\\\hline
+\bottomrule[1.5pt]
+
+\end{tabular}
+\end{adjustbox}
+\caption{\textbf{Behavior Simulation.} Mean RMSE and accuracy scores for scene-by-scene predictions of video replay values. Replay values are the normalized replay scores of each scene as provided by YouTube. The normalized scores are considered to 2 decimal places and multiplied by hundred to convert the score to an integer score in the range 0-100. RMSE is calculated for each video in the test set and the mean is calculated for this score and reported. The model is said to classify correctly if the absolute error between the predicted and ground truth value is less than or equal to 5. The scores are calculated in four regimes: past, future, random, and all-masked. In the past (future) regimes, first (last) 5-20\% scenes are masked; in the random setting, 5-20\% scenes are masked randomly, and in all masked setting, everything is masked. LCBM was behavior-fine-tuned (BFT) with 3,5,7,11 context window masking strategy, while GPT was compared with an in-context learning (ICL) setting.  We note that behavior fine-tuned LCBM, while being at least 10x smaller than other models, performs the best. Best models are denoted in \valbest{green} and runner-ups in \valgood{blue}. \label{table:behavior-simulation-replay-values}}
+\end{table*}
+\end{landscape}
+
+
+
+
+
+%\vspace*{-3mm}
+\subsection{Content Behavior Test Benchmark}
+\label{sec:downstream tasks}
+\label{sec:test benchmark}
+We test the capabilities of large content-behavior models on predictive and descriptive abilities on content and behavior, as illustrated in Fig:~\ref{fig:figure-1-lcbm}. We design the following five tasks to test these capabilities: behavior simulation, content simulation, content understanding, behavior understanding, and behavior domain adaptation.
+We cover each of these tasks next.
+
+
+\begin{enumerate}[leftmargin=*]
+    \item\textbf{Behavior Simulation.} We test simulation capability on four behaviors across two datasets: YouTube replay values, the ratio of YouTube likes to views, Twitter likes, and the number of views of the YouTube video. The common task amongst all of them is to predict the behavior given the content and content attributes like captions, scene-by-scene descriptions for videos, and sender characteristics like account and subscriber count and date of posting. The behavior to be predicted is masked and asked as a question to the LLM. Listings~\ref{listing:behavior-simulation-video-verbalization} and \ref{listing-twitter-behavior-simulation} lists the verbalization pattern for this task. For replay value prediction, we test the masked behavior in three settings: \textit{Masked Past} (all replay values of the first 5-20\% scenes are masked), \textit{Masked Future} (all replay values of last 5-20\% scenes are masked), and \textit{Random Masks} (random masking of replay values for 5-20\% scenes).
+
+    
+    % \item Image Content: Given the image content, ground truth caption, objects present in the image, object locations, image visual complexity, and date of publication, predict the number of downloads and number of licenses purchased. The template for this is presented in Listing~\ref{listing:behavior-simulation-image-verbalization}.
+
+    \item\textbf{Content Simulation.} Here, the task is to predict content given receiver behavior (Listing~\ref{listing-video-content-simulation}, \ref{table:content-simulation-twitter}). For YouTube, given the video content in terms of scene-by-scene descriptions with the content of one group of five consecutive scenes content being masked, behavior values of all scenes, and channel information, the task is to choose the masked scene speech from a list of 25 options, chosen randomly from the entire test set. For YouTube, we chose to model this task as a discriminative task instead of a generative one since videos are generally long, and there could be multiple possible contents for a given behavior, whereas the ground truth is available only for one specific characterization of the content for a given behavior. For Twitter, we model this task as content generation. The Listing~\ref{listing-twitter-content-simulation} presents the format for this task.
+    
+    \item\textbf{Behavior Understanding.} The goal of this task is to check if the model can reason about observed or unobserved receiver behavior. For this task, we could ask the model to explain any behaviors given the content. However, only the YouTube receiver comments have ground truth available with the video. Without ground truth, we found that other behaviors, such as replay values, likes, and views, are difficult to explain by non-experts. Therefore, we ask the model to simulate the sentiment of the receivers' comments and describe its reasoning. To evaluate, we asked six annotators to annotate the reasons provided by the model on a scale of 0-5, with 0 implying the LLMs provided no sentiment or reasoning and 5 implying perfect reasoning. The annotators were free to rate the LLMs as they seemed fit. The annotators were asked to review the video content and the comments to help them evaluate the reasons. We average the ratings of three annotators to get an average rating for every video. Similarly, to review the sentiment correctness, we asked the annotators to judge the predicted sentiment rating with respect to user comments.
+    
+    \item\textbf{Content Understanding.} To check if a model trained on both content and behavior tokens does not forget its original content understanding capabilities, we test the content understanding tasks on YouTube videos, following \citet{bhattacharya2023video}. They use the following tasks for video-understanding: topic, emotion, persuasion, and action-reason classification. For topic, emotion, and action-reason classification tasks, they use the advertisements dataset by \citet{hussain2017automatic}, which contains 3,477 video advertisements and the corresponding annotations for emotion and topic tags and action-reason statements for each video. There are a total of 38 topics and 30 unique emotion tags per video. Further, we have 5 action-reason statements for each video for the action-reason generation task. For our experiment, we use the subset of 1,785 public videos.  Following \citet{bhattacharya2023video}, for the topic and emotion classification task, we evaluate our pipeline using top-1 accuracy as the evaluation metric. Further, we evaluate emotion classification on clubbed emotion labels as well. For action and reason prediction, we evaluate our accuracy on the action and reason retrieval tasks where 29 random options along with 1 ground truth are provided to the model to find which one is the ground truth.
+    In the persuasion strategy classification, we use the 1002 persuasion strategy videos and corresponding labels released by \citet{bhattacharya2023video}. Given the video, the model has to predict which persuasion strategy the video conveys. Persuasion strategy classification could be an important task for evaluating LCBM since the concept of persuasion in psychology views human communication as the means to change the receiver's beliefs and actions (\textit{i.e.}, to persuade) \citep{kumar2023persuasion}, and understanding the different strategies present in communication may help understand human behavior better. We evaluate the top-1 accuracy of the model on this task.
+    
+    \item\textbf{Behavior Domain Adaptation.} In the past work, we have observed strong generalization capabilities from LLMs \citep{openai2023gpt4,ouyang2022training,raffel2020exploring}. While training on next token prediction, LLMs show generalization across tasks, including question answering, natural language inference, and sentiment analysis. Given this, the natural question is, does LCBM, too, show this kind of generalization, where a model trained on one kind of behavior, can show performance on another behavior? To understand this, we test the model on a different dataset and task than what it was originally trained for. We do this over three datasets, LVU \citep{wu2021towards}, \companyName Email Marketing\footnotemark[6], and generalization between Twitter and YouTube likes.
+    
+    \begin{itemize}
+        \item\textbf{LVU Benchmark.} \citet{wu2021towards} released a benchmark for long video understanding with over 1000 hours of video. In the benchmark, they have two behavior related tasks: ratio of likes to likes+dislikes and view prediction. YouTube has discontinued the dislike count, therefore, our corpus does not contain the dislike count. We use the LVU test benchmark to check if a model trained on other available behaviors (views, likes, and replay graphs) is able to predict the like ratio.
+        
+        \item\textbf{\companyName Email Marketing.} In this task, we ask the model to predict the click-through rate for a given target segment of an email, given the email content, subject, and verbalized descriptions of the images in the email. We use the emails sent by \companyName marketing team to its subscribers. The emails were sent from April 1, 2022 to June 12, 2023 and covered many of the premiere products %of Adobe, including Photoshop, Premiere Pro, Acrobat, and Indesign. 
+        The emails were sent to many customer segments (as defined by the marketing team) across 225 countries (Table~\ref{table:email dataset}). Listing~\ref{listing-email-content-behavior-simulation} lists the verbalization format to verbalize emails to input to the LCBM. 
+    \end{itemize}
+\end{enumerate}
+
+
+
+
+
+\begin{table}[!t]
+% \vspace*{-0.5cm}
+% \vspace*{-4mm}
+% \begin{minipage}{0.3\textwidth}
+%     \centering
+%     \includegraphics[width=0.7\textwidth]{images/email-ex-logo-redacted.pdf}
+%     \caption{The \companyName marketing emails used in the Email dataset look similar to the ones shown here.}
+%     
+% \end{minipage}
+% \hfill
+\begin{minipage}{1.0\textwidth}\hspace{4pt}
+\centering
+\begin{adjustbox}{max width = 1.0\textwidth}\scriptsize
+%\begin{tabular}{ll}\toprule[1.5pt]
+\begin{tabularx}{0.7\textwidth}{XX}\toprule[1.5pt]
+\textbf{Date Range} & April 1, 2022 to June 12, 2023 \\
+\textbf{Number of Countries} & 225 \\
+\textbf{Target Products} & Top Products used by millions of users\\ %Photoshop, Premiere Pro, Acrobat Professional, InDesign, XD, After Effects, Express, Creative Cloud, ... \\
+\textbf{Customers Segmented on the basis of} & Type of use, user expertise, frequency of use, and others\\
+\bottomrule[1.5pt]
+\end{tabularx}
+\end{adjustbox}
+\caption{Details of the \companyName Marketing Email dataset used to evaluate behavior generalization capabilities of the LCBM
+\label{table:email dataset}}
+%\end{table*}
+\end{minipage}
+% \vspace{-1em}
+\end{table}   
+
+
+
+
+
+
+\begin{center}
+\begin{table}[!htbp]
+\begin{minipage}{1.0\linewidth}
+\begin{center}
+\begin{adjustbox}{max width=\textwidth}\footnotesize\begin{tabular}{lccccc}\toprule[1.5pt]
+\textbf{Model} & \textbf{\#Params} & \textbf{\makecell{Training\\type}} & \textbf{Training} & \textbf{\makecell{Time\\Separated}} & \textbf{\makecell{Brand\\Separated}} \\\hline
+GPT-3.5 & 175B & ICL &	Few-shot &	58.84 &	64.19\\
+LCBM & 13B & BFT & 	Twitter	& \valgood{74.3}	& \valbest{97.69}\\
+LCBM & 13B & BFT & \makecell{Twitter and\\YouTube data}	& \valbest{76.87} & \valgood{92.19}\\
+\bottomrule[1.5pt]
+\end{tabular}
+\end{adjustbox}
+\end{center}
+\caption{\textbf{Behavior Simulation and Behavior Domain Adaptation}\protect\footnotemark[3]. Two-way classification accuracies for like prediction on Twitter. Given content, channel, and time, predict behavior (High, Low). We note that LCBM trained on Twitter and YouTube performs better than the one trained only on Twitter, showing signs of performance improvement by domain adaptation. \label{table:behavior-simulation-like-simulation-twitter}}
+\vspace{1em}
+\end{minipage}
+\hspace{4pt}\begin{minipage}{1.0\linewidth}
+\begin{center}
+\begin{adjustbox}{max width=\textwidth}\footnotesize\begin{tabular}{lccccccc}\toprule[1.5pt]
+\textbf{Model} & \textbf{Training}  & \textbf{Test} & \textbf{BLEU-1} & \textbf{BLEU-2} & \textbf{BLEU-3} & \textbf{BLEU-4} & \textbf{ROUGE-l}\\\hline
+\multirow{2}{*}{GPT-3.5} & \multirow{2}{*}{ICL} & Brand Separated & 53.95	& 42.36 &	31.84	& 24.28 & 	15.24\\
+& &	Time Separated	& 57.69 &	45.11 &	33.67 &	25.52 &	15.27\\\hline
+\multirow{2}{*}{LCBM} & \multirow{2}{*}{\makecell{BFT on\\Twitter}} &	Brand Separated &	\valgood{62.29} &	\valgood{46.59} &	\valgood{33.98} &	\valgood{25.64} &	\valgood{14.44}\\
+&  &	Time Separated &	\valgood{70} &	\valgood{54.4} &	\valgood{41.43} &	\valgood{32.48} &	\valgood{17.38}\\\hline
+\multirow{2}{*}{LCBM} &	\multirow{2}{*}{\makecell{BFT on Twitter\\ + Youtube}} &	Brand Separated &	\valbest{64.28} &	\valbest{48.1} &	\valbest{35.17} &	\valbest{26.63} &	\valbest{14.83}\\
+& &	Time Separated &	\valbest{70.23} &	\valbest{54.54} &	\valbest{41.52} &	\valbest{32.54} &	\valbest{17.45}\\\bottomrule[1.5pt]
+\end{tabular}
+\end{adjustbox}
+\end{center}
+\caption{\textbf{Content Simulation and Behavior Domain Adaptation}\protect\footnotemark[3]. Given behavior, channel, time, tweet media caption as prompt, predict content (tweet text). We note that LCBM trained on Twitter and YouTube performs better than the one trained only on Twitter, showing signs of performance improvement by domain adaptation. \label{table:content-simulation-twitter}}
+\end{minipage}
+\end{table}
+\end{center}
+\footnotetext[3]{Brand Separated means that the train and test set don't have any overlap in terms of brands, Time Separated means that the test set starts after the last tweet in the train set. BFT denotes behavior fine-tuning, and ICL stands for in-context learning. The best results over four runs are reported for all models. Best models are denoted in \valbest{green} and runner-ups in \valgood{blue}.}
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Behavior Instruction Fine-Tuning (BFT)}
+\label{sec:behavior-instruction-tuning}
+To teach an LLM the behavior modality over multimodal content, we convert both the visual tokens and behavior modality in the text format and instruction fine-tune the LLM end to end. This follows a two-stage approach: first, we teach the LLM the visual modality (\S\ref{sec:model}), and next, we teach the LLM the behavior modality. We call the latter ``Behavior Instruction Fine-Tuning (BFT)'' inspired by instruction fine-tuning (IFT) and its variants like visual instruction tuning \citep{liu2023visual}.
+
+
+%We use the instruction fine-tuned LLM, VideoChat, to teach it the behavior modality. VideoChat is a vision language model (VLM) that combines video and image foundation models and large language models (LLMs) through a learnable neural interface. VideoChat follows a two-stage training: one where it aligns a video- and image-encoder embedding space with the text encoder embedding space and a second step where it instruction-tunes the LLM using a video- and image-language instruction dataset. This results in a VLM, which now understands spatiotemporal perception and reasoning on vision and language data. We base our content-behavior model on VideoChat. We further instruction-fine-tune VideoChat on content aligned behavior data to teach it the behavior modality. We expand on that next.
+
+
+We prepare the content-behavior instruction datasets as explained next.\\
+\textbf{Teaching behavior in the forward direction} (predict behavior given content): In this instruction tuning task, we teach the model to predict behavior given the message sent by the communicator. Essentially, this teaches the model to predict behavior in the forward direction (as in Fig.~\ref{fig:five-factors-communication}). Concretely, we include the following information as part of verbalization - image and video embedding converted to the text space (using EvaCLiP \citep{sun2023eva}), scene-by-scene verbalization covering automatic speech recognition, scene captions, video/post caption and description, receiver behavior covering replay rates, views, and likes, and communicator information covering account name and follower count. The verbalisation pattern for this task is the same as given in the Listing~\ref{listing:behavior-simulation-video-verbalization}.
+%We observed that VideoChat's hallucinations increase substantially when the video length increases. Therefore, we choose videos with a length between 10 and 100 seconds.
+
+\textbf{Teaching behavior in the reverse direction} (predict content given behavior): This task teaches the model to learn about behavior in the reverse direction (Fig.~\ref{fig:five-factors-communication}). Here, the model learns to simulate content given behavior. The instruction for this task is given in Listing~\ref{listing-content-simulation-verbalization}.
+
+
+% 2. Adobe Stock Images: For an image $I$ from Adobe Stock, we have the following receiver behavior: downloads and all-time licenses. Further, we verbalize images by including objects detected using recognize anything model \citep{zhang2023recognize,huang2023tag2text}, object positions using segment anything model \citep{liu2023grounding,kirillov2023segany}, visual complexity using \citet{feng2023ic9600}, ground truth user-provided image captions, and date of posting the image online\footnote{Notably, we do not have information about the receiver in either YouTube or Adobe Stock. Correspondingly, we have average receiver behavior for both datasets.}. 
+
+
+
+Using the prepared content and behavior instruction datasets consisting of pairs of content and behavior tokens, we treat the content tokens ($\mathbf{X}_C$) as input and behavior tokens ($\mathbf{X}_B, x_i\in\mathbf{X}_B$) as output of the language model. We then perform instruction-tuning of the LLM on the prediction tokens, using its original auto-regressive training objective. Specifically, for a sequence of length L, we compute the probability of generating target answers ($\mathbf{X}_B$) by:
+\begin{equation}
+    p(\mathbf{X}_B | \mathbf{X}_C) = \prod_{i=1}^{L} p_{\theta}(x_i | \mathbf{X}_C, \mathbf{X}_{B, <i})
+\end{equation}
+For the behavior instruction tuning, we keep the visual encoder weights frozen and continue to update the pre-trained weights of the LLM in LCBM. 
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{center}
+\begin{table}[tbp]
+% \vspace*{-3mm}
+\begin{minipage}{0.45\linewidth}
+\begin{center}
+\begin{adjustbox}{max width=1.0\columnwidth}\footnotesize\begin{tabular}{lcc}\toprule[1.5pt]
+\textbf{Model} & \textbf{\#Params} & \textbf{Accuracy} \\\hline
+Vicuna & 13B & 19.30\% \\
+LCBM & 13B& \valbest{48.68\%} \\
+GPT-3.5 & 175B & \valgood{34.98\%}  \\
+Random & - & 4\%\\
+\bottomrule[1.5pt]
+\end{tabular}
+\end{adjustbox}
+\end{center}
+\caption{\textbf{Content Simulation.} In this task, the models have to choose the speech segment from a list of 25 options given the video description, non-masked scenes. and replay behavior. We see that despite being similar to masked language modeling (which is a content-only task), LCBM performs better than both Vicuna and GPT-3.5. Best models are denoted in \valbest{green} and runner-ups in \valgood{blue}. \label{table:content-simulation}}
+\end{minipage}
+\hspace{4pt}
+\begin{minipage}{0.52\linewidth}
+\begin{center}
+\begin{adjustbox}{max width=1.0\columnwidth}
+\scriptsize\begin{tabular}{lccc}\toprule[1.5pt]
+\textbf{Model} & \textbf{\#Params} & \textbf{Sentiment Accuracy} & \textbf{Reasoning Score} \\\hline
+\textbf{Vicuna} & 13B & \valgood{65.66\%} & \valgood{2.23} \\
+\textbf{LCBM} & 13B & \valbest{72.73\%} & \valbest{4.00} \\
+\textbf{GPT-3.5} & 175B & 61.62\% & 1.67 \\
+\bottomrule[1.5pt]
+\end{tabular}
+\end{adjustbox}
+\end{center}
+\caption{\textbf{Behavior Understanding.} In this task, the models have to simulate the sentiment of comments that a video would get by looking at only the video. Further, they also have to explain the reason for such sentiment. The responses were annotated by humans on a scale of 0-5 for the reason, with 0 being no response provided and 5 being the response matches exactly with the (ground truth) comments received on the video. Best models are denoted in \valbest{green} and runner-ups in \valgood{blue}. \label{table:behavior-understanding}}
+\end{minipage}
+% \vspace*{-4mm}
+\end{table}
+\end{center}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Results and Discussion}
+\label{sec:results}
+\cy{The description here needs improvement. It is better to describe results for each task individually}
+Here, we discuss the results for the five tasks we discuss in Section~\ref{sec:test benchmark}, namely, behavior simulation, content simulation, behavior understanding, content understanding, and behavior domain adaptation. We compare the behavior fine-tuned model discussed in \S\ref{sec:behavior-instruction-tuning} with state-of-the-art content-only models like GPT-3.5, GPT-4, and Vicuna-13B. This allows us to compare how much including behavior tokens in the training of an LLM helps in improving the LLM's understanding of behavior and joint content and behavior spaces while retaining its understanding of the content space. 
+
+The results for the five tasks are presented in Tables~\ref{table:behavior-simulation-replay-values},\ref{table:behavior-simulation-like-simulation},\ref{table:content-simulation},\ref{table:behavior-understanding},\ref{tab:content-understanding}, \ref{table:behavior-domain-adaptation},\ref{table:behavior-simulation-like-simulation-twitter}, and \ref{table:content-simulation-twitter}. We note a few general trends. LCBM, while being 10x smaller than GPT-3.5 and 4, performs better than them on all behavior-related tasks. Further, we see that there is no significant difference between 10-shot and 2-shot GPT-4 or between GPT-3.5 and GPT-4, indicating that unlike other tasks, it is harder to achieve good performance through in-context-learning on the behavior modality. It can be observed that often GPT-3.5 and 4 achieve performance comparable to (or worse than) random baselines. Interestingly, the performance of GPTs on the content simulation task is also substantially behind LCBM. The way we formulate the content simulation task (Listing~\ref{listing-video-content-simulation}), it can be seen that a substantial performance could be achieved by strong content knowledge, and behavior brings in little variance. We still see a substantial performance gap between the two models. All of this indicates that large models like GPT-3.5 and 4 are not trained on behavior tokens. 
+
+
+For the content understanding tasks (Table~\ref{tab:content-understanding}), predictably GPT-3.5, being the largest model, achieves the best results. However, we see that BFT helps the LLM to learn most content understanding tasks better than the base LLM. LCBM gets better results than both Vicuna and VideoChat. This indicates that behavior modality might carry additional information about the content, which might help an LLM understand content better \citep{khurana-etal-2023-synthesizing,klerke-etal-2016-improving,plank2016keystroke}. 
+Next, we see that LCBM also shows signs of domain adaptation in the behavior modality. We see that on five tasks: comment sentiment prediction, comment sentiment reasoning (Table~\ref{table:behavior-understanding}), email behavior simulation (Table~\ref{table:behavior-domain-adaptation}), and Twitter behavior (Table~\ref{table:behavior-simulation-like-simulation-twitter}) and content simulation (Table~\ref{table:content-simulation-twitter}). We note that if the LCBM is trained on only email behavior simulation samples, it underperforms the model trained on both YouTube data and a few samples to make the model learn email format. Similarly, LCBM trained on both Twitter and YouTube performs better than the one just trained on Twitter, showing performance improvement by domain adaptation. Finally, Figs.~\ref{fig:comment-explains},\ref{fig:replay-explains} show a few samples where we query LCBM to explain replay and comment behavior and compare it with human explanations. We see that LCBM while verbose, can explain behavior well.
+
+
+
+
+\begin{center}
+\begin{table*}[!htbp]
+% \vspace*{-4mm}
+\begin{center}
+\begin{adjustbox}{max width=\textwidth}\footnotesize\begin{tabular}{lcccccc}\toprule[1.5pt]
+\textbf{Model} & \textbf{\#Params} & \textbf{Training type} & \textbf{Training} & \textbf{RMSE} & \textbf{R$^2$} & \textbf{Accuracy} \\\hline
+%\multicolumn{3}{c}{\textbf{Past}} & \multicolumn{3}{c}{\textbf{Future}} & \multicolumn{6}{c}{\textbf{Random}}\\
+% & & & & & & & & \multicolumn{6}{c}{\textbf{Window Size}}\\\cmidrule{9-14}
+% & & & & & & & & \multicolumn{3}{c}{\textbf{5}} & \multicolumn{3}{c}{\textbf{7}} \\
+% & & \textbf{RMSE} & \textbf{R$^2$} & \textbf{Accuracy} \\\hline% & \textbf{RMSE} & \textbf{R$^2$} & \textbf{Accuracy} & \textbf{RMS}E & \textbf{R$^2$} & \textbf{Accuracy} & \textbf{RMSE} & \textbf{R$^2$} & \textbf{Accuracy} \\\hline
+\textbf{LCBM}& \multirow{4}{*}{13B} & BFT & Replay values 3-masked & \valbest{1.31} & \valbest{0.87} & \valgood{15.89} \\
+%\valgood{1.36} & \valbest{0.86} & \valgood{14.04} & 1.45 & \valgood{0.84} & \valgood{15.30} & \valbest{1.31} & \valbest{0.87} & \valgood{15.89} & \valgood{1.39} & \valgood{0.86} & \valgood{15.60}\\ 
+\textbf{LCBM} & & BFT & Replay values 5-masked & \valgood{1.48} & \valgood{0.82} & \valbest{19.93}\\
+%1.48 & 0.82 & \valbest{19.93} & \valgood{1.44} & \valgood{0.84} & \valbest{18.69} & \valgood{1.38} & \valgood{0.85} & \valbest{18.13} & 1.47 & 0.83 & \valbest{19.02}\\
+\textbf{LCBM} & & BFT & Replay values 7-masked & 1.71 & 0.78 & 15.20\\
+%1.53 & \valgood{0.82} & 11.21 & 1.71 & 0.78 & 15.20 & 1.61 & 0.81 & 12.38 & \valbest{1.36} & \valbest{0.87} & 13.94\\
+\textbf{LCBM} & & BFT & Replay values 11-masked & 1.55 & \valgood{0.82} & 13.94\\\hline
+%\valbest{1.35} & \valbest{0.86} & 12.38 & \valbest{1.43} & \valbest{0.85} & 13.26 & 1.55 & 0.82 & 13.94 & 1.51 & 0.83 & 13.74 \\ \hline
+% GPT-4 & 10-shot & 1.97 & 0.76 & 1.69 & 3.46 & 0.11 & 7.66 & 4.00 & 0.07 & 2.59 & 2.53 & 0.62 & 3.27 & 2.06 & 0.75 & 0.62\\\hline
+\textbf{GPT-4} &\multirow{2}{*}{$>$100B\footnotemark[2]} & ICL & 10-shot & 3.50 & -0.01 & 7.84\\
+%& 3.61 & 0.09 & 5.66 & 3.50 & -0.01 & 7.84 & 5.75 & -1.20 & 5.37 & 3.88 & -0.01 & 7.69\\
+% GPT-4 & 2-shot & 5.29 & -1.26 & 3.06 & 5.73 & -1.46 & 4.86 & 16.12 & -19.38 & 3.86 & 3.41 & 0.16 & 4.89 & 11.49 & -9.10 & 4.66\\\hline
+\textbf{GPT-4}& & ICL & 2-shot & 3.58 & -0.03 & 5.39\\\hline
+%5.97 & -2.22 & 3.91 & 5.78 & -1.77 & 4.95 & 16.95 & -24.00 & 4.27 & 3.58 & -0.03 & 5.39\\\hline
+% GPT-4 & 0-shot & 3.51 & -0.05 & 5.26 & 5.82 & -1.84 & 5.48 & 4.72 & -0.90 & 4.89 & & &\\\hline
+% GPT-3.5 & 3-shot & 26.06 & -55.92 & 0.10 & 73.11 & -473.69 & 0.60 & 25.78 & -34.81 & 0.40 & 18.49 & -15.13 & 0.01 & 4.76 & -3.88 & 4.05\\\hline
+\textbf{GPT-3.5}& \multirow{2}{*}{175B} & ICL & 3-shot & 64.40 & -256.96 & 2.48\\
+%64.58 & -385.57 & 0.62 & 77.13 & -583.33 & 0.67 & 64.40 & -256.96 & 2.48 & 70.03 & -251.73 & 0.0\\
+% GPT-3.5 & 2-shot & 34.55 & -105.97 & 0.40 & 71.36 & -362.56 & 0.01 & 27.12 & -92.21 & 0.00 & 15.98 & -14.17 & 0.00 & 4.76 & -3.88 & 4.05\\\hline
+\textbf{GPT-3.5} & & ICL & 2-shot & 64.88 & -375.83 & 1.27\\\hline
+%64.88 & -375.83 & 1.27 & 78.12 & -487.44 & 0.12 & 76.52 & -839.52 & 0.00 & 67.39 & -303.53 & 0.00\\\hline
+% GPT-3.5 & 1-shot & 13.07 & -15.74 & 0.09 & 17.86 & -21.58 & 0.60 & 13.69 & -9.33 & 3.53 & 1.99 & 0.60 & 0.91 & 4.76 & -3.88 & 4.05\\\hline
+% GPT-3.5 & 0-shot & 4.64 & -0.52 & 3.87 & 5.45 & -1.28 & 2.36 & 3.87 & -0.29 & 1.87 & & & \\\hline
+\textbf{Random} & - & - & - & 4.67 & 0 & 3.94 \\\hline
+%& 4.67 & 0 & 3.94 & 4.67 & 0 & 3.94 & 4.67 & 0 & 3.94\\\hline
+\bottomrule[1.5pt]
+\end{tabular}
+\end{adjustbox}
+\end{center}
+\caption{\textbf{Behavior Simulation.} RMSE, R$^2$, and accuracy scores for like/view ratio prediction task. To calculate accuracy, the model is said to classify correctly if the absolute error between the predicted and ground truth likes/views is less than or equal to 10\%. BFT denotes behavior fine-tuning, and ICL stands for in-context learning. Replay values $k$-masked means a model which is trained by masking $k$ consecutive values of the replay graph while doing BFT. We note that LCBM while being at least 10x smaller than the other models, performs the best. The best results over four runs are reported for all models. Best models are denoted in \valbest{green} and runner-ups in \valgood{blue}. \label{table:behavior-simulation-like-simulation}}
+\end{table*}
+\end{center}
+\footnotetext[2]{The exact size of GPT-4 is unknown.}
+
+
+
+
+
+
+
+
+\begin{table*}[!htbp]
+% \vspace*{-2mm}
+\centering
+\scriptsize
+\begin{minipage}
+{1.0\linewidth}
+\centering
+\begin{adjustbox}{max width = 1.0\textwidth}
+\begin{tabular}{llcccccccc}\toprule[1.5pt]
+\multirow{2}{*}{\textbf{Training}} & \multirow{2}{*}{\textbf{Model}} & \textbf{\#Params} &\textbf{Topic} &\multicolumn{2}{c}{\textbf{Emotion}} & \textbf{Persuasion} &\textbf{Action} &\textbf{Reason}\\\cmidrule{4-5}
+& & & \textbf{All labels} & \textbf{Clubbed} \\ \midrule[0.5pt]
+\textbf{Random} & \textbf{Random} &- & 2.63 & 3.37 & 14.3 & 8.37 & 3.34 & 3.34 \\\hline
+% Fine-Tuned & VideoMAE \citep{tong2022videomae} & 24.72 & 29.72 & \valgood{85.55}  & 11.17  & - & - \\
+% & \citet{hussain2017automatic} & 35.1 & 32.8 & -  & - & - & 48.45 \\
+% \ & Intern-Video \citep{wang2022internvideo} & 57.47 & \valbest{36.08} & \valbest{86.59} & 5.47 & 6.8 & 7.1 \\\hline
+\textbf{Zero-shot} & \textbf{GPT-3.5} & 175B & \valbest{51.6} & \valbest{11.68} & \valbest{79.69} & \valbest{35.02} & \valbest{66.27} & \valbest{59.59} \\
+% Zero-shot & GPT-3.5 Generated Story + Flan-t5-xxl Classifier & \valgood{60.5} & 10.8 & 79.10 &  \valgood{33.41} &  \valbest{79.22} & \valbest{81.72} \\
+% & GPT-3.5 Generated Story + Vicuna Classifier & 22.92 & 10.8 & 67.35 & 29.6 & 21.39 & 20.89 \\
+% & Vicuna Generated Story + GPT-3.5 Classifier & 46.7 & 5.9 & 80.33 & 27.54 & 61.88 & 55.44 \\
+% & Vicuna Generated Story + Flan-t5-xxl Classifier & 57.38 & 9.8 & 76.60 & 30.11 & \valgood{77.38} & \valgood{80.66}  \\
+& \textbf{Vicuna} & 13B & 11.75 & \valgood{10.5} & \valgood{68.13} & 26.59 & 20.72 & 21.00  \\
+& \makecell[l]{\textbf{VideoChat}\\\citep{li2023videochat}} & 13B & 9.07 & 3.09 & 5.1 &  10.28 & - & - \\
+& \textbf{LCBM} & 13B & \valgood{42.17} & 7.08 & 58.83 & \valgood{32.83} & \valgood{39.55} & \valgood{27.91}  \\\hline
+% & Content-Behavior instruction fine-tuned VideoChat model + Flan-t5-xxl classifier & 58.38 & 8.52 & 78.94 & 26.22 &  &   \\\hline
+\bottomrule[1.5pt]
+
+\end{tabular}
+\end{adjustbox}
+\caption{\textbf{Content Understanding.} Comparison of several models, including behavior instruction tuned models before and after BFT. We compare the models across topic, emotion, and persuasion strategy detection tasks as per the framework given by \citet{bhattacharya2023video}. We see that our model outperforms similarly sized models (Vicuna, VideoChat) in most tasks. Best models are denoted in \valbest{green} and runner-ups in \valgood{blue}.\label{tab:content-understanding}}\end{minipage}
+\end{table*}
+
+
+
+
+
+
+
+
+% \begin{center}
+% \begin{table}[tbp]
+% \begin{center}
+% \begin{adjustbox}{max width=1.0\columnwidth}\begin{tabular}{|c|c|c|c|c|c|}
+% \hline
+% LLM & Task & Past & Future & \multicolumn{2}{|c|}{Random} \\
+% \hline
+%  & &  &  & \multicolumn{2}{|c|}{Window Size} \\
+% \hline
+%  & & & & 5 & 7 \\
+% \hline
+% Vicuna & 3 secs & 1.0 & 0.94 & 0.96 & 0.96 \\
+% \hline
+% Vicuna & 5 secs & 0.95 & 0.96 & 0.95 & 0.97 \\
+% \hline
+% Vicuna & 7 secs & 0.90 & 0.96 & 0.97 & 0.94 \\
+% \hline
+% Vicuna & 11 secs & 0.95 & 0.96 & 0.94 & 0.95 \\ \hline
+
+% GPT-3.5 & few-shot & & & &  \\\hline
+% GPT-4 & few-shot  & & & & \\\hline
+% \end{tabular}\end{adjustbox}
+% \end{center}
+% \caption{Behavior-Simulation: Comparison on generation metrics. Best models are denoted in \valbest{green} and runner-ups in \valgood{blue}.}
+% \end{table}
+% \end{center}
+
+
+% \begin{center}
+% \begin{table*}[tbp]
+% \begin{center}
+% \begin{adjustbox}{max width=2.0\columnwidth}\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|}\hline
+% LLM & Training & \multicolumn{2}{|c|}{Past} & \multicolumn{2}{|c|}{Future} & \multicolumn{4}{|c|}{Random} & \multicolumn{2}{|c|}{All Masked} \\\hline
+%  & &  &  &  & & \multicolumn{4}{|c|}{Window Size} & & \\\hline 
+%  & & & & & & \multicolumn{2}{|c|}{5} & \multicolumn{2}{|c|}{7} & & \\ \hline
+%  & & RMSE & Accuracy & RMSE & Accuracy & RMSE & Accuracy & RMSE & Accuracy & RMSE & Accuracy\\ \hline
+% Vicuna & 3 & \valbest{7023518.62} & 4.00 & 11435377.05 & 3.70 & 10258208.91 & \valbest{4.78} & 11003562.06 & 7.41 & &\\ \hline
+% Vicuna & 5 & 7879834.78 & \valbest{4.19} & 7938421.01 & \valbest{4.58} & \valgood{7145507.29} & \valgood{4.00} & 7112106.52 & 7.12 & &\\\hline
+% Vicuna & 7 & 7136886.01 & 2.53 & \valbest{6955264.71} & \valgood{3.70} & 10518561.41 & 3.90 & 9339564.62 & 6.82 & &\\ \hline
+% Vicuna & 11 & \valgood{7075517.42} & \valgood{4.09} & \valgood{7156476.51} & 3.02 & \valbest{7418892.39} & 3.80 & 7199697.76 & 7.02 & &  \\ \hline
+% GPT-4 & 10-shot & 6489777.78 & 0.49 & 11996421.88 & 3.38 & 3286420.91 & 1.48 & 3253187.63 & 1.88 & 2413008.11 & 0.72 \\\hline
+% GPT-4 & 2-shot & 6946539.13 & 2.77 & 7268828.31 & 2.88 & 6822557.00 & 2.67 & 8465614.89 & 3.39 & 10972452.02 & 3.67 \\\hline
+% % GPT-4 & 0-shot & 7517653.57 & 1.29 & 7504674.31 & 3.23 & 7356172.88 & 1.91 & & & &\\\hline
+% GPT-3.5 & 3-shot & 8513852.70 & 0.40 & 17909013.63 & 2.41 & 4912201.38 & .30 & 5821090.71 & 0.10 & 22552893.06 & 2.01 \\\hline
+% GPT-3.5 & 2-shot & 7653262.07 & 0.80 & 13233895.01 & 2.19 & 20398391.11 & 0.30 & 3014288.88 & 0.10 & 7264192.45 & 1.71 \\\hline
+% % GPT-3.5 & 1-shot & 6600450.34 & 0.69 & 7060779.97 & 1.99 & 6458306.12 & 1.31 & 6608044.67 & 0.91 & 3300625.80 & 0.85 \\\hline
+% % GPT-3.5 & 0-shot & 37474454.21 & 1.07 & 88836098.13 & 1.29 & 38292314.58 & 0.94 & & & & \\\hline
+% Random & - & 12023009.22 & 5.20 & 12023009.22 & 5.20 & 12023009.22 & 5.20 & 12023009.22 & 5.20 & 12023009.22 & 5.20\\\hline
+
+% \end{tabular}
+% \end{adjustbox}
+% \end{center}
+% \caption{Behavior Simulation: Mean RMSE and Accuracy of the views received by a video. The views are verbalised such that the tens place is given in words. For example, 40000 is provided as '40 thousand'. RMSE is calculated for each video in the test set and the mean is calculated for this score and reported. The model is said to classify correctly if the absolute error between the predicted and ground truth value is less than or equal to 10\% of the ground truth views. Best models are denoted in \valbest{green} and runner-ups in \valgood{blue}. \cy{So it is doing quite bad at predicting video views? Kind of unacceptable, maybe need to use some other metrics?}}
+% \end{table*}
+% \end{center}
+
+
+
+
+
+
+% \begin{center}
+% \begin{table}[tbp]
+% \begin{center}
+% \begin{adjustbox}{max width=1.0\columnwidth}\begin{tabular}{|c|c|c|c|c|c|}\hline
+% LLM & Training & Topic & Emotion & Persuasion Strategy \\\hline
+% Vicuna & 3 &  &  &  &  \\ \hline
+% Vicuna & 5 &  &  &  &  \\ \hline
+% Vicuna & 7 &  &  &  &  \\ \hline
+% Vicuna & 11 &  &  &  &  \\\hline
+% GPT-3.5 & few-shot &  &  &  &  \\\hline
+% GPT-4 & few-shot &  &  & &  \\\hline
+
+% \end{tabular}
+% \end{adjustbox}
+% \end{center}
+% \caption{Content Understanding: Comparison of all the models across topic, emotion, and persuasion strategy detection tasks. Best models are denoted in \valbest{green} and runner-ups in \valgood{blue}.\label{tab:content-understanding}}
+% \end{table}
+% \end{center}
+
+
+% \begin{table*}[tbp]
+% \begin{center}
+% \begin{adjustbox}{max width=2.0\columnwidth}\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}\hline
+% LLM & Training & \multicolumn{3}{|c|}{Past} & \multicolumn{3}{|c|}{Future} & \multicolumn{6}{|c|}{Random}\\\hline
+%  & & & & & & & & \multicolumn{6}{|c|}{Window Size} \\\hline 
+%  & & & & & & & & \multicolumn{3}{|c|}{5} & \multicolumn{3}{|c|}{7} \\ \hline
+%  & & BLEU1 & BLEU2 & BLEU3 & BLEU1 & BLEU2 & BLEU3 & BLEU1 & BLEU2 & BLEU3 & BLEU1 & BLEU2 & BLEU3 \\ \hline
+% Vicuna & 5 & 0.18 & 0.13 & 0.09 & 0.23 & 0.18 & 0.15 & 0.32 & 0.26 & 0.23 & 0.31 & 0.24 & 0.20 \\\hline
+% GPT-4 & 10-shot & 0.02 & 0.006 & 0.002 & 0.05 & 0.03 & 0.02 & 0.03 & 0.02 & 0.02 & 0.04 & 0.02 & 0.01 \\\hline
+% GPT-4 & 2-shot & 0.02 & 0.004 & 0.001 & 0.04 & 0.03 & 0.02 & 0.04 & 0.02 & 0.01 & 0.03 & 0.02 & 0.008 \\\hline
+% % GPT-4 & 0-shot & 0.05 & 0.02 & 0.01 & 0.04 & 0.02 & 0.02 & 0.05 & 0.03 & 0.01 & & &\\\hline
+% GPT-3.5 & 3-shot & 0.03 & 0.007 & 0.003 & 0.02 & 0.016 & 0.01 & 0.04 & 0.018 & 0.01 & 0.04 & 0.016 & 0.01 \\\hline
+% GPT-3.5 & 2-shot & 0.01 & 0.005 & 0.003 & 0.03 & 0.02 & 0.012 & 0.04 & 0.02 & 0.01 & 0.02 & 0.02 & 0.009 \\\hline
+% % GPT-3.5 & 1-shot & 0.01 & 0.006 & 0.003 & 0.03 & 0.02 & 0.01 & 0.03 & 0.02 & 0.01 & 0.04 & 0.001 & 0.00 \\\hline
+% % GPT-3.5 & 0-shot & 0.04 & 0.02 & 0.01 & 0.07 & 0.04 & 0.03 & 0.03 & 0.01 & 0.01 & & & \\\hline
+
+% \end{tabular}
+% \end{adjustbox}
+% \end{center}
+%\caption{Content-Behavior Simulation BLEU Scores: Given behavior, simulate what content could be present to generate that behavior. Vicuna is trained on a window-size of 5, and GPT-3.5/GPT-4 are run few-shot. Best models are denoted in \valbest{green} and runner-ups in \valgood{blue}.\label{tab:content-behavior-simulation}}
+
+%\begin{center}
+%\begin{table*}[tbp]
+% \begin{center}
+% \begin{adjustbox}{max width=2.0\columnwidth}\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}\hline
+% LLM & Training & \multicolumn{3}{|c|}{Past} & \multicolumn{3}{|c|}{Future} & \multicolumn{6}{|c|}{Random}\\\hline
+%  & & & & & & & & \multicolumn{6}{|c|}{Window Size} \\\hline 
+%  & & & & & & & & \multicolumn{3}{|c|}{5} & \multicolumn{3}{|c|}{7} \\ \hline
+%  & & ROUGE1 & ROUGE2 & ROUGE3 & ROUGE1 & ROUGE2 & ROUGE3 & ROUGE1 & ROUGE2 & ROUGE3 & ROUGE1 & ROUGE2 & ROUGE3 \\ \hline
+% Vicuna & 5 & 0.26 & 0.13 & 0.07 & 0.33 & 0.19 & 0.13 & 0.32 & 0.19 & 0.13 & 0.31 & 0.17 & 0.12 \\\hline
+% GPT-4 & 10-shot & 0.10 & 0.03 & 0.01 & 0.28 & 0.15 & 0.10 & 0.15 & 0.06 & 0.04 & 0.14 & 0.05 & 0.03\\\hline
+% GPT-4 & 2-shot & 0.17 & 0.08 & 0.04 & 0.25 & 0.14 & 0.09 & 0.19 & 0.09 & 0.05 & 0.16 & 0.06 & 0.03\\\hline
+% % GPT-4 & 0-shot & 0.17 & 0.07 & 0.03 & 0.21 & 0.10 & 0.05 & 0.15 & 0.04 & 0.02 & & &\\\hline
+% GPT-3.5 & 3-shot & 0.10 & 0.045 & 0.021 & 0.21 & 0.097 & 0.055 & 0.11 & 0.054 & 0.035 & 0.13 & 0.063 & 0.036 \\\hline
+% GPT-3.5 & 2-shot & 0.14 & 0.057 & 0.025 & 0.19 & 0.092 & 0.053 & 0.14 & 0.067 & 0.041 & 0.08 & 0.032 & 0.017 \\\hline
+% GPT-3.5 & 1-shot & 0.12 & 0.05 & 0.03 & 0.20 & 0.11 & 0.07 & 0.13 & 0.06 & 0.03 & 0.005 & 0.00 & 0.00 \\\hline
+% GPT-3.5 & 0-shot & 0.14 & 0.06 & 0.03 & 0.20 & 0.09 & 0.05 & 0.13 & 0.05 & 0.02 & & & \\\hline
+
+% \end{tabular}
+% \end{adjustbox}
+% \end{center}
+% \caption{Content-Behavior Simulation ROUGE Measure Scores: Given behavior, simulate what content could be present to generate that behavior. Vicuna is trained on a window-size of 5, and GPT-3.5/GPT-4 are run few-shot. Best models are denoted in \valbest{green} and runner-ups in \valgood{blue}.\label{tab:content-behavior-simulation}}
+% \end{table*}
+
+% \begin{table*}[tbp]
+% \begin{center}
+% \begin{adjustbox}{max width=2.0\columnwidth}\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}\hline
+% LLM & Training & \multicolumn{2}{|c|}{Past} & \multicolumn{2}{|c|}{Future} & \multicolumn{4}{|c|}{Random}\\\hline
+%  & & & & & & \multicolumn{4}{|c|}{Window Size} \\\hline 
+%  & & & & & & \multicolumn{2}{|c|}{5} & \multicolumn{2}{|c|}{7} \\ \hline
+%  & & CIDEr & CIDErD & CIDEr & CIDErD & CIDEr & CIDErD & CIDEr & CIDErD \\ \hline
+% Vicuna & 5 & 5.336 & 2.548 & 5.412 & 2.465 & 6.104 & 2.878 & 0.32 & 0.26 \\\hline
+% GPT-4 & 10-shot & 0.02 & 0.006 & 0.002 & 0.05 & 0.03 & 0.02 & 0.03 & 0.02 \\\hline
+% GPT-4 & 2-shot & 0.02 & 0.004 & 0.001 & 0.04 & 0.03 & 0.02 & 0.04 & 0.02  \\\hline
+% % GPT-4 & 0-shot & 0.05 & 0.02 & 0.01 & 0.04 & 0.02 & 0.02 & 0.05 & 0.03 & 0.01 & & &\\\hline
+% GPT-3.5 & 1-shot & 0.01 & 0.006 & 0.003 & 0.03 & 0.02 & 0.01 & 0.03 & 0.02  \\\hline
+% % GPT-3.5 & 0-shot & 0.04 & 0.02 & 0.01 & 0.07 & 0.04 & 0.03 & 0.03 & 0.01 & 0.01 & & & \\\hline
+
+% \end{tabular}
+% \end{adjustbox}
+% \end{center}
+% \caption{Content-Behavior Simulation CIDEr Scores: Given behavior, simulate what content could be present to generate that behavior. Vicuna is trained on a window-size of 5, and GPT-3.5/GPT-4 are run few-shot. Best models are denoted in \valbest{green} and runner-ups in \valgood{blue}.\label{tab:content-behavior-simulation}}
+% \end{table*}
+
+% \begin{center}
+% \begin{table}[tbp]
+% \begin{center}
+% \begin{adjustbox}{max width=1.0\columnwidth}\begin{tabular}{|c|c|c|c|c|c|}\hline
+% LLM & Training & RMSE & Accuracy \\\hline
+%  & &  &  & \multicolumn{2}{|c|}{Window Size} \\\hline 
+%  & & & & 5 & 7 \\ \hline
+% Vicuna & 3 &  &  &  &  \\ \hline
+% Vicuna & 5 &  &  &  &  \\ \hline
+% Vicuna & 7 &  &  &  &  \\ \hline
+% Vicuna & 11 &  &  &  &  \\\hline
+% GPT-3.5 & few-shot &  &  &  & \\\hline
+% GPT-4 & few-shot &  &  & &  \\\hline
+
+% \end{tabular}
+% \end{adjustbox}
+% \end{center}
+% \caption{Content-Behavior Understanding: We showed 200 videos to 50 humans and asked why certain scenes are more or less replayed and which demographics the video targets. We measure the text overlap between human and model generated reasons. Best models are denoted in \valbest{green} and runner-ups in \valgood{blue}.}
+% \end{table}
+% \end{center}
+
+
+
+
+
+
+
+%\footnotetext[1]{For this setting, we model it as a retrieval problem where five random options along with one ground truth are provided to the model.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{table*}[!htbp]
+% \vspace*{-5mm}
+\begin{center}
+\begin{minipage}{1.0\linewidth}
+\begin{adjustbox}{width=1.0\textwidth}%
+\scriptsize \begin{tabular}{lccccccc}\toprule[1.5pt]
+%\begin{tabularx}{1.0\textwidth}{XXXXXXXX}%\toprule[1.5pt]
+\multicolumn{8}{c}{\textbf{\companyName Email Marketing}}\\\midrule[0.05pt]
+\textbf{LCBM Type} & \textbf{\makecell{Fine-tuned}} & \multicolumn{3}{c}{\textbf{Trained On}} & \textbf{Tested On} & \textbf{RMSE} & \textbf{R$^2$} \\\cmidrule[0.01pt]{3-5}
+ & \textbf{\makecell{on\\YouTube?}} & \textbf{\makecell{Unique\\Emails}} & \textbf{\makecell{Unique\\Segments}} & \textbf{\makecell{Email-Segment\\Pairs}} & &  & \\\hline
+\makecell{Domain-\\Adapted} & Yes & 100 & 10 & 1k & \multirow{2}{*}{\makecell{Different Segment\\(emails could\\be same)}} & \valbest{14.47} & \valbest{0.64} \\
+\makecell{In-\\Domain} & No & 600 & 560k & 350k &  & \valgood{25.28} & \valgood{0.55}  \\ \hline
+\makecell{Domain-\\Adapted} & Yes & 100 & 10 & 1k & \multirow{2}{*}{\makecell{Different Segments\\\& Different Emails}} & \valbest{27.28} & \valbest{0.54}  \\
+\makecell{In-\\Domain} & No & 600 & 560k & 350k & & \valgood{29.28} & \valgood{0.5}  \\ \hline
+\bottomrule[1.5pt]
+\vspace{0.3em}
+\end{tabular}
+\end{adjustbox}
+\end{minipage}\hspace{5pt}
+\begin{minipage}{1.0\linewidth}
+\begin{center}
+\scriptsize
+\begin{adjustbox}{max width = 1.0\textwidth}
+\begin{tabular}{lccc}\toprule[1.5pt]
+\multicolumn{4}{c}{\textbf{LVU Benchmark}} \\\midrule[0.05pt]
+\textbf{Training} & \textbf{Model}& \textbf{Testing} & \textbf{MSE} \\ \midrule[0.5pt]
+Trained & \makecell[l]{R101-slowfast+NL\\\citep{wu2021towards}} & Test set & 0.386 \\
+Trained & \makecell[l]{VideoBERT\\\citep{sun2019videobert}} & Test set  & 0.32 \\
+Trained & \makecell[l]{\citet{qian2021spatiotemporal}} & Test set  & 0.353 \\
+Trained & \makecell[l]{\citet{xiao2022hierarchical}} & Test set  & 0.444 \\
+Trained & \makecell[l]{Object Transformers\\\citep{wu2021towards}} & Test set  & 0.23 \\
+Zero-shot & \makecell[l]{LCBM (Ours)} & Test set  & \valgood{0.14} \\
+Zero-shot & \makecell[l]{GPT-3.5} & Test set  & \valbest{0.03} \\\midrule[0.05pt]
+Zero-shot & \makecell[l]{Vicuna} & Complete dataset  & 0.44 \\
+Zero-shot & \makecell[l]{LCBM (Ours)} & Complete dataset  & \valgood{0.30} \\
+Zero-shot & \makecell[l]{GPT-3.5} & Complete dataset  & \valbest{0.02} \\
+\bottomrule[1.5pt]
+\end{tabular}
+\end{adjustbox}
+\end{center}
+\end{minipage}
+
+\caption{\textbf{Behavior Domain Adaptation.} We test the generalization capability of LCBM on two tasks: (1)~Behavior simulation on \companyName Email Marketing Data, (2)~Behavior simulation on the LVU benchmark. For (1), we train two versions of LCBM with the \companyName Email Marketing data: one was trained on YouTube videos and further BFT on a few email samples (\textit{domain-adapted}), and the other was BFT on a larger set of emails, but not including YouTube data (\textit{in-domain})\protect\footnotemark[4]. We report the RMSE and R$^2$ scores for this task. For (2), we compare LCBM with other state-of-the-art results and GPT-3. In (1), we note that the domain-adapted LCBM performs better than the in-domain LCBM in both settings. We posit that YouTube data helps LCBM understand how a company's viewers like to hear from it, giving LCBM an edge over a model trained on a small amount of the same data (600 unique emails). In (2), LCBM performs better than the existing state-of-the-art. Surprisingly, GPT-3.5 does better than LCBM on this task. From both (1) and (2), we gather that a model trained on certain YouTube behaviors performs better on other behaviors, thus showing promise of domain-adaptation in the behavior modality. Best models are denoted in \valbest{green} and runner-ups in \valgood{blue}. \label{table:behavior-domain-adaptation}}
+\end{center}
+% \vspace*{-3mm}
+\end{table*}
+
+
+
+
+
+
+
+\subsection{Verbalization Listings}
+
+
+\begin{lstlisting}[caption={Verbalization pattern of videos for the behavior understanding task:},frame=single,label={listing-behavior-understanding},basicstyle=\scriptsize]
+Input: <video> .. </video>
+The video has the following scenes:
+Scene 1: {ASR: Welcome to a quick tutorial, OCR: Adobe Premiere Pro, Captions: A desktop interface, Replays: 60},
+Scene 2: {ASR: on using Premiere Pro to edit, Captions: A computer interface, with an image of a white horse. Objects - Horse, Grass, Fence., Replays: 53},
+...
+It was posted on Adobe's YouTube channel with the title 'Using Premiere Pro like a Pro' on Aug 15 2022. Adobe's YouTube channel has 100k subscribers. This video was viewed by 346 thousand people and liked (as a percentage of likes/views) by 2.3% people. Why is the scene 23 one of the most replayed scenes?
+
+Output: The scene shows the transformation of the image after the changes.
+\end{lstlisting}
+
+
+\begin{lstlisting}[caption={Verbalization pattern of emails for the behavior domain adapation task. The email content and CTR is for demonstration purposes only.},frame=single,label={listing-email-content-behavior-simulation},basicstyle=\scriptsize]
+Input: Email with Subject: Lock it down before you send it out. 
+Header: Nobody messes with your PDFs. 
+Body text: Add password protection, secure encryption, and restricted editing to your PDFs with Adobe Acrobat Pro DC. Share only what you want and nothing more. A button that says 'Get started'. An image of a laptop, with window open on it. Image text: "Protect using password". 
+Foreground colors: grey, blue. Background colors: lavender, white. Image Emotions: security, serious. Image keywords: laptop, protect, password, lock. Aesthetic value: low. Clutter level: medium. The email is created by a Creative Professional, for the product Adobe Acrobat Pro. It is sent to users in the United States, in the commercial market. Specifically, it is sent to Power users with the intent of Active Use.
+The email was sent 109 times between 25 August, 2022 and 26 August, 2022, and had a click through rate of [MASK]%.
+
+Output: 0.037%.
+\end{lstlisting}
+
+
+
+\begin{lstlisting}[caption={Verbalization pattern to teach behavior in the reverse direction (predicting content given behavior):},frame=single,label={listing-content-simulation-verbalization},basicstyle=\scriptsize]
+Input: <video> .. </video> The video has the following scenes: Scene 1: {ASR: [MASK], Replays: 60%}, Scene 2: {ASR: with Premiere, Captions: Woman looking at screen, Replays: 34%},
+...
+Scene 5: {ASR: has never been, Captions: Colour Pallete, Replays: 47%},
+Scene 6: {ASR: been easier, Captions: Colour Pallete, Replays: 54%},
+...
+It was posted on Adobe's YouTube channel with the title 'Using Premiere Pro like a Pro' on Aug 15 2022. It is viewed 203k times and liked 1.2%. Adobe's YouTube channel has 100k subscribers. Predict the masked ASR value for the masked scenes.
+
+Output: Scene 1:{ASR: Welcome to a quick tutorial.}
+\end{lstlisting}
+
+
+
+\begin{lstlisting}[caption={Verbalization pattern of videos for the content simulation task:},frame=single,label={listing-video-content-simulation},basicstyle=\scriptsize]
+Input: <video> .. </video> The video has the following scenes: Scene 1: {ASR: [MASK], Replays: 60%}, Scene 2: {ASR: with Premiere, Captions: Woman looking at screen, Replays: 34%},
+...
+Scene 5: {ASR: has never been, Captions: Colour Pallete, Replays: 47%},
+Scene 6: {ASR: been easier, Captions: Colour Pallete, Replays: 54%},
+...
+It was posted on Adobe's YouTube channel with the title 'Using Premiere Pro like a Pro' on Aug 15 2022. It is viewed 203k times and liked 1.2%. Adobe's YouTube channel has 100k subscribers. Predict the masked ASR value for scene 1. Choose from the given options.
+Option-1: Welcome to a quick tutorial, 
+Option-2: Samsung Galaxy A20 smartphone,
+...
+Option-25: regulations. We haven't had.
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Verbalization pattern of videos for the behavior simulation task:},frame=single,label={listing:behavior-simulation-video-verbalization},basicstyle=\scriptsize]
+Input: <video> .. </video> The video has the following scenes: 
+Scene 1: {ASR: Welcome to a quick tutorial, OCR: Adobe Premiere Pro, Captions: A desktop interface, Replays: [MASK]}, 
+Scene 2: {ASR: on using Premiere Pro to edit, Captions: A computer interface, with an image of a white horse. Objects - Horse, Grass, Fence., Replays: [MASK] }, ... 
+It was posted on Adobe's YouTube channel with the title 'Using Premiere Pro like a Pro' on Aug 15 2022. Adobe's YouTube channel has 100k subscribers.  Can you tell the replay values for scenes 2 to 5. How many times will this video be viewed and liked as a percentage of likes/views? 
+
+Output: Scene 1: {Replay: 60%}, Scene 2: {Replay: 85%}, ..., Views: 2.1 Million, Likes-per-View: 2.5%
+\end{lstlisting}
+
+
+
+\begin{lstlisting}[caption={Verbalization pattern of Twitter posts for the behavior simulation task:},frame=single,label={listing-twitter-behavior-simulation},basicstyle=\scriptsize]
+Input: Given a tweet of pfizer posted by the account PfizerMed on 2023-01-12. Tweet : Announcing a new ASGCT-Pfizer grant to support independent medical education initiatives on genetic medicines. For details, click Request for Proposals. <hyperlink>. Apply by January 30, 2022 #raredisease #ASGCT #GeneTherapy <hyperlink>.  Verbalisation of media content: \"caption\": \"A close-up of a DNA double helix, showcasing its structure and blue color\",\"keywords\": \"DNA, double helix, structure, blue, close-up, molecular biology, genetics, biology, scientific illustration\"}. Predict whether it will recieve high or low likes?", 
+
+Output: This tweet has low likes.
+\end{lstlisting}
+
+
+\begin{lstlisting}[caption={Verbalization pattern of Twitter posts for the content simulation task:},frame=single,label={listing-twitter-content-simulation},basicstyle=\scriptsize]
+Input: Generate a tweet given the media verbalization and the likes it got. Tweet is for pfizer to be posted by the account PfizerMed on 2023-01-12. Verbalisation of media content: \"caption\": \"A close-up of a DNA double helix, showcasing its structure and blue color\",\"keywords\": \"DNA, double helix, structure, blue, close-up, molecular biology, genetics, biology, scientific illustration\"}. This tweet has low likes." 
+
+Output: "Tweet : Announcing a new ASGCT-Pfizer grant to support independent medical education initiatives on genetic medicines. For details, click Request for Proposals. <hyperlink>. Apply by January 30, 2022 #raredisease #ASGCT #GeneTherapy <hyperlink>"}
+\end{lstlisting}
+
+
+
+
+
+
+
+
+\iffalse
+
+\subsection{Ablation}
+Having a model with strong behavior predictions, we want to analyse the most important factors responsible for the performance.
+We ablate over the different features provided, namely:
+\begin{itemize}
+    \item Description
+    \item ASR
+    \item OCR
+    \item Channel Name
+    \item Video Embeddings
+    \item Complete Verbalization
+\end{itemize}
+From the Results, we can say that ASR is one of the most important factors in determining the behavior. This is also supported by intuition, as the ASR provides additional information about the audio present necessary for understanding both, the content and user behavior.
+Ablation over hooks provided (asr,ocr,caption,date)
+
+
+Ablation over channel (test and train with no overlap)
+
+\begin{center}
+\begin{table}[tbp]
+\begin{center}
+\begin{adjustbox}{max width=1.0\columnwidth}\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}\hline
+LLM & Without & \multicolumn{2}{|c|}{Past} & \multicolumn{2}{|c|}{Future} & \multicolumn{4}{|c|}{Random}\\\hline
+ & &  &  &  & & \multicolumn{4}{|c|}{Window Size}\\\hline 
+ & & & & & & \multicolumn{2}{|c|}{5} & \multicolumn{2}{|c|}{7}\\ \hline
+ & & RMSE & Accuracy & RMSE & Accuracy & RMSE & Accuracy & RMSE & Accuracy \\ \hline
+Vicuna & Description & 12.44 & 49.78 & 12.49 & 51.78 & 7.65 & 65.57 & 8.85 & 60.21 \\ \hline
+Vicuna & ASR & 12.48 & 50.25 & 11.69 & 53.24 & 7.96 & 65.74 & 8.96 & 60.35 \\ \hline
+Vicuna & OCR & 12.58 & 49.83 & 11.51 & 54.18 & 7.30 & 68.43 & 8.42 & 61.78 \\ \hline
+Vicuna & OCR, Description & 12.38 & 50.04 & 13.32 & 49.12 & 7.48 & 66.07 & 8.43 & 61.83  \\\hline
+Vicuna & Post-2021 & 13.81 & 47.93 & 12.77 & 50.73 & 8.11 & 64.58 & 9.58 & 58.58 \\ \hline
+Vicuna & Channel & 12.43 & 45.97 & 11.07 & 53.97 & 7.71 & 64.84 & 9.24 & 58.26 \\ \hline
+Vicuna & Video Embeddings & 12.21 & 49.77 & 11.08 & 52.51 & 7.66 & 65.42 & 9.44 & 58.00 \\ \hline
+\textbf{LCBM (Ours)} & None & \valgood{11.53} & \valgood{52.06} & \valbest{12.02} & \valbest{53.06}  & \valbest{8.13} & \valbest{64.83} & \valbest{9.22} & \valbest{60.26}\\\hline
+
+\end{tabular}
+\end{adjustbox}
+\end{center}
+\caption{Ablations on the Vicuna 5 model. Best models are denoted in \valbest{green} and runner-ups in \valgood{blue}.}
+\end{table}
+\end{center}
+
+\fi
+
+
+
+
+
+
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/email-ex-logo-redacted.pdf}
+    \caption{The \companyName marketing emails used in the Email dataset look similar to the ones shown here.}
+    \label{fig:figure-email-example-expanded}
+\end{figure}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+In this paper, we make initial strides towards solving the effectiveness problem proposed by Shannon in his seminal paper on communication. The effectiveness problem deals with predicting and optimizing communication to get the desired receiver behavior. This can be seen as consisting of a string of capabilities: behavior simulation, content simulation, and behavior domain adaptation. We show that while large language models have great generalization capabilities, are unable to perform well on the effectiveness problem. We posit that the reason for this could be a lack of ``behavior tokens'' in their training corpora. Next, we train LLMs on behavior tokens to show that other than content understanding tasks, the trained models are now able to have good performance across all the behavior-related tasks as well. We also introduce a new Content Behavior Corpus (CBC) to spur research on these large content and behavior models (LCBMs).
+
+\footnotetext[4]{\tiny Note that we cannot compare this model with GPT-3 due to the private nature of data.}
