@@ -326,8 +326,8 @@
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % Renewed commands to set the titles of various pages correctly.
    \renewcommand\contentsname{\centering TABLE OF CONTENTS}
-   \renewcommand\listfigurename{\centering LIST OF FIGURES}
-   \renewcommand\listtablename{\centering LIST OF TABLES}
+   \renewcommand\listfigurename{\centering List of Figures}
+   \renewcommand\listtablename{\centering List of Tables}
    %\renewcommand\listsymbolname{\centering LIST OF SYMBOLS}
    \renewcommand{\chaptername}{CHAPTER}
    \renewcommand\bibname{\centering REFERENCES}
