@@ -204,12 +204,13 @@ Hopefully, I can return whatever I have gathered from these individuals back to 
 \clearpage
 
 
+\include{abstract}
+\clearpage
 
 {\small\tableofcontents}
 \pagenumbering{gobble}
 
 
-\include{abstract}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -259,7 +260,58 @@ In parallel, due to the availability of human behavior data at scale, researcher
 
 
 
-In the prediction community, different subfields have emerged dealing with the different parts of the problem of optimization of human behavior. For instance, advertisement personalization studies how to optimize (choose) \textit{receiver} for a given message \cite{chandra2022personalization}, and recommendation systems study how to \textit{choose content} from a set of pre-decided contents for a given receiver to elicit a certain effect \cite{herlocker2004evaluating}. A popular problem within the prediction community is the effect prediction problems, for example, clickthrough (CTR) prediction \cite{mcmahan2013ad}, Twitter cascade prediction \cite{cheng2014can,martin2016exploring}, sales prediction \cite{choi2012predicting,pryzant2017predicting}, content memorability prediction \cite{isola2011makes,khosla2015understanding,si2023long}, \textit{etc}. There are also works to optimize the time of the message to elicit certain effect \cite{newstead2010cost,si2023long}. Therefore, we see that all the factors of communication are studied independently in their own light with the aim of achieving the desired effect. 
+In the prediction community, different subfields have emerged dealing with the different parts of the problem of optimization of human behavior. For instance, advertisement personalization studies how to optimize (choose) \textit{receiver} for a given message \cite{chandra2022personalization}, and recommendation systems study how to \textit{choose content} from a set of pre-decided contents for a given receiver to elicit a certain effect \cite{herlocker2004evaluating}. A popular problem within the prediction community is the effect prediction problems, for example, clickthrough (CTR) prediction \cite{mcmahan2013ad}, Twitter cascade prediction \cite{cheng2014can,martin2016exploring}, sales prediction \cite{choi2012predicting,pryzant2017predicting}, content memorability prediction \cite{isola2011makes,khosla2015understanding,si2023long}, \textit{etc}. There are also works to optimize the time of the message to elicit certain effect \cite{newstead2010cost,si2023long}. Some of the major problems studied in behavioral sciences is given below. We note that all the factors of communication are studied independently in their own light with the aim of achieving the desired effect. 
+
+
+\begin{enumerate}
+\item Problem related to Sender optimization:
+    \begin{enumerate}
+        \item \textbf{Source Optimization}: \textit{Who} should send a particular message over a channel to a specific audience to get the desired behavior? This includes selecting between different brand voices, influencers, spokespersons, or organizational entities based on authority, trustworthiness, and audience affinity.
+    \end{enumerate}
+    
+
+\item Problems related to Receiver optimization:
+    \begin{enumerate}
+        \item \textbf{Personalization}: Identifying the optimal receiver for a specific content-channel-time combination to maximize engagement and conversion probability.
+        \item \textbf{Customer Targeting}: 
+        Determining which content should be delivered to a target audience segments, targeted based on multi-dimensional attributes (geographic, demographic, behavioral, and psychographic) through particular channels.
+        \item \textbf{Customer Segmentation}: Strategic division of the customer base into distinct, actionable groups based on shared characteristics, behaviors, or value propositions to enable differentiated marketing approaches.
+        \item \textbf{Social Network Analysis}: Modelling the interconnectedness of receivers (and senders) together in a graph to describe social phenomena like contagion and homophily.
+        \item \textbf{Lookalike Modeling}:  Identifying and targeting prospective customers who share similar characteristics, behaviors, and propensities with existing high-value customers or target audiences.
+        \item \textbf{Market surveys}: Systematic collection and analysis of primary data about target markets, customer preferences, and competitive landscape to inform marketing decisions.
+        \item \textbf{Identity stitching}: Probabilistic and deterministic matching of cross-channel, cross-device customer actions to create unified customer profiles and journey maps.
+        \item \textbf{Behavior Explanation}: Discovering causal mechanisms behind a receiver action.
+    \end{enumerate}
+    
+\item Problems related to Content optimization:
+    \begin{enumerate}
+        \item \textbf{Recommender Systems}: Identifying the optimal content that should be delivered next to a certain receiver given a fixed channel, time and a repository of contents (and their corresponding senders)?
+        \item \textbf{A/B Testing}: A randomized experiment involving two or more variants with the goal of discovering which variant of a message performs better with a certain audience.
+        \item \textbf{Propensity Modelling or Engagement Modelling}: Modeling probability of engagement in terms of actions like Clickthrough, social media actions such as likes and shares for a certain audience, sender, and campaign.
+        \item \textbf{Transsuasion}: Conversion of a content from low-performing to high-performing for a given audience, sender, and time, while maintaining the content's intent, style, and emotional impact.
+        \item \textbf{Transcreation}: Conversion of a content designed for one audience (like a particular culture) to another audience, while maintaining the content's intent, style, and emotional impact.
+        \item \textbf{Search Engine Optimization}: Improving the quality and quantity of website traffic to a website from search engines by doing content optimization.
+        \item \textbf{Performant Content Generation}: Generate content that can perform better for a given audience, sender, time, and goal.
+        \item \textbf{Argument Mining}: Automatic extraction and identification of argumentative structures from natural language text.
+        \item \textbf{Persuasion Strategies}: Use of rhetorical devices (such as emotion, social identity, and scarcity) to optimize the effect of a message on a certain audience.
+    \end{enumerate}
+
+\item Problems related to Channel optimization:
+    \begin{enumerate}
+        \item \textbf{Channel Optimization}: Optimizing channels for a particular audience, sender, time, and goal.
+        \item \textbf{Marketing Mix Modeling}: Measuring and attributing the impact of various decisions like channel investments, discounts, promotional campaigns in their contribution to engagement and sales. 
+        \item \textbf{Auction Design} and \textbf{Bidding}: Mechanisms to discover the cost of attention of a certain receiver to a particular sender, time, and campaign goal.
+    \end{enumerate}
+    
+\item Problem related to Time optimization:
+    \begin{enumerate}
+        \item \textbf{Send Time Optimization}: Determining the optimal timing for message delivery for a certain receiver, sender, content combination.
+    \end{enumerate}
+        
+\end{enumerate}
+
+
+
 
 
 %Notably, this is the forward path of communication in which, as time progresses, a message originates, travels in a channel, is received by the subscribers, and finally generates an effect. 

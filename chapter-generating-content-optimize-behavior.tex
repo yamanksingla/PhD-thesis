@@ -409,6 +409,9 @@ The average memorability score was 67.5\% (SD of 13.6\%).
 To evaluate human consistency, we split our participant pool into two independent halves, and quantified how well memorability on the first half of the participants matched with the second half of the participants. Averaging over 25 random split half trials, we get a Spearman's rank correlation ($\rho$) of 0.77 for brand recall (compared to 0.68 for images in \cite{khosla2015understanding}, 0.616 for videos in \cite{cohendet2019videomem} and 0.73 in \cite{newman2020multimodal}). The estimated D prime for the participants comes out to be 1.848.\footnote{\url{https://en.wikipedia.org/wiki/Sensitivity_index}}
 
 
+\subsubsection{What makes an Ad memorable?}
+\label{sec:What makes an Ad memorable?}
+Among the many reasons why an ad might be memorable, we investigate the following factors: \textbf{brand factors} (\textit{viz.,} brand popularity, industry), \textbf{content factors} (\textit{viz.,} video emotion, scene velocity, length, speech to silence ratio), \textbf{customer-content interaction factors} (\textit{viz.,} time of seeing the video, order in which the video was seen, time difference between watching the video and recalling the brand), and \textbf{customer behavior factors} (\textit{viz.,} average relevance of the brand and video popularity).
 
 
 \begin{landscape}
@@ -439,9 +442,6 @@ To evaluate human consistency, we split our participant pool into two independen
 \end{landscape}
 
 
-\subsubsection{What makes an Ad memorable?}
-\label{sec:What makes an Ad memorable?}
-Among the many reasons why an ad might be memorable, we investigate the following factors: \textbf{brand factors} (\textit{viz.,} brand popularity, industry), \textbf{content factors} (\textit{viz.,} video emotion, scene velocity, length, speech to silence ratio), \textbf{customer-content interaction factors} (\textit{viz.,} time of seeing the video, order in which the video was seen, time difference between watching the video and recalling the brand), and \textbf{customer behavior factors} (\textit{viz.,} average relevance of the brand and video popularity).
 
 
 \textbf{Content Factors}: %To answer the question of what is in the content which determines memory, 
@@ -462,6 +462,23 @@ Next, we investigate the effect of the order in which the video was watched with
 
 
 \textbf{Customer Behavior Factors}: It might be possible that the videos which are liked more are remembered more. To investigate this, we test the correlation of popularity as measured by the ratio of Youtube video likes to views with memorability. We see that there is a positive correlation between video popularity and memorability (Fig.~\ref{subfig:popularity vs recall}). Further, in the study, we asked the participants to select the brands they have personally used from a set of 15 randomly chosen brands and similarly choose brands they have seen ads for. To prevent any systematic bias, the brands asked in this question are independent of the brands shown the next day. We plot thus collected brand relevance values with brand recall in Fig.~\ref{subfig:relevance vs recall}. We see that average brand relevance is strongly correlated with average recall (coeff= 0.53), where entertainment, corporate, and food and beverage sectors, which are quite popular brands in a student population are the most remembered, while the others are less remembered (Fig.~\ref{subfig:recall by sector}).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\vspace{-2mm}
+\subsection{Predicting Ad Memorability}
+\label{sec:Predicting Ad Memorability}
+
+
+In this section, we focus on predicting memorability - both long-term and short-term for both videos and images. We pose memorability prediction as a problem that needs (a)~\textit{visual knowledge} to identify and understand visual concepts across images and videos like shapes, colors, objects, and scenes, (b)~\textit{cognitive knowledge} relevant to marketing, for example, ad emotions, scene complexity, scene aesthetics, and (c)~\textit{world knowledge} to relate the captured visual and marketing concepts to real-world concepts capturing their function, use, and interaction patterns. %Recently, models like BLIP \cite{li2023blip}, Llava \cite{liu2023visual}, and Video4096 \cite{bhattacharya2023video} have shown that visual signals can be successfully mapped to language semantics, allowing us to leverage visual knowledge from visual embedding models like ViT \cite{dosovitskiy2020image} and world knowledge from LLMs. 
+For instance, when Airbnb\footnote{See Fig.~\ref{fig:airbnb-ad}) for the ad} shows an adult female and a male with the text, ``Our guest room is paying for our wedding''; it denotes a couple saying that renting out their space on Airbnb helps them sponsor their wedding \cite{kumar2023persuasion}. World knowledge captured in LLMs, together with the visual knowledge of ViT and marketing knowledge through specialized cognitive models, helps to (i)~identify the two adults as a couple, (ii)~AirBnb as a housing company, (iii)~recognize the warm emotional tone of the text, and make sense of all three concepts together. Fig.~\ref{fig:memorability-model} shows the proposed architecture of Henry. %The overall process involves passing visual content in the form of video or image through a visual embedder, which maps the visual content into a language space with the help of QFormer \cite{li2023blip}. We find that describing the visual content in language and combining it with the video/image tokens helps for better prediction. The resulting content tokens, along with experiment descriptions, are fed into the Henry to predict memorability scores between 00 to 99. We discuss each part of the architecture and training next.
+
+
+
+
+
+
 
 \begin{landscape}
     \begin{figure*}
@@ -529,18 +546,6 @@ Video + Video Features + User responses + Aggregate User features
 
 \fi
 
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\vspace{-2mm}
-\subsection{Predicting Ad Memorability}
-\label{sec:Predicting Ad Memorability}
-
-
-In this section, we focus on predicting memorability - both long-term and short-term for both videos and images. We pose memorability prediction as a problem that needs (a)~\textit{visual knowledge} to identify and understand visual concepts across images and videos like shapes, colors, objects, and scenes, (b)~\textit{cognitive knowledge} relevant to marketing, for example, ad emotions, scene complexity, scene aesthetics, and (c)~\textit{world knowledge} to relate the captured visual and marketing concepts to real-world concepts capturing their function, use, and interaction patterns. %Recently, models like BLIP \cite{li2023blip}, Llava \cite{liu2023visual}, and Video4096 \cite{bhattacharya2023video} have shown that visual signals can be successfully mapped to language semantics, allowing us to leverage visual knowledge from visual embedding models like ViT \cite{dosovitskiy2020image} and world knowledge from LLMs. 
-For instance, when Airbnb\footnote{See Fig.~\ref{fig:airbnb-ad}) for the ad} shows an adult female and a male with the text, ``Our guest room is paying for our wedding''; it denotes a couple saying that renting out their space on Airbnb helps them sponsor their wedding \cite{kumar2023persuasion}. World knowledge captured in LLMs, together with the visual knowledge of ViT and marketing knowledge through specialized cognitive models, helps to (i)~identify the two adults as a couple, (ii)~AirBnb as a housing company, (iii)~recognize the warm emotional tone of the text, and make sense of all three concepts together. Fig.~\ref{fig:memorability-model} shows the proposed architecture of Henry. %The overall process involves passing visual content in the form of video or image through a visual embedder, which maps the visual content into a language space with the help of QFormer \cite{li2023blip}. We find that describing the visual content in language and combining it with the video/image tokens helps for better prediction. The resulting content tokens, along with experiment descriptions, are fed into the Henry to predict memorability scores between 00 to 99. We discuss each part of the architecture and training next.
 
 
 
@@ -629,6 +634,13 @@ Subsequently, we use Henry to label the ads for memorability scores. This result
 \textit{Step 3: Instruction Fine-Tuning:} We then train LLaMA-13B to perform two tasks simultaneously: behavior simulation (predicting ad memorability based on ad content; Listing~\ref{listing:memorability-prediction-verbalization-format}) and content simulation (generating ad scenes and dialogues from a brand name, ad title, and required duration; Listing~\ref{listing:advertisement-generation-prompt-Henry-SEED}). We refer to the model trained using the SEED process as Henry-SEED (Fig.~\ref{fig:Henry-SEED}).
 
 
+\subsubsection{Evaluation} 
+We assess the generated ads using four key metrics: (1)~memorability, as determined by Henry-Oracle\footnote{The Henry model trained on the complete (test+train sets) LAMBDA.}, (2)~memorability evaluated using perplexity of the generative models on ground-truth high/medium/low ads, (3)~ad quality as judged by GPT-4, and (4)~ad quality as evaluated by humans. Although content memorability is assessed by average human recall, it is important to note that humans cannot accurately predict how memorable content will be for others \cite{isola2013makes}. A true test of memorability for generated ads would require a memorability study akin to LAMBDA, which is costly and unscalable due to the number of models and generated ads. Therefore, we measure the memorability of generated ads using two approaches: Henry-Oracle and perplexity on ground truth memorable ads in LAMDA. 
+
+In evaluation using \textit{Henry-Oracle}, the expectation is that the generated ad's memorability should be at par with high-memorable samples (score$>$65) and better than the low (score$<$44) and medium memorability samples (44$<$score$<$65). Perplexity on ground truth low and high memorable ads evaluates the generative model's propensity to generate more memorable content. A stronger model should have a lower perplexity on more memorable content than less memorable content (refer \S\ref{sec:Perplexity evaluation} for details on perplexity evaluation). 
+
+
+
 \begin{landscape}
     \begin{table*}[]
     %\vspace*{-0.2in}
@@ -708,10 +720,6 @@ Subsequently, we use Henry to label the ads for memorability scores. This result
 
 \begin{comment}\somesh{I think we should specify that we use a language only LLM here, because visual tokens for generated ads are unavailable right now. I trained one more epoch the same model removing the image from the MLLM. The performance drop is 10.3\% (0.58 -> 0.52)}\end{comment}
 
-\subsubsection{Evaluation} 
-We assess the generated ads using four key metrics: (1)~memorability, as determined by Henry-Oracle\footnote{The Henry model trained on the complete (test+train sets) LAMBDA.}, (2)~memorability evaluated using perplexity of the generative models on ground-truth high/medium/low ads, (3)~ad quality as judged by GPT-4, and (4)~ad quality as evaluated by humans. Although content memorability is assessed by average human recall, it is important to note that humans cannot accurately predict how memorable content will be for others \cite{isola2013makes}. A true test of memorability for generated ads would require a memorability study akin to LAMBDA, which is costly and unscalable due to the number of models and generated ads. Therefore, we measure the memorability of generated ads using two approaches: Henry-Oracle and perplexity on ground truth memorable ads in LAMDA. 
-
-In evaluation using \textit{Henry-Oracle}, the expectation is that the generated ad's memorability should be at par with high-memorable samples (score$>$65) and better than the low (score$<$44) and medium memorability samples (44$<$score$<$65). Perplexity on ground truth low and high memorable ads evaluates the generative model's propensity to generate more memorable content. A stronger model should have a lower perplexity on more memorable content than less memorable content (refer \S\ref{sec:Perplexity evaluation} for details on perplexity evaluation). 
 
 Using \textit{GPT-4 as judge}, we test two ad-quality metrics: \textit{consistency} and \textit{preference}. 
 Consistency assesses how coherent the generated story is—both internally (e.g., between dialogues) and in relation to the provided brand information and title (Listing~\ref{lst:ad-quality-consistency-prompt}). 
