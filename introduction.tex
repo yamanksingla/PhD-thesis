@@ -44,7 +44,6 @@ Historically, behavioral social scientists have sought explanations of human beh
 In parallel, due to the availability of human behavior data at scale, researchers in machine learning are showing a growing interest in traditionally behavioral science topics, such as messaging strategies leading to persuasion \cite{habernal2016makes,kumar2023persuasion,luu2019measuring,bhattacharya2023video}, information diffusion \cite{cheng2014can,martin2016exploring}, and most importantly, prediction and predictability of human behavior \cite{choi2012predicting,song2010limits}. Machine learning approaches bring with them the culture of (training and) testing their models on large real-world datasets and pushing the state-of-the-art in terms of predictive accuracies; at the same time, often, ML approaches can only be operated as black boxes with no direct mechanism to explain predictions \cite{salganik2019bit,singla2022audio}.
 
 
-
 In the prediction community, different subfields have emerged dealing with the different parts of the problem of optimization of human behavior. For instance, advertisement personalization studies how to optimize (choose) \textit{receiver} for a given message \cite{chandra2022personalization}, and recommendation systems study how to \textit{choose content} from a set of pre-decided contents for a given receiver to elicit a certain effect \cite{herlocker2004evaluating}. A popular problem within the prediction community is the effect prediction problems, for example, clickthrough (CTR) prediction \cite{mcmahan2013ad}, Twitter cascade prediction \cite{cheng2014can,martin2016exploring}, sales prediction \cite{choi2012predicting,pryzant2017predicting}, content memorability prediction \cite{isola2011makes,khosla2015understanding,si2023long}, \textit{etc}. There are also works to optimize the time of the message to elicit certain effect \cite{newstead2010cost,si2023long}. Some of the major problems studied in behavioral sciences are given below. Through this list, one can observe that all the factors of communication are studied independently in their own light without relying on the underlying unity and continuity of the communication process. 
 
 
@@ -112,7 +111,6 @@ This problem carries parallels with the problem being solved in the natural lang
 
 
 
-
 \begin{figure*}[h]
   \centering
   \includegraphics[width=1.0\textwidth]{images/levels of analysis.pdf}
@@ -120,6 +118,7 @@ This problem carries parallels with the problem being solved in the natural lang
   \label{fig:levels of content analysis}
   }
 \end{figure*}
+
 
 
 Similarly, how do we develop a model capable of understanding behavior \textit{in general}? With the intent to answer this question, we take motivation from LLMs, where the idea is to train a model on a data-rich task. The task chosen to train LLMs is the next-word prediction, and the dataset is the text collected from the entire internet. The next-word prediction task is a data-rich task that can be trained on the huge text repositories from the internet. The intuition is that two approaches have always worked for neural networks: larger model sizes and more data for training \cite{mikolov2013efficient,devlin2018bert,radford2018improving,raffel2020exploring}. Going from a few million tokens of text \cite{mikolov2013efficient,radford2018improving} to a trillion tokens \cite{touvron2023llama,brown2020language} leads to an increase in the transfer learning capability leading to performance improvements over a wide variety of natural language tasks. 
@@ -141,10 +140,16 @@ The digital revolution has provided us with huge repositories of data. We levera
 
 
 
+\begin{figure*}[!t]
+  \centering
+  \includegraphics[width=0.7\textwidth]{images/thesis-link.pdf}
+  \caption{Communication process can be defined by seven factors: Communicator, Message, Time of message, Channel, Receiver, Time of effect, and Effect. Any message is created to serve an end goal. In this thesis, we explore the two main concerns of behavioral sciences: understanding (or explanation) and prediction. The figure shows the links between the different chapters and how they link together to form the two core pillars of understanding and explanation. \label{fig:factors-of-communication-thesis-links}}
+\end{figure*}
 
 
 
-\textit{Outline for the upcoming chapters}: Following the two traditions of behavioral sciences, in Chapter-\ref{chatper:Explaining Behavior: Persuasion Strategies}, we start with a more traditional approach to behavior explanation, where we cover the first works on extracting persuasion strategies in advertisements (both images and videos) \cite{kumar2023persuasion,bhattacharya2023video}. The contributions of these works include constructing the largest set of generic persuasion strategies based on theoretical and empirical studies in marketing, social psychology, and machine learning literature and releasing the first datasets to enable the study and model development for the same. These works have been deployed to understand the correlation between the kinds of marketing campaigns and customer behavior measured by clicks, views, and other marketing key performance indicators (KPIs). 
+\textit{Outline for the upcoming chapters}: Following the two traditions of behavioral sciences, we delve into both explanation and prediction. Figure~\ref{fig:factors-of-communication-thesis-links} gives a visual description of the various chapters and how they link with each other. In Chapter-\ref{chatper:Explaining Behavior: Persuasion Strategies}, we start with a more traditional approach to behavior explanation, where we cover the first works on extracting persuasion strategies in advertisements (both images and videos) \cite{kumar2023persuasion,bhattacharya2023video}. The contributions of these works include constructing the largest set of generic persuasion strategies based on theoretical and empirical studies in marketing, social psychology, and machine learning literature and releasing the first datasets to enable the study and model development for the same. These works have been deployed to understand the correlation between the kinds of marketing campaigns and customer behavior measured by clicks, views, and other marketing key performance indicators (KPIs). 
+
 
 Following this, in Chapter-\ref{chatper:Content and Behavior Models}, we delve into the question of modeling behavior. The key insight behind this chapter is that behavior is always produced by a receiver in response to a content sent by a sender at a time. We model behavior together with the pieces of sender, receiver, time, and content. We show that while large language models already model content, they do not model the other pieces of sender, receiver, and time. We model these factors together and show emergent abilities in understanding behavior. We observe that teaching the Large Content and Behavior Models (LCBM) behavior and content simulation improves its capabilities on them (expected), but the model also shows signs of domain-adaptation in behavior modality (few-shot capability, unexpected) and improvements in behavior understanding (zero-shot capability, unexpected). To spur research on the topic of large content and behavior models, we release our generated behavior instruction fine-tuning data from over 40,000 public domain YouTube videos and 168 million Twitter posts. The data contains: 1) YouTube video links, automatically extracted key scenes, scene verbalizations, replay graph data, video views, likes, comments, channel name, and subscriber count at the time of collection, and 2) Twitter extracted account names, tweet text, associated media (image and video) verbalizations (including image captions, keywords, colors, and tones), tweet timestamps, and like counts. We also release a benchmark to test performance on the joint content behavior space introducing two types of tasks in this space: predictive and descriptive. In the predictive benchmark, we test the model’s ability to predict behavior given the content and predict content given the behavior. In the descriptive benchmark, we validate its explanation of human behavior by comparing it with ground-truth annotations we obtain from human annotators that try to explain human behavior.
 
