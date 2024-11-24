@@ -148,7 +148,8 @@ The digital revolution has provided us with huge repositories of data. We levera
 
 
 
-\textit{Outline for the upcoming chapters}: Following the two traditions of behavioral sciences, we delve into both explanation and prediction. Figure~\ref{fig:factors-of-communication-thesis-links} gives a visual description of the various chapters and how they link with each other. In Chapter-\ref{chatper:Explaining Behavior: Persuasion Strategies}, we start with a more traditional approach to behavior explanation, where we cover the first works on extracting persuasion strategies in advertisements (both images and videos) \cite{kumar2023persuasion,bhattacharya2023video}. The contributions of these works include constructing the largest set of generic persuasion strategies based on theoretical and empirical studies in marketing, social psychology, and machine learning literature and releasing the first datasets to enable the study and model development for the same. These works have been deployed to understand the correlation between the kinds of marketing campaigns and customer behavior measured by clicks, views, and other marketing key performance indicators (KPIs). 
+\textit{Outline for the upcoming chapters}: Following the two traditions of behavioral sciences, we delve into both explanation and prediction. Figure~\ref{fig:factors-of-communication-thesis-links} gives a visual description of the various chapters and how they link with each other. In Chapter-\ref{chatper:Explaining Behavior: Persuasion Strategies}, we start with a more traditional approach to behavior explanation, where we cover the first works on extracting persuasion strategies in advertisements (both images and videos) \cite{kumar2023persuasion,bhattacharya2023video}. The contributions of these works include constructing the largest set of generic persuasion strategies based on theoretical and empirical studies in marketing, social psychology, and machine learning literature and releasing the first datasets to enable the study and model development for the same. These works have been deployed to understand the correlation between the kinds of marketing campaigns and customer behavior measured by clicks, views, and other marketing key performance indicators (KPIs). Further, we also introduce methods to mine behavioral models to understand what they learn. This approach provides a converse approach for human behavior understanding. While persuasion strategies help a human correlate and understand content (message) and behavior, universal adversarial triggers help understand what models learn, which makes them successful in predicting behavior.
+
 
 
 Following this, in Chapter-\ref{chatper:Content and Behavior Models}, we delve into the question of modeling behavior. The key insight behind this chapter is that behavior is always produced by a receiver in response to a content sent by a sender at a time. We model behavior together with the pieces of sender, receiver, time, and content. We show that while large language models already model content, they do not model the other pieces of sender, receiver, and time. We model these factors together and show emergent abilities in understanding behavior. We observe that teaching the Large Content and Behavior Models (LCBM) behavior and content simulation improves its capabilities on them (expected), but the model also shows signs of domain-adaptation in behavior modality (few-shot capability, unexpected) and improvements in behavior understanding (zero-shot capability, unexpected). To spur research on the topic of large content and behavior models, we release our generated behavior instruction fine-tuning data from over 40,000 public domain YouTube videos and 168 million Twitter posts. The data contains: 1) YouTube video links, automatically extracted key scenes, scene verbalizations, replay graph data, video views, likes, comments, channel name, and subscriber count at the time of collection, and 2) Twitter extracted account names, tweet text, associated media (image and video) verbalizations (including image captions, keywords, colors, and tones), tweet timestamps, and like counts. We also release a benchmark to test performance on the joint content behavior space introducing two types of tasks in this space: predictive and descriptive. In the predictive benchmark, we test the model’s ability to predict behavior given the content and predict content given the behavior. In the descriptive benchmark, we validate its explanation of human behavior by comparing it with ground-truth annotations we obtain from human annotators that try to explain human behavior.
@@ -159,7 +160,7 @@ Next, in Chapter~\ref{chapter:Encoding Behavior To Improve Content Understanding
 
 %the more modern approach of behavior prediction and leveraging the huge repositories of behavior data available. First, we propose models to integrate behavior with relatively smaller language models like BERT \cite{devlin2018bert}, and show that the resultant models can understand content better than the base models \cite{khurana-etal-2023-synthesizing}. Then, we propose an approach to integrate behavior and content together as part of a single model. We call these models Large Content and Behavior Models (LCBM) \cite{khandelwal2023large}. We show that these models can predict and explain behavior. 
 
-%Diagram for chapters - XXX
+%Diagram for chapters 
 
 
 
@@ -197,12 +198,20 @@ Our analysis reveals that traditional image generation metrics (fidelity, aesthe
 
 Therefore, we will cover explanation, analysis, prediction, and generation aspects of behavior. We will cover the following works in this thesis:
 \begin{enumerate}
+    \item MINIMAL: Mining models for data-free universal adversarial triggers. AAAI, 2022, (covered in Chapter-\ref{chatper:Explaining Behavior: Persuasion Strategies})
+
     \item Persuasion Strategies in Advertisements, AAAI, 2023, (covered in Chapter-\ref{chatper:Explaining Behavior: Persuasion Strategies})
+
     \item A Video Is Worth 4096 Tokens: Verbalize Videos To Understand Them In Zero Shot, EMNLP, 2023, \textbf{Nominated for best paper award} (covered in Chapter-\ref{chatper:Explaining Behavior: Persuasion Strategies})
+
     \item Large Content And Behavior Models To Understand, Simulate, And Optimize Content And Behavior, ICLR, 2024, \textbf{Nominated for best paper award} (covered in Chapter-\ref{chatper:Content and Behavior Models})
+    
     \item Synthesizing Human Gaze Feedback for Improved NLP Performance, EACL, 2023 (covered in Chapter-\ref{chapter:Encoding Behavior To Improve Content Understanding})
+
     \item Teaching Human Behavior Improves Content Understanding Abilities Of VLMs, Arxiv preprint (under review), 2024 (covered in Chapter-\ref{chapter:Encoding Behavior To Improve Content Understanding})
+
     \item Long-Term Ad Memorability: Understanding and Generating Memorable Ads, WACV, 2025 (covered in Chapter-\ref{chatper:Generating Content Leading to Optimal Behavior})
+
     \item Measuring And Improving Engagement of Text-to-Image Generation Models, Arxiv preprint (under review), 2024 (covered in Chapter-\ref{chatper:Generating Content Leading to Optimal Behavior})
 \end{enumerate}
 
