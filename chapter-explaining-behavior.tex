@@ -1,4 +1,4 @@
-\chapter{Explaining Behavior: Persuasion Strategies}
+\chapter{Explaining Behavior: Persuasion Strategies and Universal Adversarial Triggers}
 \label{chatper:Explaining Behavior: Persuasion Strategies}
 
 
@@ -23,9 +23,15 @@
 
 
 
- Modeling what makes an advertisement persuasive, \textit{i.e.}, eliciting the desired response from consumer, is critical to the study of propaganda, social psychology, and marketing. Despite its importance, computational modeling of persuasion in computer vision is still in its infancy, primarily due to the lack of benchmark datasets that can provide persuasion-strategy labels associated with ads. Motivated by persuasion literature in social psychology and marketing, we introduce an extensive vocabulary of persuasion strategies and build the first ad corpus (both image and video) annotated with persuasion strategies. We then formulate the task of persuasion strategy prediction with multi-modal learning. The image dataset also provides image segmentation masks, which labels persuasion strategies in the corresponding ad images on the test split. We publicly release our code and dataset at \url{https://midas-research.github.io/persuasion-advertisements/}. This chapter is based on two papers I published along with collaborators \cite{kumar2023persuasion,bhattacharya2023video}.
+Modeling what makes an advertisement persuasive, \textit{i.e.}, eliciting the desired response from consumer, is critical to the study of propaganda, social psychology, and marketing. Despite its importance, computational modeling of persuasion in computer vision is still in its infancy, primarily due to the lack of benchmark datasets that can provide persuasion-strategy labels associated with ads. Motivated by persuasion literature in social psychology and marketing, as the first contribution, we introduce an extensive vocabulary of persuasion strategies and build the first ad corpus (both image and video) annotated with persuasion strategies (Section~\ref{sec:chapter-2 Persuasion Strategies In Advertisements}). We then formulate the task of persuasion strategy prediction with multi-modal learning. The image dataset also provides image segmentation masks, which labels persuasion strategies in the corresponding ad images on the test split. We publicly release our code and dataset at \url{https://midas-research.github.io/persuasion-advertisements/}. This section is based on two papers \cite{kumar2023persuasion,bhattacharya2023video}.
 
 
+Persuasion strategies offer a human-interpretable framework for understanding persuasion and its influence on behavior. Another focus of my work is to uncover what models trained to predict behavior actually learn. Advances in deep learning and large language models have significantly improved the accuracy of behavior prediction \cite{khandelwal2023large}, but they have also increased the models' opacity, making them more like black boxes. Investigating what these \textit{behavior prediction models understand about behavior} can provide insights that may be challenging to derive from first principles. This motivation underpins our other work \cite{singla2022minimal}, discussed in Section~\ref{MINIMAL: Mining models for universal adversarial triggers}.
+
+
+
+\section{Persuasion Strategies In Advertisements}
+\label{sec:chapter-2 Persuasion Strategies In Advertisements}
 
 
 Marketing communications is the mode by which companies and governments inform, remind, and persuade their consumers about the products they sell. They are the primary means of connecting brands with consumers through which the consumer can know what the product is about, what it stands for, who makes it, and can be motivated to try it out. To introduce meaning into their communication, marketers use various rhetorical devices in the form of persuasion strategies such as \textbf{emotions} ({\it e.g.}, Oreo's ``Celebrate the Kid Inside'', humor by showing Ronald McDonald sneaking into the competitor Burger King's store to buy a burger), \textbf{reasoning} ({\it e.g.}, ``One glass of Florida orange juice contains 75\% of your daily vitamin C needs''), \textbf{social identity} ({\it e.g.}, Old Spice's ``Smell like a Man''), and \textbf{impact} ({\it e.g.}, Airbnb showing a mother with her child with the headline ``My home is funding her future'') (Refer to Fig.~\ref{fig:rhetoric-strategies-ads} to see these ads). Similarly, even for marketing the same product, marketers use different persuasion strategies to target different demographies (see Fig.~\ref{fig:footwear-strategies}). Therefore, recognizing and understanding persuasion strategies in ad campaigns is vitally important to decipher viral marketing campaigns, propaganda, and enable ad-recommendation. 
@@ -111,6 +117,18 @@ showing the effect of different modalities on identifying persuasion
 strategies, correlation between strategies and topics
 and objects with different strategies.\\
 
+\subsection{Related Work}
+\label{sec:related work-persuasion}
+
+
+\textit{How do messages change people's beliefs and actions?} The systematic study of persuasion has captured researchers’ interest since the advent of mass influence mechanisms such as radio, television, and advertising. Work in persuasion spans across multiple fields, including psychology, marketing, and machine learning. 
+
+
+\textbf{Persuasion in Marketing and Social Psychology:} Sociology and communication science has studied persuasion for centuries now starting from the seminal work of Aristotle on rhetoric. Researchers have tried to construct and validate models of persuasion. Due to space constraints, while we cannot cover a complete list of literature, in Section~\ref{tab:persuasive-strategies-list}, we list the primary studies which originally identified the presence and effect of various persuasion tactics on persuadees. We build on almost a century of this research and crystallize them into the persuasion strategies we use for annotation and modeling. %Using both expenditure and income calculations, \citet{mccloskey1995one} calculate that roughly one quarter of the US GDP in 1994 was due to persuasion. 
+Any instance of (successful) persuasion is composed of two events: (a) an attempt by the persuader, which we term as the persuasion strategies, and (b) subsequent uptake and response by the persuadee \cite{anand2011believe,vakratsas1999advertising}. In this work, we study (a) only while leaving (b) for future work. Throughout the rest of the paper, when we say persuasion strategy, we mean the former without considering whether the persuasion was successful or not. 
+
+
+
 
 \begin{landscape}
     
@@ -125,16 +143,6 @@ and objects with different strategies.\\
 \end{landscape}
 
 
-
-\section{Related Work}
-\label{sec:related work-persuasion}
-
-
-\textit{How do messages change people's beliefs and actions?} The systematic study of persuasion has captured researchers’ interest since the advent of mass influence mechanisms such as radio, television, and advertising. Work in persuasion spans across multiple fields, including psychology, marketing, and machine learning. 
-
-
-\textbf{Persuasion in Marketing and Social Psychology:} Sociology and communication science has studied persuasion for centuries now starting from the seminal work of Aristotle on rhetoric. Researchers have tried to construct and validate models of persuasion. Due to space constraints, while we cannot cover a complete list of literature, in Section~\ref{tab:persuasive-strategies-list}, we list the primary studies which originally identified the presence and effect of various persuasion tactics on persuadees. We build on almost a century of this research and crystallize them into the persuasion strategies we use for annotation and modeling. %Using both expenditure and income calculations, \citet{mccloskey1995one} calculate that roughly one quarter of the US GDP in 1994 was due to persuasion. 
-Any instance of (successful) persuasion is composed of two events: (a) an attempt by the persuader, which we term as the persuasion strategies, and (b) subsequent uptake and response by the persuadee \cite{anand2011believe,vakratsas1999advertising}. In this work, we study (a) only while leaving (b) for future work. Throughout the rest of the paper, when we say persuasion strategy, we mean the former without considering whether the persuasion was successful or not. 
 
 
 
@@ -154,7 +162,7 @@ Their work on political campaigners is more restrictive than general product and
 
 
 
-\section{Generic Taxonomy of Persuasion Strategies}
+\subsection{Generic Taxonomy of Persuasion Strategies}
 \label{tab:persuasive-strategies-list}
 This section introduces the generic taxonomy of persuasive strategies, their definitions, examples, and connections with prior work. Representative literature from a)~\texttt{SPM}: Social Psychology and Marketing, b)~\texttt{ML}: Machine Learning
 
@@ -232,7 +240,7 @@ This section introduces the generic taxonomy of persuasive strategies, their def
 
 
 % \vspace{-2mm}
-\section{Persuasion Strategy Corpus Creation}
+\subsection{Persuasion Strategy Corpus Creation}
 \label{sec:Persuasion Strategy Corpus Creation}
 
 \begin{figure}[t]
@@ -245,7 +253,7 @@ This section introduces the generic taxonomy of persuasive strategies, their def
     \end{figure}
 
 
-\subsection{Persuasion Strategy Dataset For Image Advertisements}
+\subsubsection{Persuasion Strategy Dataset For Image Advertisements}
 
 To annotate persuasion strategies on image advertisements, we leverage raw images from the Pitts Ads dataset. It contains 64,832 image ads with labels of topics, sentiments, symbolic references (\textit{e.g.} dove symbolizing peace), and reasoning the ad provides to its viewers (see Fig~\ref{fig:preds-sup} for a few examples). The dataset had ads spanning multiple industries, products, services, and also contained public service announcements. Through this, they presented an initial work for the task of understanding visual rhetoric in ads. Since the dataset already had a few types of labels associated with the ad images, we used active learning on a model trained in a multi-task learning fashion over the reasoning task introduced in their paper. We explain the model and then the annotation strategy followed in \S\ref{sec:Persuasion Strategy Prediction Model}. 
 
@@ -364,7 +372,7 @@ Similar to a low correlation in co-occurring strategies, we find that product se
 
 
 
-\subsection{Persuasion Strategy Dataset For Video Advertisements}
+\subsubsection{Persuasion Strategy Dataset For Video Advertisements}
 For this task, we collected 2203 video advertisements from popular brands publicly available on the web. We use the following 12 strategies as our target persuasion strategy set: \textit{Social Identity, Concreteness, Anchoring and Comparison, Overcoming Reactance, Reciprocity, Foot-in-the-Door, Authority, Social Impact, Anthropomorphism, Scarcity, Social Proof,} and \textit{Unclear}. We use non-experts human annotators to label this dataset (as compared to expert humans for the image ads dataset). In order to make the class labels easier to understand for non-expert human annotators, we make a list of 15 yes/no type-questions containing questions like ``\textit{Was there any expert (person or company) (not celebrity) encouraging to use the product/brand? Was the company showcasing any awards (e.g., industrial or government)? Did the video show any customer reviews or testimonials?}'' (complete list in Table~\ref{table:persuasion strategy questions}). 
 
 Each human annotator watches 15 videos such that each video gets viewed by at least two annotators and answers these questions for each video. Based on all the responses for a video, we assign labels to that video. We remove videos with an inter-annotator score of less than 60\%. After removing those, we get a dataset with 1002 videos, with an average length of 33 secs and a distribution as shown in Fig.~\ref{fig:persuasion-strategy-dataset-distribution}. This dataset is then used for the persuasion strategy identification task. 
@@ -409,7 +417,7 @@ Each human annotator watches 15 videos such that each video gets viewed by at le
 
 
 % \vspace{-2mm}
-\section{Modeling: Persuasion Strategy Prediction}
+\subsection{Modeling: Persuasion Strategy Prediction}
 \label{sec:Persuasion Strategy Prediction Model}
 
 
@@ -448,11 +456,11 @@ Each human annotator watches 15 videos such that each video gets viewed by at le
 \end{figure}
 
 
-\subsection{Modelling Persuasion Strategy For Image Advertisements}
+\subsubsection{Modelling Persuasion Strategy For Image Advertisements}
 The proposed Ads dataset $\mathcal{D}$ annotated with the persuasion strategies comprises of samples where each sample advertisement $a_i$ is annotated with a set of annotation strategies $S_i$ such that $1\le|{S_i}|\le3$. The unique set of the proposed persuasion strategies $\mathcal{P}$ is defined in Table~\ref{tab:persuasive-strategies-list}. Given $a_i$, the task of the modeling is to predict the persuasion strategies present in the input ad. As we observe from Fig.~\ref{fig:persuasion-strategies-headline-image}, advertisements use various rhetoric devices to form their messaging strategy. The strategies thus are in the form of multi-modalities, including images, text and symbolism. To jointly model the modalities, we design an attention fusion multi-modal framework, which fuses multimodal features extracted from the ad, {\it e.g.}, the ad image, text present in the ad extracted through the OCR (Optical Character Recognition), regions of interest (ROIs) extracted using an object detector, and embeddings of captions obtained through an image captioning model (see Fig.~\ref{fig:arch_diag}). The information obtained through these modalities are firstly embedded independently through their modality specific encoders followed by a transformer-based cross-attention module to fuse the extracted features from different modalities. The fused embeddings from the attention module are then used as input for a classifier that predicts a probability score for each strategy $p \in \mathcal{P}$. The overall architecture of the proposed model is illustrated in Fig.\ref{fig:arch_diag}. In the following, we describe each step in the prediction pipeline in detail.
 
 
-\subsubsection{Feature Extractors} 
+\paragraph{Feature Extractors} 
 
 In order to capture different rhetoric devices, we extract features from the image, text, and symbolism modalities.
 
@@ -496,6 +504,26 @@ Ad images contain elements that the creator deliberately chooses to create \text
 \fi
 
 
+
+
+
+
+
+\paragraph{Cross-Modal Attention} 
+To capture the inter-dependency of multiple modalities for richer embeddings, we apply a cross-modal attention (CMA) layer~\cite{frank2021vision} to the features extracted in the previous steps. Cross-modal attention is a fusion mechanism where the attention masks from one modality (\textit{e.g.} text) are used to highlight the extracted features in another modality (\textit{e.g.} symbolism). It helps to link and extract common features in two or more modalities since common elements exist across multiple modalities, which complete and reinforce the message conveyed in the ad. For example, the pictures of the silver cup, stadium, and ball, words like ``Australian'', ``Pakistani'', and ``World Cup'' present in the chips ad shown in Fig.~\ref{fig:arch_diag} link the idea of buying \textit{Lays} with supporting one's country's team in the World Cup. Cross attention can also generate effective representations in the case of missing or noisy data or annotations in one or more modalities \cite{frank2021vision}. This is helpful in our case since marketing data often uses implicit associations and relations to convey meaning. 
+
+The input to the cross-modal attention layer is constructed by concatenating the image, RoI, OCR, caption, and symbol embeddings. This results in a $114 \times 256$ dimension input to our attention layer. The cross-modal attention consists of two layers of transformer encoders with a hidden dimension size of $256$. %The rest of the hyper-parameters are similar to the ones given in the original paper \cite{vaswani2017attention}. 
+The output of the attention layer gives us the final combined embedding of our input ad. 
+Given image embeddings $E_i$, RoI embeddings $E_r$, OCR embeddings $E_o$, caption embeddings $E_c$ and symbol embeddings $E_s$, the output of the cross-attention layer $E_{att}$ is formulated as:
+\begin{align}
+        \text{Enc}(X) &= \text{CMA}(\left[E_i(X),E_r(X), E_o(X),E_c(X),E_s(X)\right])\,, \nonumber
+\end{align}
+where $[\ldots,\ldots]$ is the concatenation operation. For the advertisement in Fig.~\ref{fig:arch_diag}, we observed that the caption ``grey cup on the field'' attends to OCR text (containing words like ``win'') and ViT features of the RoI (of ``cup'' and ``field'').
+
+%We propose solving the following tasks for understanding advertisements: action-reason generation, topic classification, and sentiment detection. For solving these, we consider a multi-task learning framework where each task has a task-specific network built upon a common, shared multi-modal encoder. We learn the shared parameters $\thetav_s$ and a set of task-specific parameters $\{\thetav_i\}^{T}_{i=1}$ for $T$ tasks. Our goal is to learn parameters $\thetav_s \cup \{\thetav_i\}^{T}_{i=1}$ that minimize loss across all tasks. Details on different tasks and loss designs are introduced next. In our specific setting, we have $T=3$.
+
+
+
 \begin{landscape}
     
 \begin{figure*}
@@ -513,25 +541,7 @@ Ad images contain elements that the creator deliberately chooses to create \text
 \end{landscape}
 
 
-
-
-
-
-\subsubsection{Cross-Modal Attention} 
-To capture the inter-dependency of multiple modalities for richer embeddings, we apply a cross-modal attention (CMA) layer~\cite{frank2021vision} to the features extracted in the previous steps. Cross-modal attention is a fusion mechanism where the attention masks from one modality (\textit{e.g.} text) are used to highlight the extracted features in another modality (\textit{e.g.} symbolism). It helps to link and extract common features in two or more modalities since common elements exist across multiple modalities, which complete and reinforce the message conveyed in the ad. For example, the pictures of the silver cup, stadium, and ball, words like ``Australian'', ``Pakistani'', and ``World Cup'' present in the chips ad shown in Fig.~\ref{fig:arch_diag} link the idea of buying \textit{Lays} with supporting one's country's team in the World Cup. Cross attention can also generate effective representations in the case of missing or noisy data or annotations in one or more modalities \cite{frank2021vision}. This is helpful in our case since marketing data often uses implicit associations and relations to convey meaning. 
-
-The input to the cross-modal attention layer is constructed by concatenating the image, RoI, OCR, caption, and symbol embeddings. This results in a $114 \times 256$ dimension input to our attention layer. The cross-modal attention consists of two layers of transformer encoders with a hidden dimension size of $256$. %The rest of the hyper-parameters are similar to the ones given in the original paper \cite{vaswani2017attention}. 
-The output of the attention layer gives us the final combined embedding of our input ad. 
-Given image embeddings $E_i$, RoI embeddings $E_r$, OCR embeddings $E_o$, caption embeddings $E_c$ and symbol embeddings $E_s$, the output of the cross-attention layer $E_{att}$ is formulated as:
-\begin{align}
-        \text{Enc}(X) &= \text{CMA}(\left[E_i(X),E_r(X), E_o(X),E_c(X),E_s(X)\right])\,, \nonumber
-\end{align}
-where $[\ldots,\ldots]$ is the concatenation operation. For the advertisement in Fig.~\ref{fig:arch_diag}, we observed that the caption ``grey cup on the field'' attends to OCR text (containing words like ``win'') and ViT features of the RoI (of ``cup'' and ``field'').
-
-%We propose solving the following tasks for understanding advertisements: action-reason generation, topic classification, and sentiment detection. For solving these, we consider a multi-task learning framework where each task has a task-specific network built upon a common, shared multi-modal encoder. We learn the shared parameters $\thetav_s$ and a set of task-specific parameters $\{\thetav_i\}^{T}_{i=1}$ for $T$ tasks. Our goal is to learn parameters $\thetav_s \cup \{\thetav_i\}^{T}_{i=1}$ that minimize loss across all tasks. Details on different tasks and loss designs are introduced next. In our specific setting, we have $T=3$.
-
-
-\subsubsection{Persuasion Strategy Predictor} 
+\paragraph{Persuasion Strategy Predictor} 
 This module is a persuasion strategy predictor, which processes the set of feature embedding \text{Enc}(X) obtained through cross-modality fusion. Specifically, \text{Enc}(X) is passed through a self-attention layer as:
 \begin{align}
 o_{1} = softmax(\text{Enc}(X) \otimes W_{self-attn})^\intercal \otimes \text{Enc}(X)
@@ -547,7 +557,7 @@ where, $y_i$ is 1 if $i^{th}$ persuasion strategy is present in the ad and 0 oth
     \small
         \centering
         %\begin{adjustbox}{width=\columnwidth,center}
-        \resizebox{0.8\columnwidth}{!}{%
+        \resizebox{0.5\columnwidth}{!}{%
        \begin{tabular}{lll}%[tab1,tabularx={XYYYYY}]
              \textbf{\thead{Models}} & \textbf{\thead{Top-1  Acc.}} & \textbf{\thead{Top-3 Acc.}}\\ \midrule
              Our Model & \textbf{59.2} & \textbf{84.8} \\ \midrule
@@ -566,7 +576,7 @@ where, $y_i$ is 1 if $i^{th}$ persuasion strategy is present in the ad and 0 oth
         \label{tab:modalities}
     \end{table}
 
-\subsubsection{Multi Task Learning}
+\paragraph{Multi Task Learning}
 One of the key opportunities for our persuasion strategies data labeling and modeling task was the presence of additional labels already given in the base Pitts Ads dataset. In that, authors had given labels about the reasoning task. For the reasoning task, the annotators were asked to provide answers in the form ``I should [Action] because [Reason]." for each ad. In other words, they asked the annotators to describe \textit{what the viewer should do and why}, according to
 the ad. Similar to the reasoning task, persuasion strategies provide various cognitive, behavioral, and affective reasons to try to elicit the motivation of the ad viewers towards their products or services. Therefore, we hypothesize that these natural language descriptions of \textit{why the viewers should follow} the ad will be informative in inferring the ad's persuasion strategy.
 
@@ -583,7 +593,7 @@ We formulate obtaining action-reason statement as a sequence generation task whe
         % \vspace{-8mm}
 
         %\begin{adjustbox}{width=\columnwidth,center}
-        \resizebox{0.8\columnwidth}{!}{%
+        \resizebox{0.55\columnwidth}{!}{%
        \begin{tabular}{llllll}%[tab1,tabularx={XYYYYY}]
                 \textbf{\thead{Model Used}} & \textbf{\thead{Top-1 \\Accuracy}} & \textbf{\thead{Top-3 \\Accuracy}} &  \textbf{Recall} \\ \midrule
                  Model with \\DenseCap \& SSD & 59.2 & 84.8 & 74.59\\ \midrule
@@ -607,7 +617,7 @@ We formulate obtaining action-reason statement as a sequence generation task whe
     \small
         \centering
         %\begin{adjustbox}{width=\columnwidth,center}
-        \resizebox{\textwidth}{!}{%
+        \resizebox{0.8\textwidth}{!}{%
        \begin{tabular}{llllll}%[tab1,tabularx={XYYYYY}]
              & \textbf{\thead{\#ads with \\1 strategy}} & \textbf{\thead{\#ads with \\2 strategies}} & \textbf{\thead{\#ads with \\3 strategies}} & \textbf{\thead{Avg.\\strategies}} & \textbf{\thead{Std.\\Dev.}}\\ \midrule
              Train-Set & 1440 & 905 & 155 & 1.486 & 0.612 \\\midrule
@@ -623,7 +633,7 @@ We formulate obtaining action-reason statement as a sequence generation task whe
 
 
 
-\subsubsection{Active Learning}
+\paragraph{Active Learning}
 We use an active learning method to ease the large-scale label dependence when constructing the dataset. As in every active learning setting, our goal is to develop a learner that selects samples from unlabeled sets to be annotated by an oracle. Similar to traditional active learners \cite{gilad2005query,lewis1994heterogeneous}, we use uncertainty sampling to perform the sample selection. In doing so, such function learns to score the unlabeled samples based on the expected performance gain they are likely to produce and used to update the current version of the localization model being trained. To evaluate each learner, we measure the performance improvements, assessed on a labeled test set at different training dataset sizes.
 
 
@@ -639,7 +649,7 @@ In our implementation, we instantiate the active learning selection function as 
 
 
 
-\subsection{Modelling Persuasion Strategy For Video Advertisements}
+\subsubsection{Modelling Persuasion Strategy For Video Advertisements}
 Large Language Models (LLMs) have been demonstrated to perform well for downstream classification tasks in the text domain. This powerful ability has been widely verified on natural language tasks, including text classification, semantic parsing, mathematical reasoning, \textit{etc}. Inspired by these advances of LLMs, we aim to explore whether they could tackle reasoning tasks on multimodal data (\textit{i.e.} videos). Therefore, we propose a storytelling framework, which leverages the power of LLMs to verbalize videos in terms of a text-based story and then performs downstream video understanding tasks on the generated story instead of the original video. Our pipeline can be used to verbalize videos and understand videos to perform complex downstream tasks such as emotion, topic, and persuasion strategy detection. 
 
 
@@ -671,7 +681,7 @@ HVU \cite{diba2020large} is the largest long video understanding dataset consist
 
 Next, we explain our pipeline to solve these tasks.
 
-\subsubsection{Video Verbalization} 
+\paragraph{Video Verbalization} 
 To obtain a verbal representation of a video, we employ a series of modules that extract unimodal information from the multimodal video. This information is then used to prompt a generative language model (such as GPT-3.5 \cite{brown2020language} and Flan-t5 \cite{chung2022scaling}) to generate a coherent narrative from the video. The overall pipeline is depicted in Fig.~\ref{fig:story-generation-pipeline}. In the following, we delve into each component of the framework in details.
 
 \noindent \textbf{1. Video Metadata:} Understanding the context of a story is crucial, and we achieve this by gathering information about the communicator (brand). We leverage the publicly available video title and channel name from the web. Additionally, we utilize Wikidata \cite{10.1145/2629489}, a collaborative knowledge base that provides comprehensive data for Wikipedia, to obtain further details such as the company name, product line, and description. This information helps us comprehend the story elements and establish connections with the brand's business context. For non-advertisement videos, we skip this step and retrieve only the video title.
@@ -710,6 +720,8 @@ For the OCR module, we sample every 10th frame extracted at the native frames-pe
 
 \noindent \textbf{3. Text Representation of Audio:} The next modality we utilize from the video is the audio content extracted from it. We employ an Automatic Speech Recognition (ASR) module to extract transcripts from the audio. Since the datasets we worked with involved YouTube videos, we utilized the YouTube API to extract the closed caption transcripts associated with those videos.
 
+\noindent \textbf{4. Prompting:} We employ the aforementioned modules to extract textual representations of various modalities present in a video. This ensures that we capture the audio, visual, text, and outside knowledge aspects of the video. Once the raw text is collected and processed, we utilize it to prompt a generative language model in order to generate a coherent story that represents the video. To optimize the prompting process and enable the generation of more detailed stories, we remove similar frame captions and optical character recognition (OCR) outputs, thereby reducing the overall prompt size. %\cy{Do we simply concantenate all the text as the prompt? in what order?}
+
 
 \begin{landscape}
 \begin{figure*}
@@ -727,13 +739,12 @@ For the OCR module, we sample every 10th frame extracted at the native frames-pe
 
 
 
-\noindent \textbf{4. Prompting:} We employ the aforementioned modules to extract textual representations of various modalities present in a video. This ensures that we capture the audio, visual, text, and outside knowledge aspects of the video. Once the raw text is collected and processed, we utilize it to prompt a generative language model in order to generate a coherent story that represents the video. To optimize the prompting process and enable the generation of more detailed stories, we remove similar frame captions and optical character recognition (OCR) outputs, thereby reducing the overall prompt size. %\cy{Do we simply concantenate all the text as the prompt? in what order?}
 
 The prompt template is given in Section~\ref{sec:prompt-format}. Through experimentation, we discovered that using concise, succinct instructions and appending the text input signals (such as frame captions, OCR, and automatic speech recognition) at the end significantly enhances the quality of video story generation. For shorter videos (up to 120 seconds), we utilize all available information to prompt the LLM for story generation. However, for longer videos, we limit the prompts to closed captions and sampled frame captions. The entire prompting pipeline is zero-shot and relies on pre-trained LLMs. In our story generation experiments, we employ GPT-3.5 \cite{brown2020language}, Flan-t5 \cite{chung2022scaling}, and Vicuna \cite{vicuna2023}. A temperature of 0.75 is used for LLM generation. The average length of the generated stories is 231.67 words. Subsequently, these generated stories are utilized for performing video understanding tasks.
 
 
 
-\subsubsection{Prompt format} 
+\paragraph{Prompt format} 
 \label{sec:prompt-format}
  For verbalization, a template prompt format has been used, including all the data components as objects, captions, asr, ocr, meta-data. 
 
@@ -894,7 +905,7 @@ Trained & HATNet (Multitask) & 57.2 & 35.1 & 53.5 & \valgood{39.8} & 34.9 & 27.3
 \end{table*}
 
 
-\subsubsection{Results}
+\paragraph{Results}
 
 
 \textbf{Video Storytelling:} The performance comparison between our pipeline and existing methods is presented in Table~\ref{tab:story-generation}. We evaluate multiple generative and retrieval-based approaches and find that our pipeline achieves state-of-the-art results. It is important to note that as our method is entirely generative, the ROUGE-L score is lower compared to retrieval-based methods due to less overlap with ground truth reference video stories. However, overall metrics indicate that our generated stories exhibit a higher level of similarity to the reference stories and effectively capture the meaning of the source video.
@@ -914,7 +925,7 @@ Furthermore, as a comparative and ablation study of our approach, we evaluate th
 
 
 
-\subsubsection{Ablation}
+\paragraph{Ablation}
 Among the different components of information input present in the prompt, the LLM utilizes them differently while constructing the verbalization for the videos.For this experiement we use a subset of \cite{hussain2017automatic} dataset, considering videos that have spoken audio present.
 
 We use ROUGE-l to get the longest common subsequence (LCS) between the generated verbalization and the individual components,which captures the overlapping content, providing an indication of their semantic similarity.
@@ -966,7 +977,7 @@ Vicuna Generated Story + Flant5 & 31.13 & 27.32 \\
 
 
 
-\subsubsection{A few examples of the stories generated using our method}
+\paragraph{A few examples of the stories generated using our method}
 \label{sec:examples-stories-generated}
     \noindent1.~``Cathy 30 Master'' by Grand Canyon University (\url{https://www.youtube.com/watch?v=lPdD8NvVfw0}): 
     Kathy Ames had always wanted to pursue a doctoral degree but was unsure about the time commitment. When she discovered Grand Canyon University, she knew she had found the perfect fit. Grand Canyon University offered a flexible schedule that would allow her to balance her personal and family life with her studies. She - along with other students - gathered in the classroom, excitedly listening to their coach, Scott Saunders, explain the program. Afterward, Kathy made her way to the library and settled into a chair with her laptop. 
@@ -992,7 +1003,7 @@ Vicuna Generated Story + Flant5 & 31.13 & 27.32 \\
     \noindent5.~``Training sessions in the nature - Mary Kom | Priyanka Chopra | In Cinemas NOW'' by Viacom 18 Studios (\url{https://www.youtube.com/watch?v=SXTSJC5NrLs}): Mary Kom was training hard to make her mark as a boxer, and she had nothing but her focus and determination to help her succeed. She was a force to be reckoned with in the boxing ring and her hard work was soon paying off.But she knew that she had to take her training to the next level if she wanted to win the boxing championship. That's when she decided to take her own advice and step out of her comfort zone. She headed out to the woods, determined to make the most of her time in nature.The woods were a perfect place for Mary to challenge herself physically. She was soon standing on the rocks of a river, pushing her body to its limits with every movement. She was standing tall, her black top glinting in the sunlight, and her energy was palpable. The sun was setting, and it was the perfect time to relax and unwind.Finally, she ended her day with a yoga routine, her body twisting and turning in a beautiful display of strength and grace. It was a day of hard work and fun, and it left Mary feeling inspired and ready to take on anything. The video was an advertisement for the movie Mary Kom, released by Viacom18 Studios." \\
 
 
-\subsubsection{Hallucinations Present In the Automatically Generated Stories}
+\paragraph{Hallucinations Present In the Automatically Generated Stories}
 
 The current large language models , do hallucinate or produce imaginary outputs. However, they are able to capture the gist of the videos, helping improve on downstream tasks. Some examples are shown below:
 
@@ -1050,10 +1061,6 @@ The current large language models , do hallucinate or produce imaginary outputs.
 
         
        
-
-\section{Conclusion}
-\textit{What does an advertisement say that makes people change their beliefs and actions?} With limited works, the computational study of rhetoric of this all-pervasive form of marketing communication is still in its infancy. In this chapter, based on the well-developed social psychology and marketing literature, we develop and release the largest vocabulary of persuasion strategies and labeled dataset. We develop several models for predicting persuasion strategies for video and image based ads. Further, we show the performance of these models on several other advertisement-understanding related tasks, including topic, emotion, and question-answering.
-
 
 
 
@@ -1199,3 +1206,651 @@ The current large language models , do hallucinate or produce imaginary outputs.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\section{MINIMAL: Mining models for universal adversarial triggers}
+\label{MINIMAL: Mining models for universal adversarial triggers}
+\subsection{Abstract}
+It is well known that natural language models are vulnerable to adversarial attacks, which are mostly input-specific in nature. Recently, it has been shown that there also exist input-agnostic attacks in NLP models, special text sequences called universal adversarial triggers. However, existing methods to craft universal triggers are data intensive. They require large amounts of data samples to generate adversarial triggers, which are typically inaccessible by attackers. For instance, previous works take 3000 data samples per class for the SNLI dataset to generate adversarial triggers. In this paper, we present a novel data-free approach, \textit{MINIMAL}, to mine input-agnostic adversarial triggers from models. Using the triggers produced with our data-free algorithm, we reduce the accuracy of Stanford Sentiment Treebank's positive class from 93.6\% to 9.6\%. Similarly, for the Stanford Natural Language Inference (SNLI), our single-word trigger reduces the accuracy of the entailment class from 90.95\% to less than 0.6\%. Despite being completely data-free, we get equivalent accuracy drops as data-dependent methods. %Further, we find that the words selected as class impressions are low-entropy features. They form distinct clusters in the data manifold. We also observe that these class impression words form 
+
+
+
+
+
+\subsection{Introduction}
+\label{sec:introduction-UAT}
+%\cy{The title is non-standard, I would use ``MINIMAL: Mining Models without Data for Universal Adversarial Triggers''}
+In the past two decades, deep learning models have shown impressive performance over many natural language tasks, including sentiment analysis \cite{zhang2018deep}, natural language inference \cite{parikh2016decomposable}, automatic essay scoring \cite{kumar2019get}, question-answering \cite{xiong2016dynamic}, keyphrase extraction \cite{meng2017deep}, \textit{etc}. At the same time, it has also been shown that these models are highly vulnerable to adversarial perturbations \cite{behjati2019universal}. The adversaries change the inputs to cause the models to make errors. Adversarial examples pose a significant challenge to the rising deployment of deep learning based systems\footnote{The code and reproducibility steps are given in \url{https://github.com/midas-research/data-free-uats}}.
+
+
+Commonly, adversarial examples are found on a per-sample basis, \textit{i.e.}, a separate optimization needs to be performed for each sample to generate an adversarially perturbed sample. Since the optimization needs to be performed for each sample, it is computationally expensive and requires deep learning expertise for generation and testing. Lately, several research studies have shown the existence of input-agnostic universal adversarial trigger (UATs) \cite{moosavi2017universal,wallace2019universal}. These are a sequence of tokens, which, when added to any example, cause a targeted change in the prediction of a neural network. The existence of such word sequences poses a considerable security challenge since the word sequences can be easily distributed and can cause a model to predict incorrectly for all of its inputs. Moreover, unlike input-dependent adversarial examples, no model access is required at the run time for generating UATs. At the same time, the analysis of universal adversaries is interesting from the point of view of model, dataset analysis and interpretability (\S\ref{sec:Analysing the Class Impressions}). They tell us about the global model behaviour and the general input-output patterns learnt by a model \cite{wallace2019universal}.
+
+
+Existing approaches to generate UATs assume that an attacker can obtain the training data on which a targeted model is trained \cite{wallace2019universal,behjati2019universal}. While generating an adversarial trigger, an attacker firstly \textit{trains} a proxy model on the training data and then generates adversarial examples by using gradient information. Table~\ref{table:NSamples} presents the data requirements during training for the current approaches. For instance, to find universal adversaries on the natural language inference task, one needs 9000 training examples. Also, the adversarial ability of a perturbation has been shown to depend on the amount of data available \cite{mopuri2017fast,mopuri2018generalizable}. However, in practice, an attacker rarely has access to the training data. Training data are usually private and hidden inside a company's data storage facility, while only the trained model is publicly accessible. For instance, Google Cloud Natural Language (GCNL) API only outputs the scores for the sentiment classes \cite{gcnlAPI} while the data on which the GCNL model was trained is kept private. In this real-world setting, most of the adversarial attacks fail.
+
+\begin{figure}
+
+ \centering
+ \begin{tabular}{c}
+%   \includegraphics[scale=0.28]{Figures/skipflow/adding-lies-skipflow-1-24-25.png} \\
+\hspace{-0.3cm}\includegraphics[width=\textwidth]{images/2-stage-ci-uat-2.pdf}
+ %\textbf{MSE}:  0.0093898 \;% MSE: \; 0.01086 \\
+ %\textbf{PSNR}:  20.273426 \;% PSNR: \; 19.64074 \\
+ \end{tabular}
+
+ \caption{\small 
+ Two step process to generate universal adversarial triggers. First, we generate multiple class impressions for each class $c$. For this, we take multiple initialization sequences differing in starting word and length. After generating class impressions, we use them as our dataset for generating universal adversarial triggers.}
+
+ \label{fig:2 stage ci uat}
+
+\end{figure}
+
+
+
+In this paper, we present a novel data-free approach for crafting universal adversarial triggers to address the above issues. Our method is to mine a trained \textit{model} (but not data) for perturbations that can fool the target model without any knowledge about the data
+distribution (\textit{e.g.}, type of data, length and vocabulary of samples, \textit{etc}.). We only need access to the embedding layer and model outputs. Our method achieves this by solving first-order Taylor approximation of two tasks: first, we generate ``class-impressions'' (\S\ref{sec:Class-Impressions Generation Algorithm}), which are reconstructed text sentences from a model's memory representing the learned parameters for a certain data class; and second, we mine universal adversarial triggers over these generated class impressions (\S\ref{sec:Trigger Generation Algorithm}). Class-impression can be considered as the general representation of samples belonging to a particular class (Fig~\ref{fig:t-SNE plots}) and are used to emulate samples belonging to that class in our method. The concept of data leaving its impression on a trained model has also been observed in prior work in model inversion attacks in computer vision \cite{micaelli2019zero,nayak2019zero}. We build on that concept to mine universal adversarial triggers. We propose a combination of general model inversion attacks methodology with trigger generation to mine data-free adversarial triggers and show our results for several NLP models \cite{fredrikson2015model,tramer2016stealing}.
+
+%To generate the class impressions, we start with an initial input token sequence of \textit{``the the .... the''} and minimize the first-order Taylor approximation of loss around the input embedding for the target class (\S\ref{sec:Class-Impressions Generation Algorithm}). After getting the class impressions, we find universal triggers with respect to the generated impressions by minimizing the adversarial loss function (\S\ref{sec:Trigger Generation Algorithm}). 
+\noindent The major contributions of our work are summarized as:
+
+\noindent- For the first time in the literature, we propose a novel data-free approach, MINIMAL (MINIng Models for AdversariaL triggers), to craft universal adversarial triggers for natural language processing models and achieve state-of-the-art success (adversarial) rates (\S\ref{sec:experiments}). We show the efficacy of the triggers generated using our method on three well-known datasets and tasks, \textit{viz.}, sentiment analysis (\S\ref{sec:sentiment analysis}) on Stanford Sentiment Treebank (SST) \cite{socher2013recursive}, natural language inference (\S\ref{sec:Natural Language Inference}) on the SNLI dataset \cite{bowman2015large}, and paraphrase detection (\S\ref{sec:Paraphrase Identification}) on the MRPC dataset \cite{dolan2005automatically}. 
+
+
+\noindent- We use both class impressions and universal adversarial triggers generated by our models to try to understand the models' global behaviour (\S\ref{sec:Analysing the Class Impressions}). We observe that the words with the lowest entropy (\textit{i.e.}, the most informative features) appear in the class impressions (Fig.~\ref{fig:entropy-all-3-datasets}). We find that these low entropy word-level features can also act as universal adversarial triggers (Table~\ref{table:snli-uat-ci-word-transfer}). The class-impression words are good representations of a class since they form distinct clusters in the manifold representations of each class.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Related Work}
+\label{sec:related work}
+
+\textbf{Universal Adversarial Attacks:} \citet{moosavi2017universal} showed the existence of universal adversarial perturbations. They showed that a \textit{single perturbation} could fool DNNs most of the times when added to all images. Since then, many universal adversarial attacks have been designed for vision systems \cite{khrulkov2018art,li2019universal,zhang2021survey}. To the best of our knowledge, there are only three recent papers for NLP based universal adversarial attacks, and all of them require data for generating universal adversarial triggers \cite{wallace2019universal,song2020universal,behjati2019universal}. In simultaneous works, \cite{wallace2019universal,behjati2019universal} show universal adversarial triggers for NLP. \citet{song2020universal} extend it to generate natural (data-distribution like) triggers. We compare our work with \cite{wallace2019universal} since they show improved adversarial success rates over \cite{behjati2019universal}. We leave mining natural triggers from models as a future study. Our results demonstrate comparable performance as \cite{wallace2019universal} but without using any data. Table~\ref{table:NSamples} mentions the data requirement of \cite{wallace2019universal}.
+
+
+\begin{figure}[htbp]
+ \centering
+ \begin{tabular}{c}
+%   \includegraphics[scale=0.28]{Figures/skipflow/adding-lies-skipflow-1-24-25.png} \\
+\includegraphics[width=\textwidth]{images/Class-Impressions.pdf}
+ %\textbf{MSE}:  0.0093898 \;% MSE: \; 0.01086 \\
+ %\textbf{PSNR}:  20.273426 \;% PSNR: \; 19.64074 \\
+ \end{tabular}
+
+ \caption{
+ Class Impression Generation (CIG) Algorithm. We start with an initial sequence of \textit{``the the ... the''} and continuously update it based on its gradient with respect to output probabilities (Eq.~\ref{eq:class impressions taylor}). The final sequence we get represents the class impression $CI^c$ for the class $c$.%\cy{Did you show results of randomly initializing class impressions instead of setting them to ``the the ...''?}
+ }
+
+ \label{fig:Class Impression Generation Algorithm}
+\end{figure}
+
+
+
+
+
+
+While there are many proposed classifications of adversarial attacks, from the point of view of our work, they can be seen in two ways: (a)~data-based attacks; (b)~data-free attacks. Data-based computer vision attacks depend on training and validation dataset to craft adversaries, while data-free attacks rely on other signals. There are some data-free approaches in computer vision, for example, by maximizing activations at each layer \cite{mopuri2017fast,mopuri2018generalizable}, class activations \cite{mopuri2018ask}, and pretrained models and proxy dataset \cite{huan2020data}. However, there has been no work in NLP systems for data-free attacks.
+
+
+%\textbf{Model Inversion Attacks:} Model inversion (MI) attacks in the white box setting aim at reconstructing training data from model parameters \cite{correia2018copycat,fredrikson2015model,tramer2016stealing,carlini2018secret}. In these attacks, the adversary issues a large number of queries and uses the collected (input, output) pairs to train a local copy of the model. Most of the previous work shows its success against image classification APIs \cite{orekondy2019knockoff,juuti2019prada}. Lately, there have been a few recent works on NLP systems for the same \cite{pal2019framework,krishna2019thieves}. These attacks have also been shown to leak sensitive information about the training data and have been used to generate adversarial examples that evade the model served by the API \cite{tramer2016stealing,krishna2019thieves,mopuri2018ask}. Lately, a few papers have shown that model distillation is also possible using similar algorithms as for the MI attacks \cite{micaelli2019zero,nayak2019zero}. 
+
+%We extend this line of work by showing that using the general model inversion attack methodology, we can generate class-impressions that can then help us mine universal adversarial triggers for NLP models. Concretely, we develop an algorithm to mine for class-impressions using only a few queries per class. We use the class impressions obtained to further mine universal adversarial triggers. We show that the triggers obtained perform comparably to triggers extracted by optimizing on data.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{The Proposed Approach}
+\label{sec:proposed approach}
+In summary, our algorithm of crafting data-free universal adversarial triggers is divided into two steps, as shown in Fig~\ref{fig:2 stage ci uat}. First, we generate a set of class-impressions (\S\ref{sec:Class-Impressions Generation Algorithm}) (Fig~\ref{fig:Class Impression Generation Algorithm}) for each class. These natural language examples represent the entire class of samples and are generated solely from the weights learnt by the model. Second, we use the set of class impressions generated in the first step to craft universal adversarial triggers corresponding to those impressions (\S\ref{sec:Trigger Generation Algorithm}) (Fig~\ref{fig:UAT Generation Algorithm}).% We explain each step in details.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Class-Impressions Generation (CIG) Algorithm}
+\label{sec:Class-Impressions Generation Algorithm}
+
+To generate the class impression $CI^c$ for a class $c$, we propose to maximize the confidence of the model $f(x)$ for an input text sequence $\mb{t}_c$. Formally, we maximize:
+\begin{equation}
+\label{eq:class impression optimization}
+CI^c = \argmax_{\mb{t}_{c}} \mathbb{E}_{\mb{t}_{c} \sim \mathcal{V}}\left[\loss(c, f(\mb{t}_c)) \right],
+\end{equation}
+\noindent where $\mb{t}_c$ is sampled from a vocabulary $\mathcal{V}$. The input $\mb{t}_c$ in NLP is not continuous, but is made up of discrete tokens. Therefore, we use the first-order Taylor approximation of Eq.~\ref{eq:class impression optimization} \cite{michel2019evaluation,ebrahimi2017hotflip,wallace2019universal}. Formally, for every token $\mb{e}_{ci_i}$ in a class impression $CI^c$, we solve the following equation: 
+\begin{equation}\label{eq:class impressions taylor}
+ \mb{e}_{ci_i} = \argmin_{\mb{e}_i^\prime \in \mathcal V}\left[\mb{e}_i^\prime-{\mb{e}_{ci_i}}\right]^\intercal\nabla_{\mb{e}_{ci_i}}\loss,
+\end{equation}
+\noindent where $\mathcal{V}$ represents the set of all words in the vocabulary, and $\nabla_{\mb{e}_{ci_i}}\loss$ is the gradient of the task loss. We model the Eq.~\ref{eq:class impressions taylor} as an iterative procedure by starting out with an initialisation value of $\mb{e}_{ci_i}$ as \textit{`the'}. We then continually optimize it until convergence. For computing the optimal $\mb{e}_i^\prime$, we take $\vert \mathcal V \vert$ $d$-dimensional dot products where $d$ is the dimensionality of the token embedding. We use beam-search for finding the optimal sequence of tokens $\mb{e}_i^\prime$ to get the minimum loss in Eq.~\ref{eq:class impressions taylor}. We score each beam using the loss on the batch in each iteration of the optimization schedule.
+
+Finally, we convert the optimal $\mb{e}_{ci_i}$ back to their associated word tokens. Fig.~\ref{fig:Class Impression Generation Algorithm} presents an overview of the process. It shows the case where we initialized $\mb{e}_{ci_i}$ with a sequence of \textit{``the the .... the''} and then follow the optimization procedure for finding the optimal $CI^c$ for the class $c$\footnote{We vary the initialization sequence and sequence length to generate multiple class impressions for the same class}.
+
+
+To generate class impressions for the models that use contextualized embeddings like BERT \cite{devlin2018bert}, we perform the above optimization over character and sub-word level. We also replace the context-independent embeddings in Eq.~\ref{eq:class impressions taylor} with contextual embeddings as obtained from BERT after passing the complete sentence to it.
+
+
+We generate multiple class impressions for each class for all models by varying the number of tokens and the starting sequence. This gives us a number of class impressions for the next step where we generate triggers over these class impressions.
+
+\begin{table}
+{\begin{tabular}{|l||l||l|l|l|}
+\hline
+\textbf{Dataset} & \textbf{\makecell{Validation Size\\(Real samples)}} & \textbf{\makecell{Impressions Size\\(Generated samples)}} \\ \hline
+  SST & 900 & 300 \\ \hline
+  SNLI & 9000 & 400 \\ \hline
+  MRPC & 800 & 300 \\ \hline
+  
+\end{tabular}}
+\caption{\label{table:NSamples}
+Number of Samples required to generate Universal Adversarial Triggers for each Dataset. In a data-based approach like \cite{wallace2019universal}, validation set (column 2) is used to generate the UATs. The third column lists the number of queries we make to generate artificial samples. These artificial samples are then used to craft UATs. Note that no real samples are required for our method.}
+\end{table}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{The Universal Trigger Generation (UTG) Algorithm}
+\label{sec:Trigger Generation Algorithm}
+
+
+\begin{table*}[!htbp]
+{
+\begin{adjustbox}{width=\textwidth}
+
+\begin{tabular}{|l||l|}
+\hline
+\textbf{Class} & \textbf{Class Impression} \\ \hline
+  {\bf Positive} & \makecell{energizes energizes captivated energizes\\enthrall eye-catching captivating aptitude artistry passion}\\ \hline
+  {\bf Positive} & \makecell{captures soul-stirring captivates mesmerizing soar amaze\\excite amaze enthrall thrill captivating impress artistry accomplishments}\\ \hline
+  {\bf Negative} & \makecell{spiritless ill-constructed ill-conceived ill-fitting\\aborted fearing bottom-rung woe-is-me uncharismatically pileup}\\ \hline
+  {\bf Negative} & \makecell{laziest third-rate insignificance stultifyingly untalented\\hat-in-hand rot leanest blame direct-to-video wounds urinates}\\ \hline
+ 
+\end{tabular}
+\end{adjustbox}
+
+}
+\caption{\label{table:SST-GLOVE-CI} \small Class Impressions for BiLSTM-Word2Vec Sentiment Analysis  Model. Note that the words in the class impression examples highly correspond to the respective sentiment classes.}
+\end{table*}
+
+After generating class impressions in the previous step, we generate adversarial triggers as follows. From the last algorithm, we get a batch of class impressions $CI^c$ for the class $c$. The task of crafting universal adversarial triggers is defined as minimizing the following loss function:
+\begin{equation}\label{eq:uat}
+\argmin_{\mb{t}_{adv}} \mathbb{E}_{\mb{t} \sim \mathcal CI^c}\left[\loss(\tilde{c}, f(\mb{t}_{adv}; \mb{t})) \right],
+\end{equation}
+
+\noindent where $\tilde{c}$ denotes target class (distinct from the class $c$), $f(\mb{t}_{adv}; \mb{t})$ denotes the evaluation of $f(x)$ on the input containing concatenation of adversarial trigger tokens at the start of the text $t$. The text $t$ is sampled from the set of all class impressions $CI^c$. Again, we use the Taylor approximation of the above equation. Therefore, we get:
+\begin{equation}\label{eq:uat taylor}
+ \mb{e}_{adv_i} = \argmin_{\mb{e}_i^\prime \in \mathcal V}\left[\mb{e}_i^\prime-{\mb{e}_{adv_i}}\right]^\intercal\nabla_{\mb{e}_{adv_i}}\loss,
+\end{equation}
+
+\noindent where $\mathcal{V}$ represents the set of all words in the vocabulary, and $\nabla_{\mb{e}_{adv_i}}\loss$ is the average gradient of the task loss over a batch. We model Eq.~\ref{eq:uat taylor} as an iterative procedure where we initialize $\mb{e}_{adv_i}$ with an initialisation value of `the'. For computing the optimal $\mb{e}_i^\prime$, similar to the previous step, we take $\vert \mathcal V \vert$ $d$-dimensional dot products where $d$ is the dimensionality of the token embedding. We use beam-search for finding the optimal sequence of tokens $\mb{e}_i^\prime$ to get the minimum loss in Eq.~\ref{eq:uat taylor}. We score each beam using the loss on the batch in each iteration of the optimization schedule.
+Additionally, to generate impressions of varying difficulty, we randomly select the token from a N-sized beam of possible minimal candidates, instead of the least scoring candidate.
+\begin{table}[!h]
+{
+\begin{adjustbox}{max width=\columnwidth}
+%\setlength{\tabcolsep}{2pt}
+\begin{tabular}{|l||l||l|l|l|}
+\hline
+\textbf{Type} & \textbf{Direction} & \textbf{Trigger} & \textbf{\makecell{Acc.\\Before}} &\textbf{\makecell{Acc.\\After}} \\ \hline
+  Data-based & P $\rightarrow$ N & \makecell{worthless\\endurance useless} & 93.6 & 9.6 \\ \hline
+  Data-free & P $\rightarrow$ N  & \makecell{useless\\endurance useless} & 93.6 & 9.6 \\ \hline
+  Data-based & N $\rightarrow$ P & \makecell{kid-empowerment\\hickenlooper enjoyable} & 80.3 & 7.9 \\ \hline
+  Data-free & N $\rightarrow$ P  & \makecell{compassionately\\hickenlooper gaghan} & 80.3 & 8.1 \\ \hline
+  
+\end{tabular}
+\end{adjustbox}
+}
+\caption{\label{table:SST-GLOVE}
+The table reports the accuracy drop for the BiLSTM-Word2Vec sentiment analysis model after prepending 3-word adversarial triggers generated using MINIMAL and data-based methods.}
+\end{table}
+
+
+
+\begin{table}[!h]
+{
+\begin{adjustbox}{max width=\columnwidth}
+%\setlength{\tabcolsep}{2pt}
+\begin{tabular}{|l||l||l|l|l|}
+\hline
+\textbf{Type} & \textbf{Direction} & \textbf{Trigger} & \textbf{\makecell{Acc.\\Before}} &\textbf{\makecell{Acc.\\After}} \\ \hline
+  Data-free & P $\rightarrow$ N  & \makecell{useless\\endurance useless} & 86.2 & 32 \\ \hline
+  \hline
+  Data-free & N $\rightarrow$ P  & \makecell{compassionately\\hickenlooper gaghan} & 86.9 & 35 \\ \hline
+ 
+\end{tabular}
+\end{adjustbox}
+}
+
+\caption{\label{table:SST-transfer-ELMO} Accuracy drop for transfer attack with data-free UAT generated by our method. We prepend 3-word adversarial triggers to the SST BiLSTM-ELMo model.}
+
+\end{table}
+
+
+\begin{table}
+\scalebox{0.98}{
+%\setlength{\tabcolsep}{2pt}
+\begin{adjustbox}{width=0.9\columnwidth}
+
+\begin{tabular}{|c||c|}
+\hline
+\textbf{Class} & \textbf{Class Impressions} \\ \hline
+
+{\bf Contradiction} & \makecell{\textbf{Hypothesis}: lynched cardinals giraffes lynched\\lynched a mown extremist natgeo illustration\\\textbf{Premise}: zucchini restrooms swimming golds\\weekday rock 4 seven named dart} \\ \hline
+ 
+{\bf Entailment} & \makecell{\textbf{Hypothesis}: civilization va physical supersonic\\prohibits biathlon body land muffler mobility\\\textbf{Premise}: gecko robed abroad teetotalers blonds\\pluggling sprinter speeds corks dogtrack} \\ \hline
+
+{\bf Neutral} & \makecell{\textbf{Hypothesis}: porters festivals fluent a playgrounds\\ratatouille buttercups horseback popularity waist\\\textbf{Premise}: bowler teaspoons group tourism tourism\\spiritual physical physical  person} \\ \hline
+\end{tabular}
+\end{adjustbox}
+}
+\caption{\label{table:SNLI-GLOVE-CI} Class Impressions for ESIM model trained for the Natural Language Inference Task}
+\end{table}
+
+
+\begin{table}
+
+%\setlength{\tabcolsep}{2pt}
+%\centering
+\footnotesize{
+\begin{adjustbox}{max width=\columnwidth}
+\centering
+\begin{tabular}{|c|c|c|c||c|}
+\hline
+
+\multicolumn{5}{|c|}{\makecell{\textbf{Class Type: Entailment}$\rightarrow${\textbf{Neutral}}\\Original Accuracy: (ESIM: 91\%, DA: 90.3\%)}}\\\hline
+\makecell{\textbf{Data-Inputs}} & \textbf{Data-Type} & \textbf{Trigger} & \textbf{ESIM} & \textbf{DA} \\ \hline
+
+\multirow{2}{*}{\makecell{\\\textbf{Hypothesis and}\\\textbf{Premise}}}
+& Data-Based & \makecell{nobody\\whatsoever\\cats} & \makecell{0.06\\0.6\\0.69} &  \makecell{0.18\\43\\0.7}\\\cline{2-5}
+ & Data-Free& \makecell{nobody\\no\\mars} &  \makecell{0.06\\0.1\\0.1} &  \makecell{0.18\\2\\0.3}\\ \hline
+
+\textbf{Hypothesis-Only} & Data-Free & \makecell{monkeys\\zebras\\cats} & \makecell{0.7\\0.5\\0.69} &  \makecell{0.54\\0.39\\0.7}\\ \hline
+\hline
+
+\multicolumn{5}{|c|}{\makecell{\textbf{Class Type: Neutral}$\rightarrow${\textbf{Contradiction}}\\Original Accuracy: (ESIM: 88\%, DA: 80\%)}}\\\hline
+\makecell{\textbf{Data-Inputs}} & \textbf{Data-Type} & \textbf{Trigger} & \textbf{ESIM} & \textbf{DA} \\ \hline
+
+\multirow{2}{*}{\makecell{\\\textbf{Hypothesis and}\\\textbf{Premise}}}& Data-Based &\makecell{shark\\moon\\spacecraft} & \makecell{18\\17\\12} &  \makecell{28\\13\\8.4}\\ \cline{2-5}
+
+&Data-Free &\makecell{skydiving\\orangutan\\spacecraft} & \makecell{14\\12\\12} &  \makecell{20\\75\\8.4} \\ \cline{1-5}
+
+\textbf{Hypothesis-Only}&Data-Free &\makecell{sleep \\drowning\\spacecraft } & \makecell{11\\15\\12} &  \makecell{19\\29\\8.4} \\ \hline
+\hline
+
+\multicolumn{5}{|c|}{\makecell{\textbf{Class Type: Contradiction}$\rightarrow${\textbf{Entailment}}\\Original Accuracy: (ESIM: 79\%, DA: 85\%)}}\\\hline
+\makecell{\textbf{Data-Inputs}} & \textbf{Data-Type} & \textbf{Trigger} & \textbf{ESIM} & \textbf{DA} \\ \hline
+
+\multirow{2}{*}{\makecell{\\\textbf{Hypothesis and}\\\textbf{Premise}}}&Data-Based & \makecell{expert\\siblings\\championship} & \makecell{64\\66\\65} &  \makecell{73\\68\\74}\\
+\cline{2-5}
+& Data-Free&\makecell{inanimate\\final\\championships} & \makecell{67\\66\\68} &  \makecell{82\\68\\85} \\ 
+\hline
+
+\textbf{Hypothesis-Only}& Data-Free &\makecell{humans\\semifinals\\championship} & \makecell{70\\68\\65} &  \makecell{79\\74\\74} \\ \hline
+\hline
+
+\end{tabular}
+\end{adjustbox}
+}
+\caption{We prepend a single word (Trigger) to SNLI hypotheses. We display the top 3 triggers created using both Validation set and Class Impressions for ESIM and show their performance on the DA. The original accuracies are mentioned in brackets. \cy{Hard to compare. Why not add another row of average accuracy?}}
+\label{table:snli-uat}
+\end{table}
+
+
+
+
+\begin{table}[!htbp]
+%\setlength{\tabcolsep}{2pt}
+\scalebox{0.98}{
+\begin{adjustbox}{width=0.9\columnwidth}
+\begin{tabular}{|c||c|}
+\hline
+\textbf{Class} & \textbf{Class Impressions} \\ \hline
+
+{\bf \makecell{Paraphase\\Detected}}     & \makecell{\textbf{Sentence 1}:nintendo daredevil bamba bamba the\\the lakers dodgers weekend rhapsody seahawks\\\textbf{Sentence 2}:  nintendo multiplayer shawnee dodgers \\  anthem netball the olympics soundtrack\\overture martial} \\ \hline
+ \hline
+{\bf \makecell{Paraphase\\Detected}}     & \makecell{\textbf{Sentence 1}: mon submitted icus submit arboretum\\templar desires them requirements kum \\\textbf{Sentence 2}: lection rahul organizers postgraduate \\ qualifying your exercises signifies its them} \\ \hline
+\hline
+{\bf \makecell{No Paraphase\\Detected}} & \makecell{\textbf{Sentence 1}: b 617 matrices dhabi ein wm spelt\\rox a proportional alamo swap \\\textbf{Sentence 2}:  drilled traced 03 02 said\\mattered million 0\% 50\% corporations a a}\\ \hline
+ \hline
+{\bf \makecell{No Paraphase\\Detected}} & \makecell{\textbf{Sentence 1}: cw an hung kanda singapore\\tribu chun mid 199798 nies bula latvia\\\textbf{Sentence 2}: came tempered paced times than\\an saying say shone say s copp}\\\hline
+\hline
+\end{tabular}
+\end{adjustbox}
+}
+\caption{\label{table:MRPC-ALBERT-CI} Class Impressions for ALBERT model trained for the Microsoft Research Paraphrase Corpus}
+\end{table}
+
+
+
+Finally, we convert the optimal $\mb{e}_{adv_i}$ back to their associated word tokens. Fig.~\ref{fig:UAT Generation Algorithm} presents an overview of the process. Similar to Sec.~\ref{sec:Class-Impressions Generation Algorithm}, we initialize the iterative algorithm with a sequence ($\mb{e}_{adv}$) of \textit{``the the .... the''}\footnote{We vary the initialisation sequence and sequence length to generate multiple adversarial triggers} and then follow the optimization procedure to find the optimal $\mb{e}_{adv}$. We handle contextual embeddings in a similar manner as in Sec.~\ref{sec:Class-Impressions Generation Algorithm}. Next, we show the application of the algorithms developed on several downstream tasks.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Experiments}
+\label{sec:experiments}
+We present our experimental setup and the effectiveness of the proposed method in terms of the success rates achieved by the crafted UATs. We test our method on several tasks including sentiment analysis, natural language inference, and paraphrase detection.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Sentiment Analysis}
+\label{sec:sentiment analysis}
+We use the Stanford Sentiment Treebank (SST) dataset \cite{socher2013recursive}. Previous studies have extensively used this dataset for studying sentiment analysis \cite{devlin2018bert,cambria2013new}. We use two models on this dataset: Bi-LSTM model \cite{graves2005framewise} with word2vec emebddings \cite{mikolov2017advances}, Bi-LSTM model with ELMo embeddings \cite{peters2018deep}. The same models have been used in previous work \cite{wallace2019universal} for generating data-dependent universal adversarial triggers. The models achieve an accuracy of 84.4\% and 86.6\% over the dataset, respectively. We compare our algorithm with \cite{wallace2019universal} since it is demonstrated to work better than other works \cite{behjati2019universal}.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\noindent\textbf{Class Impressions:} First, we generate class impressions for the model. Table~\ref{table:SST-GLOVE-CI} presents 2 class impressions per class. As can be seen from the table, the words selected by the CIG algorithm highly correspond to the class sentiment. For instance, the algorithm selects positive words such as {\em energizes, enthrall} for the positive class, and negative words such as {\em spiritless, ill-conceived, laziest} for the negative class. We posit that the class impressions generated through our algorithm can be used to interpret what a model has learnt.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\noindent\textbf{UAT:} Next, using the class impressions generated for the models, we generate universal adversarial triggers with the UTG algorithm (Sec~\ref{sec:Trigger Generation Algorithm}). In order to avoid selecting construct-relevant words, we remove such words\footnote{\url{https://www.cs.uic.edu/\~liub/FBS/sentiment-analysis.html\#lexicon}} from our vocabulary for this task. Table~\ref{table:SST-GLOVE} shows the results for the performance of adversarial triggers generated using our method and those by the data-based approach of \cite{wallace2019universal}. Despite being completely independent of data, we achieve comparable accuracy drops as \cite{wallace2019universal}. We are able to reduce the sentiment prediction accuracy by more than 70\% for both the classes.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\textbf{Transfer of Mined UATs:} We check whether the triggers mined from one model also work on other models. For this, we test the triggers mined from BiLSTM-Word2Vec model on the BiLSTM-ELMo model. Table~\ref{table:SST-transfer-ELMO} notes the results for the same. The triggers reduce the accuracy for both the classes by more than 50\%. This is significant since they are completely mined from the model without any information of the underlying distribution. We also compare the attack success rate as a function of trigger length (Fig.~\ref{fig:attack-success-trigger-length}).
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Natural Language Inference}
+\label{sec:Natural Language Inference}
+For natural language inference, we use the well-known Stanford Natural Language Inference (SNLI) Corpus \cite{bowman2015large}. We use two models for our analysis on this task: Enhanced Sequential Inference Model (ESIM) \cite{chen2016enhanced} and Decomposable Attention (DA) \cite{parikh2016decomposable} with GloVe embeddings \cite{pennington2014glove}. The accuracies reported by ESIM is 86.2\%, and DA is 85\%.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\noindent\textbf{Class Impressions:} Modelling natural language inference involves taking in two inputs: premise and hypothesis and deciding the relation between them. The relation can be one amongst entailment, contradiction, and neutral. Following the algorithm in Sec.~\ref{sec:Class-Impressions Generation Algorithm}, we find both premise and hypothesis together after starting out from a common initial word sequence. Through this, we get a \emph{typical} premise and its corresponding hypothesis for the three output classes (entailment, contradiction, and neutral). 
+
+One example per class for the ESIM model is given in Table~\ref{table:SNLI-GLOVE-CI}. Unlike sentiment analysis, class impressions for SNLI are not readily interpretable. This is because that while a sentence from the SST corpus can be considered a combination of latent sentiments, the same cannot be assumed of a hypothesis sentence from the SNLI corpus. A statement by itself is not a characteristic hypothesis (or premise). For instance, the SST sentence ``You'll probably love it.'' is a characteristic positive polarity sentence and can be understood to be so by the word `love'. The same cannot be said for the SNLI premise sentence ``An older and younger man smiling.'' SNLI class impressions give us a glance into a model's learnt deep manifold representation of premise-hypothesis pair. They are generally far away from the training data. Strong priors about the natural training distribution might be needed to make them closer to the training data, . We leave this task for future investigation. 
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\textbf{UAT:} After obtaining a batch of class impressions from the previous step, we craft the universal adversarial triggers. A comparison of the results for UATs generated using our method, and those of \cite{wallace2019universal} are given in Table~\ref{table:snli-uat}. As can be seen, we achieve comparable results as \cite{wallace2019universal}. A single word trigger is able to reduce the accuracy of the entailment class from 90.3\% to 0.06\%.
+
+\textbf{Hypothesis Only UATs:} Several recent research studies have indicated that the annotation protocol for SNLI leaves artefacts in the dataset such that by giving just hypothesis, one can obtain 67\% accuracy \cite{gururangan2018annotation,poliak2018hypothesis}. Following that line of study, we generate only the hypothesis class impressions using the CIG algorithm. Then, we generate triggers over the hypothesis-only generated class impressions. Table~\ref{table:snli-uat} notes the results for the hypothesis-only attacks. We find that hypothesis-only triggers perform equivalently to hypothesis and premise attacks. This provides further proof that there are many biases in the SNLI dataset and more importantly, the models are using those biases as class representations and adversarial triggers actively exploit these (\S\ref{sec:Analysing the Class Impressions}).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\textbf{Transfer of Mined UATs to Other Models:} To determine how the triggers mined from one model transfer to another, we test both data-based and our data-free triggers generated using the ESIM model on the DA model. Table~\ref{table:snli-uat} shows the results. We check the transfer attack performance in two cases: where both hypothesis and premise are given and where only the hypothesis is given. It can be seen that even though both the models are architecturally very different, the triggers transfer remarkably well for both cases. For instance, for the entailment class, the original and transfer attack accuracy drops are comparable. It is also noteworthy that our results are equivalent to \cite{wallace2019universal} even for transfer attacks.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Paraphrase Identification}
+\label{sec:Paraphrase Identification}
+For paraphrase identification, we use the Microsoft Research Paraphrase Corpus (MRPC) \cite{dolan2005automatically}. Paraphrase identification is the task of identifying whether two sentences are semantically equivalent. We use the ALBERT model \cite{lan2019albert} for the task. It reports an accuracy of 89.9\% over this.
+
+\noindent \textbf{Class Impressions:} Similar to natural language inference, here, the models require two input sentences. The task of the model is to identify whether the two sentences are semantically the same. The class impressions generated on the ALBERT model are given in Table~\ref{table:MRPC-ALBERT-CI}. We find that similar to the SNLI corpus, the MRPC class impressions are not readily interpretable. For specific examples like the first example in the table, we find that sometimes words related to one topic occur as class impressions. Words like `nintendo' and 'daredevil' in sentence one and `multiplayer' and `anthem' often occur in the context of multiplayer digital games. We should have got similar class impressions in an ideal scenario for sentences 1 and 2 for actual paraphrases. However, we find that the model considers even those sentence pairs (example 2) as paraphrases that have zero vocabulary or topic overlap. This indicates that the model is performing a similarity match in the high dimensional data manifold. We do some analysis for this in Sec.~\ref{sec:Analysing the Class Impressions}. We leave the further investigation of this for future work.
+
+\textbf{UAT:} Table~\ref{table:MRPC-Albert} notes the performance of 3 word data-free adversarial triggers generated using MINIMAL. As can be seen, the mined artefacts reduce the accuracy for both classes by more than 70\%. 
+
+\begin{figure}[htbp]
+ \centering
+ \begin{tabular}{c}
+\includegraphics[width=\textwidth]{images/UAT.pdf}
+ \end{tabular}
+
+ \caption{Iterative Universal Trigger Generation (UTG) Algorithm.
+ }
+ \label{fig:UAT Generation Algorithm}
+
+\end{figure}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Analyzing the Class Impressions}
+\label{sec:Analysing the Class Impressions}
+We futher analyze class impressions and their relationship with universal adversarial triggers. Specifically, we try to answer these questions: which words get selected as class impressions, why are we able to find universal adversarial triggers from a batch of class impressions and no train data distribution is required? We also try to relate it to the observation made by \cite{gururangan2018annotation,poliak2018hypothesis}, which ranked the dataset artefact words by calculating their pointwise-mutual information (PMI) values for each class. We further show that the trigger words align very well with dataset artefacts.
+
+
+\begin{table}[!htbp]
+{
+\setlength{\tabcolsep}{2pt}
+\begin{adjustbox}{max width=\columnwidth}
+
+\begin{tabular}{|l||l||l|l|l|}
+\hline
+\textbf{Type} & \textbf{Direction} & \textbf{Trigger} & \textbf{\makecell{Acc.\\Before}} &\textbf{\makecell{Acc.\\After}} \\ \hline
+  Data-free & P $\rightarrow$ N  & \makecell{insisting sacrificing either} & 95 & 45\\ \hline
+  Data-free & N $\rightarrow$ P  & \makecell{waistband interests stomped} & 80.9 & 61.6\\ \hline
+\end{tabular}
+\end{adjustbox}
+}
+\caption{\label{table:MRPC-Albert} Accuracy drop for the ALBERT paraphrase identification model after prepending 3-word adversarial triggers generated using MINIMAL.}
+
+\end{table}
+
+\begin{table}[]
+\begin{adjustbox}{max width=\columnwidth}
+
+\begin{tabular}{|c|c|c|c|}
+\hline
+\multicolumn{4}{|c|}{\textbf{Stanford Sentiment Treebank}}          \\ \hline
+\textbf{Positive}  & \textbf{\%} & \textbf{Negative}  & \textbf{\%} \\ \hline
+beautifully        & 99.97       & dull               & 99.99       \\ \hline
+wonderful          & 99.95     & worst              & 99.99       \\ \hline
+enjoyable          & 99.94       & suffers            & 99.98       \\ \hline
+engrossing         & 99.94       & stupid             & 99.98       \\ \hline
+charming           & 99.89       & unfunny            & 99.97       \\ \hline \hline
+Impression Average & 73.89       & Impression Average & 77.97       \\ \hline
+\end{tabular}
+\end{adjustbox}
+\caption{ PMI percentiles for sample class impression words and their average}
+\label{table:sst-pmi-percentile}
+\end{table}
+
+
+
+\begin{table}[]
+\begin{adjustbox}{max width=\columnwidth}
+
+\begin{tabular}{|c|c|c|c|}
+\hline
+\multicolumn{4}{|c|}{\textbf{Microsoft Research Paraphrase Corpus}}               \\ \hline
+\textbf{Paraphrase}         & \textbf{\%} & \textbf{Non-Paraphrase} & \textbf{\%} \\ \hline
+experts                     & 99.89       & biological              & 99.91       \\ \hline
+{\color[HTML]{000000} such} & 99.84       & important               & 99.39       \\ \hline
+only                        & 99.67       & drug                    & 99.92       \\ \hline
+due                         & 99.65       & case                    & 98.91       \\ \hline
+said                        & 99.57       & among                   & 98.73       \\ \hline
+Impression Average          & 77.23       & Impression Average      & 81.89       \\ \hline
+\end{tabular}
+\end{adjustbox}
+\caption{PMI percentiles for sample class impression words and their average}
+\label{table:mrpc-pmi-percentile}
+\end{table}
+
+
+\begin{table}[]
+\begin{adjustbox}{max width=\columnwidth}
+\begin{tabular}{|lc|lc|lc|}
+\hline
+\multicolumn{6}{|c|}{\textbf{Stanford Natural language Inference}}                                          \\ \hline
+\textbf{Contradiction} & \textbf{\%} & \textbf{Entailment} & \textbf{\%} & \textbf{Neutral}   & \textbf{\%} \\ \hline
+naked                  & 99.99       & human               & 99.91       & about              & 99.73       \\ \hline
+sleeping               & 99.97       & athletic            & 99.73       & treasure           & 99.06       \\ \hline
+tv                     & 99.96       & martial             & 99.71       & headed             & 99.05       \\ \hline
+asleep                 & 99.96       & clothes             & 99.53       & school             & 98.87       \\ \hline
+eats                   & 99.93       & aquatic             & 99.38       & league             & 98.83       \\ \hline \hline
+Average     & 67.89       & Average  & 70.89       & Average & 68.97       \\ \hline
+\end{tabular}
+\end{adjustbox}
+\caption{ PMI percentiles for sample class impression words and their average}
+\label{table:snli-pmi-percentile}
+\end{table}
+
+
+
+\begin{table}[!htbp]
+%\setlength{\tabcolsep}{2pt}
+\centering
+\footnotesize{
+\begin{adjustbox}{max width=\columnwidth}
+\scalebox{0.95}{
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Ground Truth$\rightarrow$Attacked Target} & \textbf{Trigger} & \textbf{ESIM} \\ \hline
+
+\vtop{\hbox{\strut {\textbf{Entailment}}$\rightarrow${\textbf{Neutral}}}\hbox{\strut Accuracy:88\% }}
+& \makecell{beatboxing\\insects\\reclining} & \makecell{77\\68\\83}\\ \hline
+
+\vtop{\hbox{\strut {\textbf{Entailment}}$\rightarrow${\textbf{Contradiction}}}\hbox{\strut Accuracy:79\%}}
+& \makecell{qualities\\coexist\\stressful} & \makecell{70\\71\\70}\\ \hline
+
+\vtop{\hbox{\strut {\textbf{Neutral}}$\rightarrow${\textbf{Contradiction}}}\hbox{\strut Accuracy:   79\%}}
+& \makecell{disoriented\\arousing\\championship} & \makecell{69\\67\\65} \\ \hline
+
+\vtop{\hbox{\strut {\textbf{Neutral}}$\rightarrow${\textbf{Entailment}}}\hbox{\strut Accuracy:   91\%}}
+& \makecell{championship\\semifinals\\aunts} & \makecell{0.1\\0.9\\0.5} \\ \hline
+
+\vtop{\hbox{\strut {\textbf{Contradiction}}$\rightarrow${\textbf{Entailment}}}\hbox{\strut Accuracy: 91\% }}
+&\makecell{ballet\\nap\\olives} & \makecell{5\\2\\9}\\ \hline
+
+\vtop{\hbox{\strut {\textbf{Contradiction}}$\rightarrow${\textbf{Neutral}}}\hbox{\strut Accuracy:   88\% }}
+& \makecell{nap\\hubble\\snakes} & \makecell{14\\21\\9} \\ \hline
+
+
+\hline
+
+\end{tabular}}
+\end{adjustbox}
+}
+\caption{ We prepend a single word trigger to SNLI hypotheses. We take the first word from all ground truth class impressions and evaluate them on class impressions of the target class.% We then choose the top 4 and show their validation performance for the target class.
+\label{table:snli-uat-ci-word-transfer}}
+\end{table}
+
+\begin{figure*}[!htbp]
+ \centering
+ \includegraphics[scale=0.4]{images/boxplot_entropy.pdf}
+
+ \caption{
+ Mean Entropy of class impression words and 350 words randomly selected from the SST, SNLI, and MRPC dataset vocabularies. \label{fig:entropy-all-3-datasets}}
+
+\end{figure*}
+
+\begin{comment} 
+    \begin{figure*}[!h]
+     \begin{tabular}{ccc}
+     \centering
+    %   \includegraphics[scale=0.28]{Figures/skipflow/adding-lies-skipflow-1-24-25.png} \\
+    \includegraphics[scale=0.36]{images/SST_TSNE_PERPLEXITY_100.pdf}&\includegraphics[scale=0.36]{images/SNLI_TSNE_PERPLEXITY_120.pdf}&\includegraphics[scale=0.36]{images/MRPC_TSNE_PERPLEXITY_30.pdf}\\
+     %\textbf{MSE}:  0.0093898 \;% MSE: \; 0.01086 \\
+     %\textbf{PSNR}:  20.273426 \;% PSNR: \; 19.64074 \\
+     \end{tabular}
+     \caption{
+     t-SNE plots for SST, SNLI, and MRPC class impression words. The words from the different class impressions form different distinct clusters depending on its class for all three datasets. The clusters are shown in different colors based on their classes. \label{fig:t-SNE plots}}
+    \end{figure*}
+\end{comment}
+
+\begin{figure*}[!h]
+    \centering
+    \subfloat[]{
+        \includegraphics[scale=0.36]{images/SST_TSNE_PERPLEXITY_100.pdf}
+        \label{fig:sst_tsne}
+    }
+    \hfill
+    \subfloat[]{
+        \includegraphics[scale=0.36]{images/SNLI_TSNE_PERPLEXITY_120.pdf}
+        \label{fig:snli_tsne}
+    }
+    \hfill
+    \subfloat[]{
+        \includegraphics[scale=0.36]{images/MRPC_TSNE_PERPLEXITY_30.pdf}
+        \label{fig:mrpc_tsne}
+    }
+    \caption{
+        t-SNE plots for SST, SNLI, and MRPC class impression words. The words from the different class impressions form distinct clusters based on their classes for all three datasets. The clusters are shown in different colors based on their classes.
+    }
+    \label{fig:t-SNE plots}
+\end{figure*}
+
+
+
+
+\begin{figure}
+ \centering
+ \begin{tabular}{c}
+%   \includegraphics[scale=0.28]{Figures/skipflow/adding-lies-skipflow-1-24-25.png} \\
+\includegraphics[scale=0.5]{images/success_rate_vs_token_length.png}
+ %\textbf{MSE}:  0.0093898 \;% MSE: \; 0.01086 \\
+ %\textbf{PSNR}:  20.273426 \;% PSNR: \; 19.64074 \\
+ \end{tabular}
+
+ \caption{Attack success rate as a function of trigger length \label{fig:attack-success-trigger-length}
+ }
+
+ \label{fig:Length}
+\end{figure}
+
+
+\textbf{Class Impression Words:} For analyzing why certain words are selected as representatives of a particular class, we find the discriminative power of each word by calculating its entropy. Concretely, we calculate entropy of the random variable $Y|X$ where $Y$ denotes a model class and $X$ denotes the word level feature. Formally, we compute:
+\begin{equation}
+    \mathbb{H}(Y|X) = -\sum_{k=1}^{K}p(Y=k|X)\log_2p(Y=k|X)
+\end{equation}
+for the class impression words and we compare them with randomly chosen words from the model vocabulary.
+Fig.~\ref{fig:entropy-all-3-datasets} shows the results for SST, SNLI, and MRPC datasets. Interestingly, we find that the words which form class impressions are low entropy features. These words are much more discriminative than other randomly sampled words for all three datasets. This is further reinforced by Fig.~\ref{fig:t-SNE plots} where we show t-SNE plots for all the datasets \cy{do you use word-embedding feature?}. They show that words from different class impressions form distinct clusters. 
+
+
+
+
+
+
+
+
+
+Fig.~\ref{fig:entropy-all-3-datasets} shows that CIG algorithm selects low entropy features as representatives of different classes. However, it does not show the class-preference of these low entropy word-features. We hypothesize that those words become representatives of a particular class with a higher PMIs with respect to that class. In order to show this, we calculate PMI values of class representatives for each class and note that class representatives have a higher PMI for their own class than other classes. Formally, we compute:
+\begin{equation}
+    PMI(word, class) = log \frac{p(word,class)}{p(word,.)p(.,class)}
+\end{equation}
+We use add-10 smoothing for calculating this. We then group each class impression word based on its target class and report their PMI percentile. We show the results %for sentiment analysis, paraphrase identification, and natural language inference tasks 
+in Tables~\ref{table:sst-pmi-percentile}-\ref{table:snli-pmi-percentile}. It can be seen that class representatives have very high PMI percentiles. Previous studies have characterized high PMI words as \textit{dataset artefacts} \cite{gururangan2018annotation,poliak2018hypothesis}. \citet{wallace2019universal} have also shown that universal adversarial triggers have a high overlap with these dataset artefacts and consequently have high PMI values. Since we observe that class representatives too have high PMI values, we hypothesize that they could act as good adversarial triggers.
+
+
+Following this, we postulate that adding class impression words of one class to a real example of another class should change the prediction of that example. For validating this, we conduct an experiment where we take words from class impressions of class $c_i$ and prepend them to real examples of class $c_j$. Table~\ref{table:snli-uat-ci-word-transfer} shows the results of the experiment over SNLI dataset. As can be seen, the results are very promising. 
+
+We observe that the class which was more adversarially unsecure (\textit{Entailment}$\textgreater_{adv-unsecure}$\textit{Contradiction}) has better class impression words. These words, when added to examples of other classes, produce more successful perturbations. For e.g., when entailment words are added to contradiction examples, they reduce the accuracy from 91\% to less than 10\%. On the other hand, contradiction was adversarially more secure, and hence there is no appreciable reduction in the accuracy of any other class upon adding the contradiction class impression words\footnote{We find similar results on the MRPC dataset. We did not do these experiments for the SST dataset since SST class impression words are construct-relevant words and hence are bound to change sentiment scores while the same is not true for the other two datasets.}. This result can potentially help dataset designers design more secure datasets on which the model-makers can train adversarially robust models. 
+
+
+
+
+
+The above analysis shows that we can get class-impressions and adversarial triggers from dataset itself by computing entropy and PMI values. Moreover, our experiments in Sec.~\ref{sec:experiments} show that one can equivalently mine models to get class impressions and adversarial triggers. Therefore,
+we conclude that we can craft both class impressions and adversarial triggers given either dataset or a well-trained model (\textit{i.e.}, the one which can model training data distribution well). Further, the models represent their classes with dataset artefacts. These artefacts are also responsible for making them adversarially unsecure. The lesser the dataset artefacts in a class, the lesser is a trained model's representative capacity for that class, and the more is the model's adversarial robustness for that class. We would like to further develop on these initial results to better dataset design protocols in future work.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Conclusion and Future Work}
+\label{sec:conclusion}
+This paper presents a novel data-free approach, MINIMAL to mine natural language processing models for input-agnostic (universal) adversarial triggers. Our setting is more natural, which assumes an attacker does not have access to training data but only the trained model. Therefore, existing data-dependent adversarial trigger generation techniques are unrealistic in practice. On the other hand, our method is data-free and achieves comparable performance to data-based adversarial trigger generation methods. We also show that the triggers generated by our algorithm transfer remarkably well to different models and word embeddings. We achieve this by developing a combination of model inversion and adversarial trigger generation attacks. Finally, we show that low entropy word-level features occur as adversarial triggers and hence one can equivalently mine either a model or a dataset for these triggers.
+
+
+We conduct our analysis on word-level triggers and class impressions based model inversion. While this analysis leads to crucial insights into dataset design and adversarial trigger crafting techniques, it can be extended to multi-word contextual analysis. %Ultimately, NLP aims not to build bag-of-word-based models but to build such modeling techniques that can take context and other information into account while processing human language. Therefore, one line of future work is to extend the current analysis to take into account multi-word context. 
+This will also potentially lead to better dataset design protocols. We are actively engaged in this line of research. Further, another research focus can be to generate natural-looking class impressions and, consequently adversarial triggers.
+
+
+
+
+
+
+
+\section{Chapter Conclusion}
+\textit{What does an advertisement say that makes people change their beliefs and actions?} With limited works, the computational study of rhetoric of this all-pervasive form of marketing communication is still in its infancy. In this chapter, based on the well-developed social psychology and marketing literature, we develop and release the largest vocabulary of persuasion strategies and labeled dataset. We develop several models for predicting persuasion strategies for video and image based ads. Further, we show the performance of these models on several other advertisement-understanding related tasks, including topic, emotion, and question-answering.
+
