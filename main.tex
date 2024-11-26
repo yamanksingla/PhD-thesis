@@ -3,11 +3,12 @@
 % \usepackage[left=3.0 cm,right=4.0 cm,top=4.0 cm,bottom=5.0 cm]{geometry}
 \usepackage{svg} % this has to come above graphicx line
 \usepackage[utf8]{inputenc}
-\usepackage{lipsum}  
+\usepackage{lipsum}
+\usepackage{xurl}
 \usepackage{graphicx}
 \usepackage{pdflscape}  % For rotating content
 \usepackage{graphicx}   % Required for rotating tables
-\usepackage{hyperref}
+\usepackage[breaklinks=true]{hyperref}
 %\usepackage{devanagari}
 \usepackage[T1]{fontenc} % this is specially added to handle angel brackets
 \usepackage{amsfonts} % for Z symbol
@@ -208,8 +209,9 @@ Hopefully, I can return whatever I have gathered from these individuals back to 
 \clearpage
 
 {\small
+\tableofcontents
 \addcontentsline{toc}{chapter}{Detailed Table of Contents}
-\tableofcontents}
+}
 \pagenumbering{gobble}
 
 
@@ -236,16 +238,16 @@ Hopefully, I can return whatever I have gathered from these individuals back to 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\addcontentsline{toc}{chapter}{List of Tables}
 \listoftables
-\addcontentsline{toc}{chapter}{List of Figures}
+\addcontentsline{toc}{chapter}{List of Tables}
 \listoffigures
+\addcontentsline{toc}{chapter}{List of Figures}
 %\listofsymbols
 %\addcontentsline{toc}{chapter}{LIST OF SYMBOLS}
-\addcontentsline{toc}{chapter}{Bibliography}
-%\bibliographystyle{plainnat}
 \begin{singlespace}
 \bibliography{ref}
+\addcontentsline{toc}{chapter}{Bibliography}
+%\bibliographystyle{plainnat}
 \end{singlespace}
 
 \end{document}

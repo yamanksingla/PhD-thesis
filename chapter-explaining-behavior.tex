@@ -5,7 +5,7 @@
 \begin{figure}[t]
     % \vspace{-38mm}
     \centering
-    \includegraphics[scale=0.08]{images/footwear-strategies.pdf}
+    \includegraphics[width=0.8\textwidth]{images/footwear-strategies.pdf}
     \caption{Different persuasion strategies are used for marketing the same product (footwear in this example). The strategies are in red words and to be defined by us in the paper.}
     \label{fig:footwear-strategies}
     % \vspace*{-4mm}
@@ -26,7 +26,7 @@
 Modeling what makes an advertisement persuasive, \textit{i.e.}, eliciting the desired response from consumer, is critical to the study of propaganda, social psychology, and marketing. Despite its importance, computational modeling of persuasion in computer vision is still in its infancy, primarily due to the lack of benchmark datasets that can provide persuasion-strategy labels associated with ads. Motivated by persuasion literature in social psychology and marketing, as the first contribution, we introduce an extensive vocabulary of persuasion strategies and build the first ad corpus (both image and video) annotated with persuasion strategies (Section~\ref{sec:chapter-2 Persuasion Strategies In Advertisements}). We then formulate the task of persuasion strategy prediction with multi-modal learning. The image dataset also provides image segmentation masks, which labels persuasion strategies in the corresponding ad images on the test split. We publicly release our code and dataset at \url{https://midas-research.github.io/persuasion-advertisements/}. This section is based on two papers \cite{kumar2023persuasion,bhattacharya2023video}.
 
 
-Persuasion strategies offer a human-interpretable framework for understanding persuasion and its influence on behavior. Another focus of my work is to uncover what models trained to predict behavior actually learn. Advances in deep learning and large language models have significantly improved the accuracy of behavior prediction \cite{khandelwal2023large}, but they have also increased the models' opacity, making them more like black boxes. Investigating what these \textit{behavior prediction models understand about behavior} can provide insights that may be challenging to derive from first principles. This motivation underpins our other work \cite{singla2022minimal}, discussed in Section~\ref{MINIMAL: Mining models for universal adversarial triggers}.
+Persuasion strategies offer a human-interpretable framework for understanding persuasion and its influence on behavior. Another focus of my work is to uncover what models trained to predict behavior actually learn. Advances in deep learning and large language models have significantly improved the accuracy of behavior prediction \cite{khandelwal2023large}, but they have also increased the models' opacity, making them more like black boxes. Investigating what these \textit{behavior prediction models understand about behavior} can provide insights that may be challenging to derive from first principles. This motivation underpins our other work \cite{singla2022minimal}, discussed in Section~\ref{MINIMAL: Mining models for universal adversarial triggers}. In this work, we mine behavioral prediction models to understand what they learn about behavior which makes them so successful at behavior prediction. This approach is complementary to the approach afforded by persuasion strategies. While persuasion strategies help humans summarize all messages to predict and understand behavior, our method, called universal adversarial triggers (UATs) help us understand a model's global behavior. We observe that content words with the lowest entropy appear as UATs. We explain this idea with the help of several models and datasets.
 
 
 
@@ -41,39 +41,34 @@ Marketing communications is the mode by which companies and governments inform, 
 
 \begin{figure*}
     \centering
-    \begin{subfigure}[b]{0.22\textwidth}
+    \begin{subfigure}[b]{0.4\textwidth}
          \centering
          \includegraphics[width=\textwidth,scale=0.6]{images/airbnb.jpeg}
          \caption{}
          \label{fig:Airbib}
      \end{subfigure}
-     \begin{subfigure}[b]{0.2\textwidth}
+     \begin{subfigure}[b]{0.4\textwidth}
          \centering
          \includegraphics[width=\textwidth,scale=0.5]{images/Burger-King-vs-McDonalds-comparative-ad.png}
-         \caption{}
          \label{fig:mcdonald}
      \end{subfigure}
-     \begin{subfigure}[b]{0.27\textwidth}
-         \centering
-         \includegraphics[width=\textwidth,scale=1.0]{images/old-spice.jpeg}
-         \caption{}
-         \label{fig:old-spice}
-     \end{subfigure}
-     \begin{subfigure}[b]{0.12\textwidth}
+     \begin{subfigure}[b]{0.3\textwidth}
          \centering
          \includegraphics[width=\textwidth,scale=0.68]{images/1950s-usa-florida-orange-juice-magazine-advert-EXR404.jpeg}
-         \caption{}
          \label{fig:florida-juice}
      \end{subfigure}
-     \begin{subfigure}[b]{0.12\textwidth}
+     \begin{subfigure}[b]{0.3\textwidth}
          \centering
          \includegraphics[width=\textwidth,scale=0.68]{images/Oreo_SnowWhite.jpeg}
-         \caption{}
          \label{fig:oreo}
      \end{subfigure}
+     \begin{subfigure}[b]{0.6\textwidth}
+         \centering
+         \includegraphics[width=\textwidth,scale=1.0]{images/old-spice.jpeg}
+         \label{fig:old-spice}
+     \end{subfigure}
      
-     
-    \caption{Various rhetoric strategies used in advertisements}
+    \caption{Example of various rhetoric strategies used in advertisements}
     \label{fig:rhetoric-strategies-ads}
 \end{figure*}
 
