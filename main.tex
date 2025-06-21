@@ -6,7 +6,7 @@
 \usepackage{lipsum}
 \usepackage{xurl}
 \usepackage{graphicx}
-\usepackage{pdflscape}  % For rotating content
+\usepackage{lscape}  % For rotating content
 \usepackage{graphicx}   % Required for rotating tables
 \usepackage[breaklinks=true]{hyperref}
 %\usepackage{devanagari}
@@ -18,7 +18,6 @@
 \usepackage{makecell} % for line breaks in table cell
 \usepackage{booktabs} % this is for toprule and bottomrule in tables
 \usepackage{xcolor} % color only one cell of a table
-\usepackage{pdflscape} % one page landscape
 %\usepackage[numbers,sort&compress]{natbib}
 \usepackage{cite}
 \usepackage{amsmath,amsfonts,amssymb}
@@ -28,7 +27,7 @@
 \setcounter{tocdepth}{5}
 \setcounter{secnumdepth}{6}
 \usepackage{hyperref}
-
+\usepackage{tocbibind}
 \newcommand{\mathbbm}[1]{\text{\usefont{U}{bbm}{m}{n}#1}}
 \input{behavior_model_macros}
 
@@ -61,16 +60,37 @@
 
 % Set global spacing for all enumerate environments
 \setlist[enumerate]{topsep=0.5em} % Adjust the value of topset as needed
+\usepackage{pdflscape}
+
+\usepackage{fancyhdr}
+
+
+% Define a custom page style for landscape pages
+\fancypagestyle{landscapeStyle}{
+    \fancyhf{} % Clear all headers and footers
+    \fancyfoot[C]{\thepage} % Page number centered at bottom
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}  
+}
+
+\pagestyle{fancy} % Use a default fancy style globally
+\renewcommand{\headrulewidth}{0pt} % Remove the header line
+\renewcommand{\footrulewidth}{0pt} % Remove the footer line
+\fancyhf{} % Clear default header and footer
+\fancyfoot[C]{\thepage} % Place page numbers on the right for other pages
+
 
 
 
 \begin{document}
 
 % \maketitle
-\input{cover}
+
+%\input{cover-old}
+\input{cover-iiitd}
 
 \pagenumbering{roman}
-\setcounter{page}{1}
+\setcounter{page}{3}
 
 % \chapter*{Certificate}
 % \addcontentsline{toc}{chapter}{Certificate} 
@@ -221,6 +241,8 @@ Hopefully, I can return whatever I have gathered from these individuals back to 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\include{queries}
 \include{introduction}
 \include{chapter-explaining-behavior}
 \include{chapter-content-behavior-model}
@@ -237,17 +259,37 @@ Hopefully, I can return whatever I have gathered from these individuals back to 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\iffalse
+% List of Tables
+\addcontentsline{toc}{chapter}{List of Tables}  % Add to TOC
+\listoftables
+\clearpage  % Ensure page break
+
+% List of Figures
+\addcontentsline{toc}{chapter}{List of Figures}  % Add to TOC
+\listoffigures
+\clearpage  % Ensure page break
+
+
 
 \listoftables
 \addcontentsline{toc}{chapter}{List of Tables}
+\suppressfloats[t]
+\clearpage
 \listoffigures
-\addcontentsline{toc}{chapter}{List of Figures}
-%\listofsymbols
-%\addcontentsline{toc}{chapter}{LIST OF SYMBOLS}
+%\addtocontents{toc}{\protect\contentsline{chapter}{List of Figures}{282}}
+%\addcontentsline{toc}{chapter}{List of Figures}{282}
+\suppressfloats[t]
+\fi
+
+\listoftables
+\listoffigures
 \begin{singlespace}
 \bibliography{ref}
-\addcontentsline{toc}{chapter}{Bibliography}
-%\bibliographystyle{plainnat}
+%\addtocontents{toc}{\protect\contentsline{chapter}{Bibliography}{297}}
+%\addcontentsline{toc}{chapter}{Bibliography}{297}
 \end{singlespace}
+
+
 
 \end{document}

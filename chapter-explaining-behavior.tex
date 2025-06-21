@@ -126,7 +126,7 @@ Any instance of (successful) persuasion is composed of two events: (a) an attemp
 
 
 \begin{landscape}
-    
+    \pagestyle{landscapeStyle}
 \begin{figure*}[t]
 % \vspace*{-12mm}
         \centering
@@ -636,6 +636,11 @@ At every learning step $t$, a set of labeled samples $L_t$ is first used to trai
 $f_t$. Then, from an unlabeled pool $U_t=D-L_t$, an image instance $a$ is chosen by a selection function $g$. Afterwards, an oracle provides temporal ground-truth for the selected instance, and the labeled set $L_t$ is augmented with this new annotation. This process repeats until the desired performance is reached or the set $U_t$ is empty.
 
 In our implementation, we instantiate the active learning selection function as the entropy of the probability distribution predicted by the model over the set of persuasion strategies for a given ad image instance $a$. Formally, $g = -\sum_{i=1}^{|\mathcal{P}|}p^{n}_{i}*\log(p^{n}_i)$, where $p^{n}_i$ denotes the normalized probability with which $i^{th}$ persuasion strategy is present in $a$ as per the model prediction. The normalized probability $p^{n}_{i}$ is estimated as $p_i/\sum_{j=1}^{|\mathcal{P}|}p_j$. Intuitively, ad samples with high entropy selection values indicate that the model trained on limited data has a higher degree of confusion while predicting the persuasion strategy since it is not decisively confident about predicting few strategies. Hence, we rank the unlabeled ad images in the decreasing order of difficulty according to the corresponding values of the entropy selection function and select the top-k ads in the subsequent batch for annotation followed by training. As shown in Fig.~\ref{fig:AL_batch_test}, we set k to be 250 and analyze the effect of incrementally introducing new samples selected through active learning. It can be seen that both top-1 and top-3 accuracy increases with the addition of new training data. We stop at the point when 2500 training samples are used since the model performs reasonably well with a top-1 and top-3 strategy prediction accuracy of 59.2\% and 84.8\% (see Fig.~\ref{fig:AL_batch_test}). 
+
+
+For sample selection, we rank the ads using the model's entropy as the ranking function. We choose samples with the highest entropy, indicating the model's confusing in predicting strategies. The ad samples with top-k entropy (where k=250) are selected for annotation in each batch (with the entropy thresholds for each batch being determined by the entropy of the kth sample). The active learning process stops when the model achieves reasonable performance (thus determining the convergence criterion), with a top-1 accuracy of 59.2\% and top-3 accuracy of 84.8\% after training on 2,500 samples. Incremental improvements in accuracy are observed as new data is introduced through active learning.
+
+
 
 
 

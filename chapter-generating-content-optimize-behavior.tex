@@ -397,7 +397,7 @@ In contrast to previous video memorability works where videos were soundless and
 \label{sec:Annotation Protocol}
 At the outset, participants are given a preliminary questionnaire aimed at establishing their brand-related interactions and media consumption habits. Participants are given a list of fifteen randomly chosen brand options and are asked to choose those they recall encountering advertisements for during the current year. Subsequently, participants are presented with another set of fifteen brands and are instructed to identify those for which they have personally utilized products within the same timeframe. 
 
-In addition, participants are asked about their utilization of ad-blocking software and their Youtube subscription. The questionnaire further captures participants' digital media habits, including the division of their time spent on YouTube between mobile and web platforms and their preferred channels for acquiring information about new products and brands.
+In addition, participants are asked about their utilization of ad-blocking software and their YouTube subscription. The questionnaire further captures participants' digital media habits, including the division of their time spent on YouTube between mobile and web platforms and their preferred channels for acquiring information about new products and brands.
 
 Following the initial questionnaire, participants proceed to the core segment of the study, where they are shown 11 advertisements in a sequential manner. Notably, the eleventh advertisement is deliberately repeated for half of the participants, while it is unique for the other half. To ensure participant engagement, attention-check questions are placed between every two to three advertisements. These questions are common sense questions like ``How many legs does a cow have?''. If the participant fails to answer the question within 10 secs, they are requested to rewatch the video. After the 11th video, participants are asked if they recollect watching the ad in the span of the study. Interestingly, 15\% participants were not able to recognize the repeated video correctly. 
 
@@ -466,13 +466,24 @@ Next, we investigate the effect of the order in which the video was watched with
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\vspace{-2mm}
+
 \subsection{Predicting Ad Memorability}
 \label{sec:Predicting Ad Memorability}
 
+Predicting ad memorability—both short-term and long-term—requires integrating diverse forms of knowledge. We conceptualize this task as a function of three primary components: (a)\textit{content features} or \textit{visual knowledge} derived from the ad's audio-visual data, including shapes, colors, objects, and scenes; (b)\textit{cognitive knowledge} related to marketing psychology, such as emotion, scene complexity, and aesthetics; and (c)~\textit{world knowledge} that allows reasoning about real-world entities and relationships implied by the ad.
 
-In this section, we focus on predicting memorability - both long-term and short-term for both videos and images. We pose memorability prediction as a problem that needs (a)~\textit{visual knowledge} to identify and understand visual concepts across images and videos like shapes, colors, objects, and scenes, (b)~\textit{cognitive knowledge} relevant to marketing, for example, ad emotions, scene complexity, scene aesthetics, and (c)~\textit{world knowledge} to relate the captured visual and marketing concepts to real-world concepts capturing their function, use, and interaction patterns. %Recently, models like BLIP \cite{li2023blip}, Llava \cite{liu2023visual}, and Video4096 \cite{bhattacharya2023video} have shown that visual signals can be successfully mapped to language semantics, allowing us to leverage visual knowledge from visual embedding models like ViT \cite{dosovitskiy2020image} and world knowledge from LLMs. 
-For instance, when Airbnb\footnote{See Fig.~\ref{fig:airbnb-ad}) for the ad} shows an adult female and a male with the text, ``Our guest room is paying for our wedding''; it denotes a couple saying that renting out their space on Airbnb helps them sponsor their wedding \cite{kumar2023persuasion}. World knowledge captured in LLMs, together with the visual knowledge of ViT and marketing knowledge through specialized cognitive models, helps to (i)~identify the two adults as a couple, (ii)~AirBnb as a housing company, (iii)~recognize the warm emotional tone of the text, and make sense of all three concepts together. Fig.~\ref{fig:memorability-model} shows the proposed architecture of Henry. %The overall process involves passing visual content in the form of video or image through a visual embedder, which maps the visual content into a language space with the help of QFormer \cite{li2023blip}. We find that describing the visual content in language and combining it with the video/image tokens helps for better prediction. The resulting content tokens, along with experiment descriptions, are fed into the Henry to predict memorability scores between 00 to 99. We discuss each part of the architecture and training next.
+Our proposed model, Henry (Fig.~\ref{fig:memorability-model}), is designed to fuse these components to produce a memorability prediction. The processing of content features begins with a visual encoder (EVA-CLIP) that extracts embedding vectors from ad frames. To bridge the modality gap between vision and language, these visual embeddings are projected into the word embedding space of a large language model using a Q-Former module \cite{li2023blip}. This creates a sequence of "visual tokens" that represent the ad's visual narrative. To enrich this representation, we further generate textual "verbalizations" of the content using specialized perception modules. These include automatic speech recognition (ASR) transcripts, optical character recognition (OCR) from on-screen text, and descriptions of cognitive attributes like the ad's emotional tone and scene complexity.
+
+Crucially, memorability is not solely an intrinsic property of the content but is also influenced by prior audience engagement. We incorporate this through behavioral signals. Signals such as brand relevance (derived from user studies) and ad popularity metrics (e.g., YouTube likes-to-views ratio) are encoded into a format suitable for the LLM. Numerical signals are quantized into descriptive categories (e.g., 'high', 'medium', 'low' popularity) and converted to text. These textual representations of behavioral signals are then tokenized.
+
+The final stage involves merging these different information streams. The latent representations, comprising the projected visual tokens, the tokenized verbalizations, and the tokenized behavioral signals, are concatenated into a single, unified input sequence. This sequence is then fed into the LLM (Llama). The self-attention layers within the LLM are responsible for fusing these varied signals, allowing the model to learn complex interactions between the ad's content, its prior reception, and real-world concepts. The entire Henry model is then fine-tuned end-to-end on the LAMBDA dataset to predict a memorability score, framed as a regression task on a scale of 0 to 99. This integrated approach allows Henry to ground visual and behavioral data in the rich semantic space of the LLM, enabling more accurate and nuanced memorability predictions.
+
+
+For example, consider an Airbnb ad (see Fig.~\ref{fig:airbnb-ad}) showing a couple and the on-screen text: “Our guest room is paying for our wedding.” This requires the model to identify the individuals as a couple (visual and cognitive knowledge), recognize Airbnb as a housing company (world knowledge), and interpret the warm emotional tone (cognitive knowledge). The LLM uses its rich pretrained knowledge to reason across these domains.
+
+Finally, the entire Henry model is fine-tuned end-to-end on the LAMBDA dataset to predict memorability scores (ranging from 0 to 99) via a regression objective. This unified architecture allows Henry to ground audio-visual and behavioral data in a semantically rich space, enabling more accurate and context-aware predictions of ad memorability.
+
+
 
 
 
@@ -2466,16 +2477,36 @@ Next, we try in-context learning with GPT-3.5 \cite{ouyang2022training} and GPT-
 
 
  
+
  \subsubsection{EngageNet Model To Align With Viewer Engagement}
  \label{sec:EngageNet}
  
- Since the existing approaches do not show acceptable performance for predicting user engagement over images, we, therefore, train our own engagement-aware vision-language model (VLM) model, EngageNet. To this end, we perform visual instruction fine-tuning of LLaVA-1.5 \cite{liu2023visual} on the EngagingImageNet train dataset (Figure \ref{fig:EngageNet_training}). We design an instruction (Listing~\ref{EngageNet:behaviour_simulation-1}) for the VLM to predict the normalized likes of an image on a 0-100 scale, also conditioned on metadata comprising the marketer (company), image resolution, image colours and tones with their spatial coverage, image description and tags, and the date of releasing the image on social media. 
+ Since the existing approaches do not show acceptable performance for predicting user engagement over images, we, therefore, train our own engagement-aware vision-language model (VLM) model, EngageNet. To this end, we perform visual instruction fine-tuning of LLaVA-1.5 \cite{liu2023visual} on the EngagingImageNet train dataset (Figure \ref{fig:EngageNet_training}). 
+ 
+
+The core of EngageNet is its ability to condition its output on a diverse set of inputs, including behavioral signals. The model is architected to predict the normalized likes of an image on a 0-100 scale. This prediction is conditioned on a unified input representation that merges visual information with various forms of metadata, including behavioral cues.
+The conditioning mechanism operates as follows. First, the input image is processed by the VLM's vision encoder to produce a sequence of visual embeddings. Concurrently, we process the metadata, which consists of marketer-provided information such as the company name, image resolution, color palettes, descriptive tags, and the social media release date. These categorical and textual metadata are converted into a uniform text-based format. For instance, numerical data like image resolution are described textually (e.g., "resolution 1024 by 1024 pixels"). All textual metadata, including these converted signals, are concatenated into a single string.
+
+
+This combined text string is then tokenized to create a sequence of textual embeddings. These are subsequently prepended to the visual embeddings derived from the image. This concatenated sequence of text and vision embeddings forms the final input to the LLaVA-1.5 language model component. The model's self-attention mechanism is then responsible for fusing these heterogeneous signals—learning the complex interplay between the visual content and the associated metadata—to predict the engagement score.
+To enhance the model's robustness and its reliance on visual features, we augment the EngagingImageNet dataset with synthetic negative samples. For 25\% of tweets from high and medium engagement tiers, we pair the tweet's metadata with an unrelated image from a different tweet. The corresponding "likes" for these mismatched pairs are set to a low value (randomly sampled from 5-15). This procedure encourages the model to penalize images that are semantically irrelevant to the textual context, thereby improving its discriminative ability. After this augmentation, our final dataset comprises 957,809 samples, which we split into training and testing sets.
+
+We design an instruction (Listing~\ref{EngageNet:behaviour_simulation-1}) for the VLM to predict the normalized likes of an image on a 0-100 scale, also conditioned on metadata comprising the marketer (company), image resolution, image colours and tones with their spatial coverage, image description and tags, and the date of releasing the image on social media. 
+
+
+Since EngageNet is trained to predict the KPI of an image, we additionally model the problem as a regression task. We attach a two-layered MLP network on top of the last layer of hidden states of the decoder module to predict the scalar KPI from EngageNet. Therefore, while typically language models are trained on cross-entropy loss $L_{CE}$, we also use mean squared error $L_{MSE}$ as an auxiliary loss to train EngageNet%, similar to \cite{zhou2024customization}
+ . This is because $L_{MSE}$ is more sensitive to the difference between the predicted and actual KPI values, which is crucial to better guide EngageNet to learn the image KPI prediction task. Thus, the final loss function for EngageNet is given by:
+ \begin{equation}
+     L_{EOIG} = L_{CE} + \lambda L_{MSE}
+ \end{equation}
+ where $\lambda$ is a hyperparameter that controls the weight of the auxiliary loss. We set $\lambda = 0.1$ in our experiments. We find that EngageNet demonstrates strong performance at predicting user engagement over images, achieving a Pearson correlation of ~0.62 with ground truth user likes (Table \ref{tab:EngageNet_kpi_prediction_results}).
+
 
 
 % Contrastive samples
- We also augment EngagingImageNet with synthetic data samples. For this, we randomly sample 25\% tweets from the high and medium likes buckets of each company and pair the tweet with an unrelated image from a different tweet. The corresponding likes is set to a low value, randomly sampled from the range 5-15. The resulting samples are called \textit{negative samples}. This helps the model with the following: (1)~it induces more sensitivity towards image features and reduces bias on tweet metadata to predict the KPI, and (2)~penalises the image if it is irrelevant to the tweet context. 
+% We also augment EngagingImageNet with synthetic data samples. For this, we randomly sample 25\% tweets from the high and medium likes buckets of each company and pair the tweet with an unrelated image from a different tweet. The corresponding likes is set to a low value, randomly sampled from the range 5-15. The resulting samples are called \textit{negative samples}. This helps the model with the following: (1)~it induces more sensitivity towards image features and reduces bias on tweet metadata to predict the KPI, and (2)~penalises the image if it is irrelevant to the tweet context. 
  
- Finally, we end up with a dataset of 957,809 samples, which we split into training and testing sets. We randomly sampled nearly 2000 samples from each bucket for testing, with the remaining samples used for training.  
+% Finally, we end up with a dataset of 957,809 samples, which we split into training and testing sets. We randomly sampled nearly 2000 samples from each bucket for testing, with the remaining samples used for training.  
  
  % Inputs to EngageNet BS reward model:
  % \begin{itemize}
@@ -2502,12 +2533,6 @@ Next, we try in-context learning with GPT-3.5 \cite{ouyang2022training} and GPT-
 
 
  
- Since EngageNet is trained to predict the KPI of an image, we additionally model the problem as a regression task. We attach a two-layered MLP network on top of the last layer of hidden states of the decoder module to predict the scalar KPI from EngageNet. Therefore, while typically language models are trained on cross-entropy loss $L_{CE}$, we also use mean squared error $L_{MSE}$ as an auxiliary loss to train EngageNet%, similar to \cite{zhou2024customization}
- . This is because $L_{MSE}$ is more sensitive to the difference between the predicted and actual KPI values, which is crucial to better guide EngageNet to learn the image KPI prediction task. Thus, the final loss function for EngageNet is given by:
- \begin{equation}
-     L_{EOIG} = L_{CE} + \lambda L_{MSE}
- \end{equation}
- where $\lambda$ is a hyperparameter that controls the weight of the auxiliary loss. We set $\lambda = 0.1$ in our experiments. We find that EngageNet demonstrates strong performance at predicting user engagement over images, achieving a Pearson correlation of ~0.62 with ground truth user likes (Table \ref{tab:EngageNet_kpi_prediction_results}).
 
 
 
@@ -2534,8 +2559,6 @@ We also conduct an experiment to investigate the signal present in the EngagingI
 Additionally, we evaluate the impact of adding negative samples to the training data. These samples are constructed by sampling images and other inputs in the instruction from different tweets, such that they are not aligned, and then setting the normalized likes to a very low value. Although we find that the addition of negative samples does not significantly impact the correlation of EngageNet, however it does help in improving the robustness of the model. This is because EngageNet learns to penalize images that are not aligned with the other inputs in the instruction. This is crucial for leveraging EngageNet as a reward model for engagement-optimized image generation as described in Section \ref{sec:Performance Aligning Stable Diffusion}. Since we propose to also utilize EngageNet as an oracle for ranking models in the Engagement Arena, we train EngageNet on the entire EngagingImageNet dataset, \textit{i.e.}, with both train and test data. In this configuration, EngageNet accomplishes a high correlation of 0.87 with ground truth user likes, which establishes its effectiveness to be used as an oracle. 
  
 
-
- 
  
  \iffalse
      \begin{itemize}
