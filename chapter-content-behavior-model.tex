@@ -1023,6 +1023,41 @@ Vicuna & Video Embeddings & 12.21 & 49.77 & 11.08 & 52.51 & 7.66 & 65.42 & 9.44 
 
 %%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%
+\section{Failure Cases and Model Limitations}
+\label{sec:failure-cases}
+
+While LCBM demonstrates strong performance across behavior-related tasks, our empirical analysis reveals several systematic limitations and failure modes that merit detailed examination. Understanding these failure cases is crucial for both theoretical advancement and practical deployment of content-behavior models.
+
+\subsection{Scale vs. Specialization Trade-offs}
+
+The most prominent limitation of LCBM emerges in pure content understanding tasks, where scale advantages of larger models cannot be overcome by behavioral specialization. Table~\ref{tab:content-understanding} demonstrates this clearly: while LCBM (42.17\% topic accuracy) substantially outperforms similar-sized models like Vicuna (11.75\%) and VideoChat (9.07\%), it underperforms GPT-3.5 (51.6\%) despite being trained on both content and behavior tokens. This 9.43 percentage point gap indicates that \textit{parameter scale remains a fundamental limiting factor for content understanding capabilities}.
+
+This trade-off manifests across multiple content tasks. In emotion classification, LCBM achieves 7.08\% accuracy compared to GPT-3.5's 11.68\%, and in action-reason understanding, LCBM reaches 39.55\% versus GPT-3.5's 66.27\%. These consistent performance gaps suggest that behavior fine-tuning, while beneficial for behavior-related tasks, may introduce interference patterns that degrade pure content processing capabilities when competing against substantially larger models.
+
+\subsection{Behavior Domain Specificity and Transfer Limitations}
+
+Our domain adaptation experiments reveal significant limitations in cross-domain behavior transfer. Table~\ref{table:behavior-domain-adaptation} shows that LCBM trained exclusively on email data achieves R² = 0.55, substantially underperforming the domain-adapted model (R² = 0.64) trained on YouTube + Email data. This 16.4\% relative improvement demonstrates that either behavior patterns exhibit strong domain-specific characteristics that limit naive transfer learning approaches or that models of certain (small) size need to be trained on more data to generalize better.
+
+The failure of direct behavior transfer is particularly evident in the semantic gap between platforms. YouTube replay patterns, which capture temporal engagement dynamics in video content, do not directly transfer to email click-through behaviors, which reflect different cognitive and motivational processes. Similarly, Twitter engagement patterns (likes, retweets) operate under distinct social dynamics compared to YouTube's consumption-focused metrics. This suggests that behavior tokens encode platform-specific interaction modalities that require careful adaptation strategies rather than direct transfer. Future works should explore increasing the size of the model, training on diverse and more data to improve generalization, and also explore more sophisticated domain adaptation strategies.
+
+
+\subsection{Context Length and Complexity Limitations}
+
+LCBM exhibits performance degradation on longer content sequences and complex multimodal inputs. For videos exceeding certain length (typically 300 seconds or containing more than 50 distinct scenes), behavior prediction accuracy drops significantly. Similarly, when processing emails with extensive visual content or complex layout structures, click-through rate prediction becomes less reliable.
+
+This limitation stems from the verbalization approach used to convert multimodal content into text tokens. Longer content requires proportionally more tokens for adequate representation, leading to context window constraints and attention dilution. The linear scaling of token requirements with content complexity creates a fundamental scalability challenge for the current architecture. Future works should explore more efficient content verbalization approaches that scale better with content complexity. Further, stronger integrations of the content and behavior modalities could help the model to better understand the content and behavior.
+
+\subsection{Behavioral Signal Quality Dependencies}
+
+LCBM's performance is highly sensitive to the quality and granularity of behavioral signals. For content with sparse engagement data (fewer than 100 interactions) or noisy behavioral metrics (e.g., bot-inflated engagement), prediction accuracy degrades substantially. This dependency on high-quality behavioral supervision limits the model's applicability to emerging content creators or niche domains with limited historical data. Future works should explore more robust behavioral signal collection and processing methods to improve the quality of the behavioral signals.
+
+Furthermore, the model struggles with behavioral signals that exhibit high temporal variance or are influenced by external events (trending topics, viral phenomena). The static nature of the training data fails to capture the dynamic aspects of online engagement, leading to prediction failures during periods of unusual activity patterns. Future works should explore more dynamic behavioral modeling approaches to capture the dynamic aspects of online engagement.
+
+
+Understanding these failure modes provides a foundation for developing more robust and capable content-behavior models while setting appropriate expectations for current deployment scenarios.
+
+%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
 In this paper, we make initial strides towards solving the effectiveness problem proposed by Shannon in his seminal paper on communication. The effectiveness problem deals with predicting and optimizing communication to get the desired receiver behavior. This can be seen as consisting of a string of capabilities: behavior simulation, content simulation, and behavior domain adaptation. We show that while large language models have great generalization capabilities, are unable to perform well on the effectiveness problem. We posit that the reason for this could be a lack of ``behavior tokens'' in their training corpora. Next, we train LLMs on behavior tokens to show that other than content understanding tasks, the trained models are now able to have good performance across all the behavior-related tasks as well. We also introduce a new Content Behavior Corpus (CBC) to spur research on these large content and behavior models (LCBMs).
 
@@ -1031,7 +1066,7 @@ In this paper, we make initial strides towards solving the effectiveness problem
 
 
 
-\section{Bias Mitigation and Privacy-Preserving Strategies in Large-Scale Behavioral Modeling}
+\section{Ethical Considerations: Bias Mitigation and Privacy-Preserving Strategies in Large-Scale Behavioral Modeling}
 \label{sec:bias-privacy-appendix}
 The integration of real-world behavioral data into large-scale content-behavior models offers unprecedented opportunities for understanding and simulating human communication. However, it also introduces critical challenges related to fairness, bias, and privacy. In this section, we detail the technical strategies adopted in this thesis to address these concerns, drawing on best practices from the machine learning literature and the specific protocols implemented in our work.
 
