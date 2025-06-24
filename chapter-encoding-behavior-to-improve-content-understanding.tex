@@ -1978,6 +1978,92 @@ Assess whether the caption is concise yet descriptive, providing meaningful and 
             \item LAMBDA \cite{si2023long} is a long-term memorability consisting of 2205 video ads collected over 1749 participants covering 276 brands. The average video length is 33 seconds and the videos are highly complex, consisting of audio, logos, fast-moving scenes, emotions, \textit{etc}.
 \end{enumerate}
 
+\subsubsection{Memorability Metrics: Detailed Explanation and Limitations}
+\label{sec:Memorability Metrics}
+
+Our evaluation of memorability models across seven benchmarks (Table \ref{tab:memorability}) employs specific metrics with established justifications in cognitive psychology and computer vision literature. This section provides detailed justification for our metric choices and discusses their limitations.
+
+\textbf{Choice of Spearman Rank Correlation:}
+
+We use Spearman's rank correlation ($\rho$) as our primary evaluation metric for memorability prediction, following established practices in memorability research \cite{khosla2015understanding,cohendet2019videomem,newman2020multimodal}. This choice is justified by several cognitive and methodological considerations. 
+
+Memorability is fundamentally a ranking phenomenon where humans consistently order content by memorability with 60-80\% agreement. The universal adoption of rank-based metrics stems from fundamental challenges in memory assessment: individual differences in motivation, attention span, and cognitive ability create substantial variation in absolute memory performance across participants and experimental contexts. However, the relative ordering of content by memorability remains remarkably stable across these individual differences \cite{isola2011makes,khosla2015understanding}. This stability occurs because temporal factors affect all content similarly - when the delay between initial viewing and memory testing increases, memorability scores for all images decrease proportionally, preserving their rank ordering \cite{isola2011makes}. This temporal invariance of ranks, combined with their robustness to individual participant variations, makes correlation-based metrics the most appropriate and reliable approach for memorability evaluation across diverse experimental settings and populations.
+
+Therefore, rank correlation has been the standard evaluation metric chosen by all major memorability datasets and studies in the field. This includes the foundational work by \citet{isola2011makes} for SUN memorability, \citet{khosla2015understanding} for LaMem, \citet{cohendet2019videomem} for VideoMem, \citet{newman2020multimodal} for Memento10k, \citet{goetschalckx2019memcat} for MemCat, and MediaEval challenges \cite{Kiziltepe2021}. As demonstrated in Chapter 5, Table~\ref{tab:memorability}, human consistency scores across memorability datasets range from 0.55 (LAMBDA) to 0.78 (MemCat), indicating that humans naturally rank content by memorability rather than providing absolute scores.
+    
+
+\textbf{Human Consistency as Performance Ceiling:}
+
+Our evaluation framework uses human consistency scores as theoretical performance ceilings, as detailed in Chapter 5's comprehensive analysis. Human consistency measures the extent to which humans agree on the memorability of an image or a video. Human agreement levels across our seven benchmarks demonstrate the inherent limits of memorability prediction:
+
+\begin{itemize}
+    \item \textbf{Image Datasets}: LaMem (0.68), MemCat (0.78), SUN (0.75)
+    \item \textbf{Video Datasets}: Memento10k (0.73), VideoMem (0.61), LAMBDA (0.55)
+\end{itemize}
+
+These values represent the theoretical maximum performance achievable, as they reflect the extent to which humans themselves agree on memorability rankings. Our Behavior-LLaVA models approach but do not exceed these consistency levels, indicating meaningful memorability modeling within human agreement ranges. Going beyond these consistency levels requires personalization of a memorability model for each user.
+
+\textbf{Limitations and Methodological Challenges:}
+
+Despite the strong theoretical foundation, our memorability evaluation approach has several important limitations:
+
+\begin{enumerate}
+    \item \textbf{Dataset Size Variations}: Our benchmarks range from 1,500 (MediaEval) to 60,000 (LaMem) samples, creating potential evaluation inconsistencies. We mitigate this through correlation metrics that are robust to sample size differences, but acknowledge that smaller datasets may not capture the full complexity of memorability patterns.
+    
+    \item \textbf{Temporal Memory Types}: Our evaluation spans both short-term memory (STM: delays $<$10 minutes) and long-term memory (LTM: delays 1-3 days). As demonstrated in Chapter 5's ablation studies, STM generalizes better to LTM in zero-shot settings than vice versa, indicating that different memory systems may require specialized modeling approaches.
+    
+    \item \textbf{Content Complexity Spectrum}: Performance gains correlate with cognitive complexity, with highest improvements on complex multimodal content (LAMBDA: 219\% zero-shot improvement) and more modest gains on simpler content (SUN, MemCat). This suggests our behavioral training may be particularly effective for complex, real-world content but less impactful for controlled laboratory stimuli.
+    
+    \item \textbf{Human Consistency Ceiling Effects}: The relatively low human consistency scores, particularly for complex video content (LAMBDA: 0.55, VideoMem: 0.61), indicate fundamental challenges in memorability assessment. 
+    
+    \item \textbf{Cross-Domain Generalization}: While our models show consistent improvements across all benchmarks, the magnitude of gains varies significantly. As shown in Chapter 5's domain adaptation analysis, there are substantial performance losses when modeling memorability for brands or content types not seen during training, suggesting domain-specific memorability patterns.
+\end{enumerate}
+
+
+\textbf{Future Directions for Metric Development:}
+
+Based on our analysis and the limitations identified, we propose several directions for improving memorability evaluation:
+
+\begin{itemize}
+    \item \textbf{Personalized Memorability Models}: Developing metrics that capture different aspects of a person's memorability (visual, semantic, emotional) rather than relying on average statistics.
+    \item \textbf{Temporal Modeling}: Incorporating time-dependent memorability measures that account for forgetting curves and memory consolidation processes.
+    \item \textbf{Real-World Validation}: Developing evaluation protocols that better reflect natural viewing conditions and real-world memorability assessment scenarios. 
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+%\bibliography{iclr2025_conference}
+%\bibliographystyle{iclr2025_conference}
+
+\subsubsection{Failure Case Analysis and Model Limitations}
+\label{sec:failure_cases}
+
+Although our proposed models exhibit notable advancements across various benchmarks, a thorough analysis uncovers several systematic failure modes that offer critical insights into the constraints of integrating behavioral signals for content understanding. This section examines these failure cases and proposes hypotheses regarding their underlying causes.
+
+\textbf{Scale-Dependent Performance Limitations:}
+In multiple evaluation tables (Tables~\ref{tab:image-emotion}, \ref{tab:image-dense-captioning}, \ref{tab:video-qa}), Behavior-LLaVA consistently underperforms when compared to significantly larger models such as GPT-4V, despite the benefits conferred by behavioral training. This pattern suggests that while behavioral signals provide qualitative enhancements within similar parameter ranges, they are insufficient to overcome the limitations imposed by model scale. Behavior tokens enhance understanding capabilities relative to models of comparable size but cannot substitute for the extensive knowledge representations and reasoning capabilities that arise from larger parameter counts. This indicates that behavior optimization functions as a complementary enhancement rather than a replacement for model scale in achieving optimal performance across diverse tasks.
+
+\textbf{Low-Level Task Interference:}
+An analysis of Table~\ref{table:hvu-benchmark} reveals that Behavior-LLaVA exhibits diminished performance on basic perceptual tasks, with reductions of 0.22\% in Action recognition and 0.03\% in Object recognition when augmented with story generation. This pattern indicates that while behavioral signals are advantageous for high-level cognitive tasks such as emotion recognition, memorability prediction, and persuasion strategy classification, they offer limited value or may even interfere with basic perceptual tasks that necessitate precise object and action recognition. This suggests a misalignment between the objectives of behavior optimization and the requirements of low-level visual processing, where behavioral training may introduce noise or competing objectives that detract from accurate perceptual recognition.
+
+\textbf{Accuracy-Engagement Trade-offs in Behavior-LLaVA:}
+Table~\ref{tab:image-dense-captioning} illustrates a trade-off in the dense captioning performance of Behavior-LLaVA. While the model demonstrates improvements in detail (6.57\%) and quality (9.72\%) metrics, it shows a 1.3\% decrease in correctness compared to LLaMA-Vid (7.3 vs 7.4). This pattern suggests that behavioral training introduces a trade-off between factual accuracy and the generation of engaging content. Behavior-LLaVA learns to produce more detailed and qualitatively appealing captions by incorporating stylistic elements that users find engaging, but this enhancement comes at the expense of precise factual description. The model appears to prioritize emotional resonance and aesthetic appeal over strict adherence to visual facts, reflecting the behavioral signals it was trained on rather than ground truth accuracy.
+
+\textbf{Cross-Domain Overfitting in ScanTextGAN:}
+An analysis of Tables~\ref{tab:celer}, \ref{tab:iitb_2016}, and \ref{tab:iitb_2017} reveals that ScanTextGAN experiences significant performance degradation when applied to cross-domain datasets. Notably, in cross-domain evaluation (Table~\ref{tab:iitb_2016}), the LSTM baseline outperforms ScanTextGAN on Vector similarity (0.984 vs 0.966) and Length similarity (0.973 vs 0.945) metrics, despite ScanTextGAN's superior in-domain performance on the CELER dataset (Table~\ref{tab:celer}). This suggests that ScanTextGAN overfits to the specific linguistic patterns and reading behaviors present in the news-reading CELER dataset. When applied to movie reviews, tweets, and sarcastic quotes, the model fails because these domains possess fundamentally different syntactic structures, vocabulary distributions, and cognitive processing patterns. The adversarial training component may exacerbate this overfitting by learning domain-specific discriminative features that do not generalize across textual domains.
+
+\textbf{Intent-Awareness Limitations in ScanTextGAN:}
+While Table~\ref{tab:iitb_classifier_results} demonstrates that intent-aware scanpaths achieve superior performance (0.8477 vs 0.8404 F1 for sentiment analysis), the base ScanTextGAN model fails to capture task-specific reading behaviors without explicit conditioning. This limitation reveals that human reading behavior is context-dependent and varies significantly based on the reader's cognitive intent (e.g., sentiment analysis vs sarcasm detection). ScanTextGAN's failure to automatically adapt to different cognitive tasks suggests that the model learns generic reading patterns rather than task-specific attention mechanisms. This indicates a limitation in the model's ability to understand the dynamic relationship between reading intent and scanpath generation.
+
 
 \subsubsection{Limitations}
 In this paper, we try to show the hypothesis that training on the behavior modality improves learning of the content modality. We train the models on comments and likes to show this. We test our models on multiple benchmarks and obtain positive results. While we try to cover a wide variety of tasks and while results do conclusively show that the hypothesis is true, yet, we can test on more benchmarks covering even more tasks. Similarly, we can show it with multiple models, other than LLaMA-Vid.

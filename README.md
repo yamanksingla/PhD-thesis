@@ -1,4 +1,4 @@
-# Behavior As A Modality
+# Behavior As A Modality: A Framework To Enable Automated Persuasion
 Yaman Kumar Singla's PhD Thesis
 
 The webpage for the thesis is available at [https://yamanksingla.github.io/PhD-thesis/](https://yamanksingla.github.io/PhD-thesis/).
