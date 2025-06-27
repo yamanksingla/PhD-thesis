@@ -16,6 +16,8 @@ We also made significant strides in demonstrating how behavioral signals can enh
 In the realm of content generation, we made contributions towards generating performant content in both text and visual domains. Through our work on memorability optimization, we developed Henry, a model achieving a 44\% improvement in memorability scores of the generated content from the starting point. This represents the first successful application of synthetic data in a domain previously lacking large-scale training resources. In the visual domain, we addressed the critical need for engagement-optimized image generation through the development of EngageNet and the creation of EngagingImageNet, a comprehensive dataset of 168 million tweets with associated media and engagement metrics. Our introduction of Engagement Arena, the first automated benchmark for assessing the engagement potential of text-to-image models, provides the research community with a valuable tool for evaluating and improving engagement-oriented image generation techniques.
 
 
+Despite these significant contributions, our research has several important limitations that must be acknowledged. First, our models exhibit fundamental scale-dependent performance limitations, where behavioral specialization cannot overcome the advantages of larger parameter counts in pure content understanding tasks, as evidenced by LCBM's consistent underperformance compared to significantly larger models like GPT-4V. Second, we observe domain specificity constraints in behavioral transfer, with models trained on platform-specific data (e.g., YouTube) showing substantial performance degradation when applied to different domains (e.g., email marketing), suggesting that behavioral patterns are more context-dependent than initially hypothesized. Third, our approaches face scalability challenges with longer and more complex content, particularly evident in the verbalization approach used in LCBM, where performance degrades significantly for content exceeding certain thresholds (videos over 300 seconds or emails with extensive visual content). Fourth, the quality and availability of behavioral signals create dependencies that limit model applicability—performance drops substantially for content with sparse engagement data or when behavioral metrics are influenced by external events and temporal variance. Fifth, our evaluation frameworks, particularly for memorability prediction, are constrained by relatively low human consistency scores (ranging from 0.55 to 0.78), indicating fundamental challenges in behavioral assessment that set theoretical performance ceilings. Finally, our datasets and models exhibit inherent biases stemming from platform demographics, self-selection effects, and algorithmic influences, which may limit generalizability across diverse populations and cultural contexts. These limitations underscore the need for continued research in developing more robust, scalable, and generalizable approaches to behavioral modeling.
+
 Looking ahead, this research opens several promising directions for future work. The integration of behavioral data into AI systems could lead to more nuanced and context-aware models that better understand and predict human responses. Concretely, we visualize the following avenues for automated behavioral sciences in the near future:
 \begin{enumerate}
     \item \textbf{Infinite Personalization}: Before the invention of the printing press, each document had to be written with manual effort. Content production was the limiting factor in communication. The invention of the printing press made it possible to mass-produce content. However, delivery was still limited. While newspapers began to be printed, their area of influence was limited to a certain small geographical boundary. Delivery was the limiting factor then. Steam engines helped solve some of that problem. Still, the extent of delivery was limited, and the speed of delivery was slow. It was not until the invention of the internet and mobile devices that the delivery problem was completely solved. Now, anyone can instantly deliver any piece of content to any other person. The next limiting factor in communication is the time and human labor cost of producing content. This limits a communicator to send out the same message to all the receivers. Further, as both ours and several other research studies have shown, humans are bad at predicting the behavior of others; we need techniques to produce performant content. This will enable infinite personalization, a personalized way of communicating between a communicator and a receiver, with the aim of fulfilling the shared goals.
@@ -54,14 +56,70 @@ Looking ahead, this research opens several promising directions for future work.
 \end{enumerate}
 
 
+\section{Societal and Ethical Implications of Behavior Optimized AI}
+
+The development of AI systems capable of understanding, predicting, and optimizing human behavior represents a significant technological advancement with far-reaching societal implications. Our work throughout this thesis—spanning persuasion strategy analysis in advertising, behavioral signal integration for content understanding, content generation optimized for memorability and engagement, and comprehensive behavioral modeling—demonstrates both the tremendous potential and the inherent risks of behavior-optimized AI. This section synthesizes the ethical considerations that emerge from our research and similar work in the field, providing a comprehensive framework for understanding the broader implications of this technology.
+
+\subsection{Dual-Use Nature and Manipulation Risks}
+
+Behavior-optimized AI systems exhibit a fundamental dual-use characteristic: the same technologies that can benefit society can also be misused for harmful purposes \cite{singh2024measuring,khurana2023behavior}. Our research demonstrates that AI models can be trained to generate content optimized for specific behavioral outcomes—whether increasing memorability, engagement, or persuasive impact. While such capabilities offer tremendous potential for positive applications in education, public health campaigns, and user-centered design, they simultaneously create unprecedented opportunities for manipulation and deception.
+
+The manipulation potential of these systems manifests in several critical domains. \textbf{Political manipulation} represents perhaps the most concerning risk, where behavior-optimized AI could be deployed to shape political inclinations through carefully crafted, engagement-maximized content that exploits psychological vulnerabilities rather than presenting balanced information \cite{tappin2023quantifying}. \textbf{Misinformation amplification} poses another significant threat, as these systems could be used to create and disseminate false information in formats optimized for viral spread and cognitive acceptance \cite{lukito2020coordinating}. Additionally, \textbf{consumer manipulation} risks emerge when such technologies are used to encourage ill-informed purchasing decisions or exploit behavioral biases for commercial gain \cite{boerman2017online}.
+
+Our work has consistently acknowledged these risks and implemented safeguards including Acceptable Use Policies that explicitly prohibit deployment in high-risk domains such as political campaigning, spam generation, and deceptive advertising. However, the fundamental challenge remains: how can we quantitatively measure the "manipulation potential" of a behavioral model and develop robust safeguards that prevent misuse while preserving beneficial capabilities?
+
+\subsection{Privacy and Data Protection Challenges}
+
+The development of behavior-optimized AI systems necessitates the collection and analysis of vast amounts of behavioral data, raising significant privacy concerns. Throughout our research—from analyzing persuasion strategies in advertising datasets to integrating behavioral signals like eye movements, comments, and engagement metrics—we have implemented comprehensive privacy-preserving strategies, including systematic removal of personally identifiable information (PII), restriction of data collection to enterprise accounts identified through structured knowledge bases, and aggregation of behavioral signals to prevent individual re-identification.
+
+However, the scale and granularity of behavioral data required for effective modeling present ongoing challenges. Even aggregated behavioral data can potentially reveal sensitive information about individuals or groups, particularly when combined with other data sources. The development of formal differential privacy mechanisms \cite{dwork2014algorithmic} and federated learning approaches \cite{mcmahan2017communication} represents promising directions for addressing these concerns, but significant technical challenges remain in balancing privacy protection with model utility in high-dimensional, multimodal behavioral modeling scenarios.
+
+\subsection{Bias, Fairness, and Representation}
+
+Behavioral data inherently reflects the biases present in the platforms and populations from which it is collected. Our research has consistently acknowledged that data sourced from diverse platforms—including advertising datasets for persuasion analysis, social media platforms for engagement modeling, eye-tracking studies for attention modeling, and video platforms for behavioral understanding—may exhibit demographic skews, self-selection bias, and algorithmic influences that could lead to uneven model performance across different user groups or reinforce existing societal biases.
+
+These biases manifest in multiple dimensions: \textbf{demographic biases} related to age, gender, and socioeconomic background may influence how persuasion strategies are interpreted and modeled; \textbf{cultural biases} may affect the recognition and effectiveness of behavioral interventions across different cultural contexts; and \textbf{temporal biases} may result from the dynamic nature of online platforms and changing user behaviors over time.
+
+Addressing these challenges requires comprehensive bias mitigation strategies including adversarial de-biasing techniques \cite{zhang2018mitigating}, fairness-aware learning algorithms \cite{hardt2016equality}, and systematic bias auditing using subgroup performance analysis and counterfactual fairness testing. However, the fundamental challenge of ensuring fair and representative behavioral modeling across diverse global populations remains an active area of research.
+
+\subsection{Autonomy, Consent, and Human Agency}
+
+The development of increasingly sophisticated behavior prediction and optimization systems raises profound questions about human autonomy and agency. If AI systems can accurately predict and influence human behavior, what does this mean for individual freedom of choice and decision-making? Our work touches on these philosophical questions, particularly in the context of free will and determinism, suggesting that human behavior may be more predictable and influenceable than commonly assumed.
+
+The concept of informed consent becomes particularly complex in the context of behavior-optimized AI. While users may consent to data collection for service improvement, they may not fully understand how their behavioral data will be used to create models capable of predicting and influencing their future actions. This asymmetry of understanding and power raises questions about the validity of consent in these contexts and the need for more transparent and comprehensible disclosure practices.
+
+\subsection{Accountability and Governance Frameworks}
+
+The deployment of behavior-optimized AI systems requires robust governance frameworks that can address the complex ethical challenges while enabling beneficial applications. Our research has contributed to this discussion through various approaches: implementing acceptable use policies for persuasion analysis datasets, developing controlled evaluation frameworks for engagement optimization, establishing privacy-preserving protocols for behavioral data collection, and proposing "Constitutional AI" approaches for persuasion, where models are trained to adhere to auditable ethical principles developed in collaboration with ethicists, psychologists, and policymakers.
+
+However, significant challenges remain in developing effective governance mechanisms. \textbf{Technical auditing} requires new methods for assessing model behavior, detecting potential misuse, and ensuring compliance with ethical guidelines. \textbf{Regulatory frameworks} must balance innovation with protection, requiring close collaboration between technologists, policymakers, and civil society organizations. \textbf{Industry standards} need to be developed to ensure responsible development and deployment practices across the technology sector.
+
+\subsection{Long-term Societal Implications}
+
+The widespread deployment of behavior-optimized AI systems could fundamentally alter the nature of human communication and social interaction. The possibility of "infinite personalization"—where every message is optimized for maximum effectiveness with specific individuals—could create unprecedented levels of persuasive power while potentially undermining the shared information environment necessary for democratic discourse.
+
+The development of digital societies and human simulation capabilities raises additional concerns about the potential for creating echo chambers, amplifying existing divisions, or manipulating public opinion at scale. While these technologies offer tremendous potential for understanding and addressing social challenges, they also create new risks that must be carefully managed.
+
+\subsection{Toward Responsible Development}
+
+Addressing these challenges requires a multi-faceted approach combining technical innovation with ethical reflection and regulatory oversight. Key principles for responsible development include:
+
+\textbf{Transparency and Explainability}: Developing models whose decision-making processes can be understood and audited, enabling meaningful oversight and accountability.
+
+\textbf{Participatory Design}: Involving diverse stakeholders, including affected communities, in the design and deployment of behavior-optimized AI systems.
+
+\textbf{Continuous Monitoring}: Implementing systems for ongoing assessment of model behavior, societal impact, and potential misuse.
+
+\textbf{Adaptive Governance}: Creating flexible regulatory frameworks that can evolve with technological developments while maintaining core ethical principles.
+
+The societal implications of behavior-optimized AI are profound and multifaceted. While our research demonstrates the tremendous potential of these technologies for beneficial applications, it also highlights the critical importance of addressing ethical challenges proactively. The future development of this field must prioritize not only technical advancement but also the careful consideration of societal impact, ensuring that the power to understand and influence human behavior is wielded responsibly and in service of human flourishing.
 
 
-
-\subsection{Open Research Questions}
+\section{Open Research Questions}
 
 To spur progress, we outline key open research questions, categorized into four thematic areas.
 
-\subsubsection*{Core Modeling and Architectural Challenges}
+\subsection*{Core Modeling and Architectural Challenges}
 \begin{itemize}
     \item \textbf{Architectural Innovation for Multimodal Behavior:} What architectural innovations are needed to effectively fuse textual, visual, and behavioral modalities in a single, coherent model? A central challenge is balancing the computational overhead of incorporating diverse behavioral signals against the performance gains in downstream tasks.
     
@@ -70,7 +128,7 @@ To spur progress, we outline key open research questions, categorized into four 
     \item \textbf{Data-Efficient Behavioral Modeling:} How can we develop accurate behavioral models in domains with scarce data? This involves exploring few-shot, zero-shot, and transfer learning to leverage knowledge from data-rich environments (e.g., social media) for data-poor contexts (e.g., public health campaigns, niche product markets, or B2B interactions).
 \end{itemize}
 
-\subsubsection*{Causality, Interpretability, and Intervention}
+\subsection*{Causality, Interpretability, and Intervention}
 \begin{itemize}
     \item \textbf{Integrating Causality into Predictive Models:} A key frontier is the integration of causal inference with predictive modeling. Future work should focus on hybrid models that combine the predictive power of large-scale machine learning with the explanatory power of causal reasoning. This could involve techniques for automatically identifying and leveraging natural experiments within massive datasets or developing architectures that learn causal graphs from observational and interventional data, moving from 'what' users will do to 'why' they do it.
     
@@ -79,7 +137,7 @@ To spur progress, we outline key open research questions, categorized into four 
     \item \textbf{Generating Persuasive and Trustworthy Explanations:} Beyond predicting behavior, can we generate faithful explanations for *why* people act as they do? Furthermore, can we design models whose own recommendations are accompanied by explanations that are not only interpretable but also persuasive and trust-inspiring? How can we measure the behavioral impact of such machine-generated explanations?
 \end{itemize}
 
-\subsubsection*{Ethical and Societal Considerations}
+\subsection*{Ethical and Societal Considerations}
 \begin{itemize}
     \item \textbf{Ethical Frameworks for Persuasive Technologies:} As AI systems become more persuasive, it is imperative to develop robust ethical frameworks to guide their deployment. An actionable research direction is the creation of 'Constitutional AI' for persuasion, where models are trained to adhere to auditable ethical principles (e.g., transparency, fairness, respect for autonomy), co-developed with ethicists, psychologists, and policymakers.
 
@@ -88,7 +146,7 @@ To spur progress, we outline key open research questions, categorized into four 
     \item \textbf{Building and Validating Digital Societies:} How can we construct and validate large-scale, multi-agent simulations of digital societies to study emergent social phenomena? Research is needed to model phenomena like opinion polarization and information cascades, and to ethically test the impact of potential policy or platform design interventions in these simulated worlds.
 \end{itemize}
 
-\subsubsection*{Bridging Theory, Practice, and People}
+\subsection*{Bridging Theory, Practice, and People}
 \begin{itemize}
     \item \textbf{Cross-Cultural and Demographic Generalization:} How do we ensure that behavioral models are fair and generalize across diverse cultures, languages, and demographic groups? This requires creating new benchmark datasets that capture global diversity and developing methods to detect and mitigate biases present in training data.
     

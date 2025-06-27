@@ -1021,6 +1021,16 @@ Vicuna & Video Embeddings & 12.21 & 49.77 & 11.08 & 52.51 & 7.66 & 65.42 & 9.44 
 
 
 
+\subsection{Cross Domain Generalization}
+\label{sec:cross-domain-generalization}
+
+A key question for the practical use of Large Content Behavior Models (LCBM) is whether the improvements seen in advertising contexts can be applied to other domains like education, healthcare, and entertainment. Our experiments provide strong evidence supporting this cross-domain generalization.
+
+\textbf{Cross-Domain Performance.} The LVU benchmark results (Table~\ref{table:behavior-domain-adaptation}) clearly demonstrate LCBM's capability, achieving a zero-shot performance with an MSE of 0.14 on videos from documentaries, lectures, sports, and entertainment—none of which are related to advertising. Additionally, LCBM adapts well to various content types and behavioral patterns, such as temporal engagement dynamics and content complexity preferences, facilitating cross-domain transfer. Our domain adaptation experiments reveal that LCBM, when trained on diverse YouTube content, performs better on email marketing tasks (R² = 0.64) compared to models trained solely on email data (R² = 0.55), indicating effective bidirectional cross-domain transfer.
+
+\textbf{Diverse Content Coverage.} Our Content Behavior Corpus (CBC) dataset, comprising over 40,000 videos, includes educational tutorials, health and wellness content, entertainment, technology reviews, and general informational content. This diversity shows that LCBM can learn behavioral patterns beyond just persuasive or commercial content. We present LCBM's performance on the CBC dataset in Tables~\ref{table:behavior-simulation-replay-values}, \ref{table:content-simulation-twitter}, \ref{table:content-simulation}, \ref{table:behavior-simulation-like-simulation}, and \ref{table:behavior-understanding}, highlighting its ability to handle behavioral patterns that differ significantly from those in advertising content.
+
+
 %%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%
 \section{Failure Cases and Model Limitations}
